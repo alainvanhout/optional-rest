@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
-public @interface RestRelative {
+public @interface RestInstanceRelative {
     String value() default "";
 
     HttpMethod[] methods() default {HttpMethod.GET};

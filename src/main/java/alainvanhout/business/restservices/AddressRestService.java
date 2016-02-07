@@ -4,6 +4,7 @@ import alainvanhout.business.Person;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.rest.RestResponse;
 import alainvanhout.rest.annotations.RestEntity;
+import alainvanhout.rest.annotations.RestError;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.restservice.RestService;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -16,5 +17,10 @@ public class AddressRestService extends RestService {
     public RestResponse arrive(RestRequest restRequest) {
         Person person = restRequest.getFromContext("person");
         return new RestResponse().renderer(new StringRenderer(ToStringBuilder.reflectionToString(person.getAddress(), ToStringStyle.JSON_STYLE)));
+    }
+
+    @RestError
+    public RestResponse error(RestRequest restRequest) {
+        return new RestResponse().renderer(new StringRenderer("An address error has occurred"));
     }
 }

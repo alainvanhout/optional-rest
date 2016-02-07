@@ -99,9 +99,8 @@ public class RestRequest {
     }
 
     public boolean done(){
-        return getPath().done();
+        return getPath().isDone();
     }
-
 
     public static RestRequest fromQuery(String query, String root, HttpMethod method) {
         query = StringUtils.substringAfter(query, root);

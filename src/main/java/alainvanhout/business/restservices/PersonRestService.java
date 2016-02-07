@@ -3,12 +3,13 @@ package alainvanhout.business.restservices;
 import alainvanhout.business.Person;
 import alainvanhout.business.repositories.PersonRepository;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
+import alainvanhout.rest.RestException;
 import alainvanhout.rest.RestResponse;
-import alainvanhout.rest.utils.JsonUtils;
 import alainvanhout.rest.annotations.*;
 import alainvanhout.rest.request.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.restservice.RestService;
+import alainvanhout.rest.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -22,13 +23,13 @@ import java.util.stream.Collectors;
 public class PersonRestService extends RestService {
 
     @Autowired
-    @RestRelative(value = "address", forInstance = true)
+    @RestInstanceRelative(value = "address")
     private AddressRestService addressRestService;
 
     @Autowired
     private PersonRepository personRepository;
 
-    @RestRelative(value = "pets", forInstance = true)
+    @RestInstanceRelative(value = "pets")
     public RestResponse foo(RestRequest restRequest) {
         Person person = (Person) restRequest.getContext().get("person");
         return new RestResponse().renderer(new StringRenderer(ToStringBuilder.reflectionToString(person.getPets().toArray(), ToStringStyle.JSON_STYLE)));
@@ -69,12 +70,11 @@ public class PersonRestService extends RestService {
         return new RestResponse().renderer(new StringRenderer("[" + content + "]"));
     }
 
-//    @RestEntity(methods = HttpMethod.OPTIONS)
-//    public RestResponse entityOpions(RestRequest restRequest){
-//        String json = RestUtils.entityToJson(Person.class);
-//        return new RestResponse().renderer(new StringRenderer(json));
-//    }
-
+    @RestEntity(methods = HttpMethod.OPTIONS)
+    public RestResponse entityOptions(RestRequest restRequest) {
+        String json = JsonUtils.entityToJson(Person.class);
+        return new RestResponse().renderer(new StringRenderer(json));
+    }
 
     @Override
     public Class getEntityClass() {
@@ -82,8 +82,16 @@ public class PersonRestService extends RestService {
     }
 
     @RestInstance(methods = HttpMethod.OPTIONS)
-    public RestResponse instanceOptions(RestRequest restRequest){
+    public RestResponse instanceOptions(RestRequest restRequest) {
         String json = JsonUtils.entityToJson(Person.class);
         return new RestResponse().renderer(new StringRenderer(json));
     }
+
+    @RestError
+    public RestResponse error(RestRequest restRequest) {
+        RestException exception = restRequest.getFromContext("exception");
+        return new RestResponse().renderer(new StringRenderer("An error has occurred: " + exception.getMessage() + " "
+                + exception.getContext().entrySet().stream().map(e -> e.getKey() + ":" + ToStringBuilder.reflectionToString(e.getValue(), ToStringStyle.JSON_STYLE)).collect(Collectors.joining(","))));
+    }
+
 }
