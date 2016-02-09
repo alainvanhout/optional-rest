@@ -199,12 +199,11 @@ public class SimpleScope implements BasicScope {
     }
 
     @Override
-    public SimpleScope addRelativeMapping(String relative, RestMapping mapping) {
+    public void addRelativeMapping(String relative, RestMapping mapping) {
         if (relativeMapping.containsKey(relative)) {
             throw new RestException("Relative mapping already defined: " + relative);
         }
         relativeMapping.put(relative, mapping);
-        return this;
     }
 
     public void setFallbackScope(BasicScope fallbackScope) {

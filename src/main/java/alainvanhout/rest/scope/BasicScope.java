@@ -16,7 +16,7 @@ public interface BasicScope extends Scope {
 
     BasicScope addErrorMapping(RestMapping mapping, HttpMethod... methods);
 
-    SimpleScope addRelativeMapping(String relative, RestMapping mapping);
+    void addRelativeMapping(String relative, RestMapping mapping);
 
     String getType();
 }

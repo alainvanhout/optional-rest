@@ -6,7 +6,6 @@ import alainvanhout.rest.annotations.*;
 import alainvanhout.rest.request.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.scope.BasicScope;
-import alainvanhout.rest.scope.Scope;
 import alainvanhout.rest.scope.ScopeContainer;
 import alainvanhout.rest.scope.SimpleScope;
 import alainvanhout.rest.utils.ReflectionUtils;
@@ -82,28 +81,25 @@ public class ScopeManager {
         RestEntityDefinition restEntityDefinition = ReflectionUtils.retrieveAnnotation(accessibleObject, RestEntityDefinition.class);
 
         if (restEntity != null) {
-            addMapping(owner, accessibleObject, entityScope, restEntity.methods(), passing);
+            addToScope(entityScope, restEntity.methods(), passing, new RestMapping(owner).set(accessibleObject));
         }
         if (restRelative != null) {
-            String value = restRelative.value();
-            addRelativeMapping(owner, accessibleObject, entityScope, restRelative.methods(), passing, value);
+            entityScope.addRelativeMapping(restRelative.value(), createRelativeMapping(owner, accessibleObject));
         }
 
         if (restInstance != null) {
-            addMapping(owner, accessibleObject, instanceScope, restInstance.methods(), passing);
+            addToScope(instanceScope, restInstance.methods(), passing, new RestMapping(owner).set(accessibleObject));
         }
         if (restInstanceRelative != null) {
-            String value = restInstanceRelative.value();
-            addRelativeMapping(owner, accessibleObject, instanceScope, restInstanceRelative.methods(), passing, value);
+            instanceScope.addRelativeMapping(restInstanceRelative.value(), new RestMapping(owner).set(accessibleObject));
         }
 
         if (restError != null) {
-            addErrorMapping(owner, accessibleObject, entityScope, restError.methods());
-            addErrorMapping(owner, accessibleObject, instanceScope, restError.methods());
+            entityScope.addErrorMapping(new RestMapping(owner).set(accessibleObject), restError.methods());
+            instanceScope.addErrorMapping(new RestMapping(owner).set(accessibleObject), restError.methods());
         }
         if (restEntityDefinition != null) {
             Class entityClass = addEntityDefinition(owner, accessibleObject);
-//            entityScope.setDefinitionClass(entityClass);
             instanceScope.setDefinitionClass(entityClass);
         }
     }
@@ -127,21 +123,15 @@ public class ScopeManager {
         }
     }
 
-    private void addErrorMapping(ScopeContainer owner, AccessibleObject accessibleObject, BasicScope scope, HttpMethod[] methods) {
-        RestMapping restMapping = new RestMapping(owner).set(accessibleObject);
-        scope.addErrorMapping(restMapping, methods);
-    }
-
-    private void addMapping(ScopeContainer owner, AccessibleObject accessibleObject, BasicScope scope, HttpMethod[] methods, boolean passing) {
-        RestMapping restMapping = new RestMapping(owner).set(accessibleObject);
+    private void addToScope(BasicScope scope, HttpMethod[] methods, boolean passing, RestMapping mapping) {
         if (passing) {
-            scope.addPassMapping(restMapping, methods);
+            scope.addPassMapping(mapping, methods);
         } else {
-            scope.addArriveMapping(restMapping, methods);
+            scope.addArriveMapping(mapping, methods);
         }
     }
 
-    private void addRelativeMapping(ScopeContainer owner, AccessibleObject accessibleObject, BasicScope scope, HttpMethod[] methods, boolean passing, String relative) {
+    private RestMapping createRelativeMapping(ScopeContainer owner, AccessibleObject accessibleObject) {
         if (accessibleObject instanceof Field) {
             Field field = (Field) accessibleObject;
             if (!ScopeContainer.class.isAssignableFrom(field.getType())) {
@@ -150,13 +140,13 @@ public class ScopeManager {
             try {
                 field.setAccessible(true);
                 ScopeContainer container = (ScopeContainer) field.get(owner);
-                scope.addRelativeMapping(relative, new RestMapping(owner).scopeContainer(container));
+                return new RestMapping(owner).scopeContainer(container);
             } catch (IllegalAccessException e) {
                 throw new RestException("Encountered error while adding relative mapping for field " + field.getName());
             }
         } else if (accessibleObject instanceof Method) {
             Method method = (Method) accessibleObject;
-            scope.addRelativeMapping(relative, new RestMapping(owner).method(method));
+            return new RestMapping(owner).method(method);
         } else {
             throw new RestException("Relative mapping does not support type " + accessibleObject.getClass().getName());
         }
