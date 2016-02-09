@@ -1,6 +1,5 @@
 package alainvanhout.rest.utils;
 
-import alainvanhout.business.Person;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -8,7 +7,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +28,17 @@ public class JsonUtils {
         primitiveTypes.put(BigDecimal.class, "decimal");
     }
 
-    public static String entityToJson(Class<Person> entity) {
+    public static String entityToJson(Class entity) {
+        Map<String, Map> definitionMap = getDefinitionMap(entity);
+        return definitionToJson(definitionMap);
+    }
+
+    public static String definitionToJson(Map<String, Map> definitionMap) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(definitionMap);
+    }
+
+    public static Map<String, Map> getDefinitionMap(Class entity) {
         Map<String, String> primitive = new HashMap<>();
         Map<String, String> relative = new HashMap<>();
         Field[] fields = entity.getDeclaredFields();
@@ -46,9 +54,7 @@ public class JsonUtils {
         Map<String, Map> entityMap = new HashMap<>();
         entityMap.put("primitive", primitive);
         entityMap.put("relative", relative);
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(entityMap);
+        return entityMap;
     }
 
     public static String getType(Field field) {

@@ -8,7 +8,7 @@ import alainvanhout.rest.RestResponse;
 import alainvanhout.rest.annotations.*;
 import alainvanhout.rest.request.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
-import alainvanhout.rest.restservice.RestService;
+import alainvanhout.rest.services.RestService;
 import alainvanhout.rest.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -28,6 +28,9 @@ public class PersonRestService extends RestService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @RestEntityDefinition
+    private Class person = Person.class;
 
     @RestInstanceRelative(value = "pets")
     public RestResponse foo(RestRequest restRequest) {
@@ -72,17 +75,6 @@ public class PersonRestService extends RestService {
 
     @RestEntity(methods = HttpMethod.OPTIONS)
     public RestResponse entityOptions(RestRequest restRequest) {
-        String json = JsonUtils.entityToJson(Person.class);
-        return new RestResponse().renderer(new StringRenderer(json));
-    }
-
-    @Override
-    public Class getEntityClass() {
-        return Person.class;
-    }
-
-    @RestInstance(methods = HttpMethod.OPTIONS)
-    public RestResponse instanceOptions(RestRequest restRequest) {
         String json = JsonUtils.entityToJson(Person.class);
         return new RestResponse().renderer(new StringRenderer(json));
     }

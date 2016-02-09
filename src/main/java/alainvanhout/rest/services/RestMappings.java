@@ -1,4 +1,4 @@
-package alainvanhout.rest.restservice;
+package alainvanhout.rest.services;
 
 import alainvanhout.rest.request.HttpMethod;
 

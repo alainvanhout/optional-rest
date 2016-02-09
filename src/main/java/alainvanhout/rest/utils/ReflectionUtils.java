@@ -1,8 +1,7 @@
 package alainvanhout.rest.utils;
 
 import alainvanhout.rest.RestException;
-import alainvanhout.rest.request.RestRequest;
-import alainvanhout.rest.restservice.RestMapping;
+import alainvanhout.rest.services.RestMapping;
 
 import java.lang.reflect.*;
 

@@ -18,6 +18,7 @@ import alainvanhout.renderering.renderer.webpage.WebpageRenderer;
 import alainvanhout.rest.RestResponse;
 import alainvanhout.rest.request.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
+import alainvanhout.rest.services.ScopeManager;
 import alainvanhout.routing.path.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -57,6 +58,9 @@ public class TestController {
     @Autowired
     private PersonRestService personRestService;
 
+    @Autowired
+    private ScopeManager scopeManager;
+
     private PersonRenderer personRenderer;
 
     @RequestMapping(value = "/root/**")
@@ -77,24 +81,9 @@ public class TestController {
     public String test(HttpServletRequest httpRequest) {
         HttpMethod method = HttpMethod.valueOf(httpRequest.getMethod());
         RestRequest restRequest = RestRequest.fromQuery(httpRequest.getRequestURI(), "/test/", method);
-        RestResponse response = personRestService.follow(restRequest);
+        RestResponse response = scopeManager.follow(personRestService, restRequest);
         return response.render();
     }
-
-
-//    @RequestMapping(value = "people/{id}")
-//    public String people(@PathVariable("id") long id) {
-//        Person person = personRepository.findOne(BigInteger.valueOf(id));
-//
-//        Template template = templateRepository.findByName("person-large");
-//        StringRenderer templateRenderer = new StringRenderer(template.getBody());
-//        return new SafeRenderer(new PersonRenderer(templateRenderer).set(person), new SafeRenderer.Handler() {
-//            @Override
-//            public String thenReturn(Renderer renderer, Exception e) {
-//                return "<em>Error occurred.</em>" + e.getMessage();
-//            }
-//        }).render();
-//    }
 
     public FetchingRenderer<String> template(String s) {
         return new FetchingRenderer<String>(rendererService, s);
