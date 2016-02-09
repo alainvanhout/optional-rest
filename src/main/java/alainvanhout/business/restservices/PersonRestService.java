@@ -73,11 +73,11 @@ public class PersonRestService implements ScopeContainer{
         return new RestResponse().renderer(new StringRenderer("[" + content + "]"));
     }
 
-    @RestEntity(methods = HttpMethod.OPTIONS)
-    public RestResponse entityOptions(RestRequest restRequest) {
-        String json = JsonUtils.entityToJson(Person.class);
-        return new RestResponse().renderer(new StringRenderer(json));
-    }
+//    @RestEntity(methods = HttpMethod.OPTIONS)
+//    public RestResponse entityOptions(RestRequest restRequest) {
+//        String json = JsonUtils.entityToJson(Person.class);
+//        return new RestResponse().renderer(new StringRenderer(json));
+//    }
 
     @RestError
     public RestResponse error(RestRequest restRequest) {

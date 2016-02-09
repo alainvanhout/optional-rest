@@ -25,8 +25,8 @@ import java.util.Map;
 @Service
 public class ScopeManager {
 
-    private Map<ScopeContainer, Scope> instanceMap = new HashMap<>();
-    private Map<Class, Scope> classMap = new HashMap<>();
+    private Map<ScopeContainer, BasicScope> instanceMap = new HashMap<>();
+    private Map<Class, BasicScope> classMap = new HashMap<>();
 
     @Autowired
     private Collection<ScopeContainer> containers;
@@ -34,7 +34,7 @@ public class ScopeManager {
     @PostConstruct
     public void setup() {
         for (ScopeContainer scopeContainer : containers) {
-            Scope scope = processScopeContainer(scopeContainer);
+            BasicScope scope = processScopeContainer(scopeContainer);
             instanceMap.put(scopeContainer, scope);
             classMap.put(scopeContainer.getClass(), scope);
         }
@@ -47,16 +47,16 @@ public class ScopeManager {
         return instanceMap.get(container).follow(restRequest);
     }
 
-    public Scope getScopeForContainer(ScopeContainer container) {
+    public BasicScope getScopeForContainer(ScopeContainer container) {
         if (!instanceMap.containsKey(container)) {
             throw new RestException("No scope found for container " + container.getClass().getName());
         }
         return instanceMap.get(container);
     }
 
-    public Scope processScopeContainer(ScopeContainer owner) {
-        SimpleScope entityScope = new SimpleScope(this);
-        SimpleScope instanceScope = new SimpleScope(this);
+    public BasicScope processScopeContainer(ScopeContainer owner) {
+        SimpleScope entityScope = new SimpleScope(this).type("entity");
+        SimpleScope instanceScope = new SimpleScope(this).type("instance");
         entityScope.setFallbackScope(instanceScope);
 
         try {
@@ -103,7 +103,7 @@ public class ScopeManager {
         }
         if (restEntityDefinition != null) {
             Class entityClass = addEntityDefinition(owner, accessibleObject);
-            entityScope.setDefinitionClass(entityClass);
+//            entityScope.setDefinitionClass(entityClass);
             instanceScope.setDefinitionClass(entityClass);
         }
     }
@@ -128,13 +128,11 @@ public class ScopeManager {
     }
 
     private void addErrorMapping(ScopeContainer owner, AccessibleObject accessibleObject, BasicScope scope, HttpMethod[] methods) {
-        String name = ReflectionUtils.retrieveName(accessibleObject);
         RestMapping restMapping = new RestMapping(owner).set(accessibleObject);
         scope.addErrorMapping(restMapping, methods);
     }
 
     private void addMapping(ScopeContainer owner, AccessibleObject accessibleObject, BasicScope scope, HttpMethod[] methods, boolean passing) {
-        String name = ReflectionUtils.retrieveName(accessibleObject);
         RestMapping restMapping = new RestMapping(owner).set(accessibleObject);
         if (passing) {
             scope.addPassMapping(restMapping, methods);
