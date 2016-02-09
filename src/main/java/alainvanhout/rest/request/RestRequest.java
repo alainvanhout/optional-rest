@@ -13,9 +13,10 @@ public class RestRequest {
 
     private Path path;
     private HttpMethod method;
+    public Headers headers = new Headers();
     private Map<String, String> parameters = new HashMap<>();
-    private Map<String, Object> context = new HashMap<>();
 
+    private Map<String, Object> context = new HashMap<>();
     private String query = "";
     private String queryPath = "";
     private String queryParameters = "";
@@ -137,5 +138,9 @@ public class RestRequest {
                 p -> StringUtils.substringBefore(p, KEY_VALUE_SEPARATOR),
                 p -> StringUtils.contains(p, KEY_VALUE_SEPARATOR) ? StringUtils.substringAfter(p, KEY_VALUE_SEPARATOR) : null
         ));
+    }
+
+    public Headers getHeaders() {
+        return headers;
     }
 }

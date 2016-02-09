@@ -28,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 
 @Controller
 @ResponseBody
@@ -81,6 +84,11 @@ public class TestController {
     public String test(HttpServletRequest httpRequest) {
         HttpMethod method = HttpMethod.valueOf(httpRequest.getMethod());
         RestRequest restRequest = RestRequest.fromQuery(httpRequest.getRequestURI(), "/test/", method);
+
+        List<String> headerNames = Collections.list(httpRequest.getHeaderNames());
+        for (String headerName : headerNames) {
+            restRequest.getHeaders().add(headerName, httpRequest.getHeader(headerName));
+        }
         RestResponse response = scopeManager.follow(personRestService, restRequest);
         return response.render();
     }
