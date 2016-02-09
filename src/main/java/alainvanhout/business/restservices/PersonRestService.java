@@ -8,7 +8,7 @@ import alainvanhout.rest.RestResponse;
 import alainvanhout.rest.annotations.*;
 import alainvanhout.rest.request.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
-import alainvanhout.rest.services.RestService;
+import alainvanhout.rest.scope.ScopeContainer;
 import alainvanhout.rest.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -20,7 +20,7 @@ import java.math.BigInteger;
 import java.util.stream.Collectors;
 
 @Service
-public class PersonRestService extends RestService {
+public class PersonRestService implements ScopeContainer{
 
     @Autowired
     @RestInstanceRelative(value = "address")
