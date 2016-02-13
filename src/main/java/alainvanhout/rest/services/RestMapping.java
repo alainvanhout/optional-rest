@@ -1,10 +1,12 @@
 package alainvanhout.rest.services;
 
 import alainvanhout.rest.RestException;
+import alainvanhout.rest.scope.Scope;
 import alainvanhout.rest.scope.ScopeContainer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.function.Supplier;
 
 public class RestMapping {
 
@@ -13,6 +15,7 @@ public class RestMapping {
     private Method method;
     private ScopeContainer scopeContainer;
     private RestMappingType type;
+    private Supplier<Scope> scopeSupplier;
 
     public RestMapping(Object owner) {
         this.owner = owner;
@@ -37,7 +40,8 @@ public class RestMapping {
     public enum RestMappingType {
         FIELD,
         METHOD,
-        SCOPE_CONTAINER
+        SCOPE_CONTAINER,
+        SCOPE
     }
 
     public RestMapping field(Field field) {
@@ -81,5 +85,20 @@ public class RestMapping {
 
     public ScopeContainer getScopeContainer() {
         return scopeContainer;
+    }
+
+    public RestMapping setScopeSupplier(Supplier<Scope> scopeSupplier){
+        this.scopeSupplier = scopeSupplier;
+        if (type == null) {
+            type = RestMappingType.SCOPE;
+        }
+        return this;
+    }
+
+    public Scope getScope(){
+        if (this.scopeSupplier == null){
+            throw new RestException("No scope supplier available");
+        }
+        return scopeSupplier.get();
     }
 }

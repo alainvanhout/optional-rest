@@ -18,7 +18,8 @@ import java.math.BigInteger;
 import java.util.stream.Collectors;
 
 @Service
-public class PersonRestService implements ScopeContainer{
+@RestEntityDefinition(name = "person", instanceClass = Person.class)
+public class PersonRestService implements ScopeContainer {
 
     @Autowired
     @RestInstanceRelative(value = "address")
@@ -26,9 +27,6 @@ public class PersonRestService implements ScopeContainer{
 
     @Autowired
     private PersonRepository personRepository;
-
-    @RestEntityDefinition
-    private Class person = Person.class;
 
     @RestInstanceRelative(value = "pets")
     public RestResponse foo(RestRequest restRequest) {
@@ -77,11 +75,11 @@ public class PersonRestService implements ScopeContainer{
 //        return new RestResponse().renderer(new StringRenderer(json));
 //    }
 
-    @RestError
-    public RestResponse error(RestRequest restRequest) {
-        RestException exception = restRequest.getFromContext("exception");
-        return new RestResponse().renderer(new StringRenderer("An error has occurred: " + exception.getMessage() + " "
-                + exception.getContext().entrySet().stream().map(e -> e.getKey() + ":" + ToStringBuilder.reflectionToString(e.getValue(), ToStringStyle.JSON_STYLE)).collect(Collectors.joining(","))));
-    }
+//    @RestError
+//    public RestResponse error(RestRequest restRequest) {
+//        RestException exception = restRequest.getFromContext("exception");
+//        return new RestResponse().renderer(new StringRenderer("An error has occurred: " + exception.getMessage() + " "
+//                + exception.getContext().entrySet().stream().map(e -> e.getKey() + ":" + ToStringBuilder.reflectionToString(e.getValue(), ToStringStyle.JSON_STYLE)).collect(Collectors.joining(","))));
+//    }
 
 }

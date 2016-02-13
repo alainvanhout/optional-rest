@@ -14,6 +14,15 @@ public class ReflectionUtils {
         return null;
     }
 
+    public static <T> T retrieveAnnotation(Class parent, Class annotationClass) {
+        Object[] pathAnnotations = parent.getAnnotationsByType(annotationClass);
+        if (pathAnnotations.length == 1) {
+            return (T) pathAnnotations[0];
+        }
+        return null;
+    }
+
+
     public static RestMapping.RestMappingType retrieveType(AccessibleObject mappingParent) {
         if (mappingParent instanceof Field) {
             return RestMapping.RestMappingType.FIELD;

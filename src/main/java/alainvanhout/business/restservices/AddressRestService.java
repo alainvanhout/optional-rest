@@ -11,16 +11,21 @@ import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.scope.ScopeContainer;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RestEntityDefinition(name = "address", instanceClass = Address.class)
 public class AddressRestService implements ScopeContainer {
 
-    @RestEntityDefinition
-    private Address address;
-
+    // TODO: this should be RestInstance + Address should have its own repository
     @RestEntity
     public RestResponse arrive(RestRequest restRequest) {
+        Person person = restRequest.getFromContext("person");
+        return new RestResponse().renderer(new StringRenderer(ToStringBuilder.reflectionToString(person.getAddress(), ToStringStyle.JSON_STYLE)));
+    }
+    @RestEntity
+    public RestResponse arriveInstance(RestRequest restRequest) {
         Person person = restRequest.getFromContext("person");
         return new RestResponse().renderer(new StringRenderer(ToStringBuilder.reflectionToString(person.getAddress(), ToStringStyle.JSON_STYLE)));
     }

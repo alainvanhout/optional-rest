@@ -4,6 +4,7 @@ import alainvanhout.business.Address;
 import alainvanhout.business.renderers.PersonRenderer;
 import alainvanhout.business.repositories.PersonRepository;
 import alainvanhout.business.restservices.PersonRestService;
+import alainvanhout.business.restservices.RootScope;
 import alainvanhout.business.services.RendererService;
 import alainvanhout.cms.dtos.stored.StoredRoute;
 import alainvanhout.cms.repositories.SwitchRouteRepository;
@@ -62,9 +63,10 @@ public class TestController {
     private PersonRestService personRestService;
 
     @Autowired
-    private ScopeManager scopeManager;
+    private RootScope rootScope;
 
-    private PersonRenderer personRenderer;
+    @Autowired
+    private ScopeManager scopeManager;
 
     @RequestMapping(value = "/root/**")
     public String root(HttpServletRequest request) {
@@ -89,7 +91,7 @@ public class TestController {
         for (String headerName : headerNames) {
             restRequest.getHeaders().add(headerName, httpRequest.getHeader(headerName));
         }
-        RestResponse response = scopeManager.follow(personRestService, restRequest);
+        RestResponse response = scopeManager.follow(rootScope, restRequest);
         return response.render();
     }
 

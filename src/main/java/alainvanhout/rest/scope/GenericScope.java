@@ -9,22 +9,17 @@ import alainvanhout.rest.services.RestMapping;
 import alainvanhout.rest.services.RestMappings;
 import alainvanhout.rest.services.ScopeManager;
 import alainvanhout.rest.utils.JsonUtils;
-import alainvanhout.rest.utils.RestUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
-public class SimpleScope implements BasicScope {
+public class GenericScope implements Scope {
 
     private ScopeManager scopeManager;
-    private String type;
-    // entity
-    private Class entityClass;
+    private ScopeDefinition definition = new ScopeDefinition();
     // primitive and relative mappings
     private RestMappings passMappings = new RestMappings();
     private RestMappings arriveMappings = new RestMappings();
@@ -32,10 +27,12 @@ public class SimpleScope implements BasicScope {
     // error mappings
     private RestMappings errorMappings = new RestMappings();
     // fallback mappings
-    private BasicScope fallbackScope;
+    private Scope fallbackScope;
     private RestMappings fallbackMappings = new RestMappings();
 
-    public SimpleScope(ScopeManager scopeManager) {
+    private Map<String, Supplier<Scope>> relativeScopes = new HashMap<>();
+
+    public GenericScope(ScopeManager scopeManager) {
         this.scopeManager = scopeManager;
     }
 
@@ -52,7 +49,7 @@ public class SimpleScope implements BasicScope {
                 if (arriveMappings.contains(restRequest.getMethod())) {
                     return call(arriveMappings, restRequest);
                 } else if (HttpMethod.OPTIONS.equals(restRequest.getMethod())) {
-                    Map<String, Object> definitionMap = getDefinitionMap();
+                    Map<String, Object> definitionMap = definition.getMap();
                     String json = JsonUtils.definitionToJson(definitionMap);
                     return new RestResponse().renderer(new StringRenderer(json));
                 }
@@ -63,6 +60,11 @@ public class SimpleScope implements BasicScope {
             String step = restRequest.getPath().nextStep();
 
             // first check relative scopes
+            if (relativeScopes.containsKey(step)) {
+                return call(relativeScopes.get(step), restRequest);
+            }
+
+            // then check relative mappings
             if (relativeMapping.containsKey(step)) {
                 return call(relativeMapping.get(step), restRequest);
             }
@@ -89,52 +91,8 @@ public class SimpleScope implements BasicScope {
         throw new RestException("No appropriate mapping found for scope " + this.getClass().getSimpleName());
     }
 
-    @Override
-    public Map<String, Object> getDefinitionMap() {
-        Map<String, Object> definitionMap = new LinkedHashMap<>();
-        Map<String, Object> internalMap = getInternalsMap();
-        Map<String, Object> relativeMap = getAsscociatedMap();
-
-        if (StringUtils.isNotBlank(type)) {
-            definitionMap.put("type", type);
-        }
-        if (internalMap.size() > 0) {
-            definitionMap.put("internal", internalMap);
-        }
-        if (fallbackScope != null && StringUtils.isNotBlank(fallbackScope.getType())){
-            definitionMap.put(fallbackScope.getType(), fallbackScope.getDefinitionMap());
-        }
-        if (relativeMap.size() > 0) {
-            definitionMap.put("relative", relativeMap);
-        }
-        return definitionMap;
-    }
-
-    private Map<String, Object> getAsscociatedMap() {
-        Map<String, Object> map = new HashMap<>();
-        for (Map.Entry<String, RestMapping> relative : relativeMapping.entrySet()) {
-            RestMapping mapping = relative.getValue();
-            if (mapping.getType().equals(RestMapping.RestMappingType.SCOPE_CONTAINER)) {
-                ScopeContainer container = mapping.getScopeContainer();
-                BasicScope scope = scopeManager.getScopeForContainer(container);
-            }
-            map.put(relative.getKey(), "");
-        }
-        return map;
-    }
-
-    public Map<String, Object> getInternalsMap() {
-        Map<String, Object> map = new HashMap<>();
-        if (entityClass != null) {
-            Field[] fields = entityClass.getDeclaredFields();
-            for (Field field : fields) {
-                String type = RestUtils.typeOfField(field);
-                if (type != null) {
-                    map.put(field.getName(), type);
-                }
-            }
-        }
-        return map;
+    private RestResponse call(Supplier<Scope> scopeSupplier, RestRequest restRequest) {
+        return scopeSupplier.get().follow(restRequest);
     }
 
     private RestResponse call(RestMappings mappings, RestRequest restRequest) {
@@ -147,10 +105,12 @@ public class SimpleScope implements BasicScope {
                 case FIELD:
                     Field field = mapping.getField();
                     field.setAccessible(true);
-                    Scope target = (Scope) field.get(mapping.getOwner());
-                    return target.follow(restRequest);
+                    ScopeContainer target = (ScopeContainer) field.get(mapping.getOwner());
+                    Scope scope = scopeManager.getScopeForContainer(target);
+                    return scope.follow(restRequest);
                 case METHOD:
                     Method method = mapping.getMethod();
+                    method.setAccessible(true);
                     return (RestResponse) method.invoke(mapping.getOwner(), restRequest);
                 case SCOPE_CONTAINER:
                     ScopeContainer container = mapping.getScopeContainer();
@@ -161,37 +121,40 @@ public class SimpleScope implements BasicScope {
         } catch (RestException e) {
             e.add("mapping", mapping);
             throw e;
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             if (e.getCause() instanceof RestException) {
                 throw ((RestException) e.getCause()).add("mapping", mapping);
             }
-            throw new RestException("Unable to call mapping", e).add("mapping", mapping);
-        } catch (IllegalAccessException e) {
             throw new RestException("Unable to call mapping", e).add("mapping", mapping);
         }
     }
 
     @Override
-    public SimpleScope addPassMapping(RestMapping mapping, HttpMethod... methods) {
+    public ScopeDefinition getDefinition() {
+        return definition;
+    }
+
+    @Override
+    public GenericScope addPassMapping(RestMapping mapping, HttpMethod... methods) {
         return addMapping(passMappings, mapping, methods);
     }
 
     @Override
-    public SimpleScope addArriveMapping(RestMapping mapping, HttpMethod... methods) {
+    public GenericScope addArriveMapping(RestMapping mapping, HttpMethod... methods) {
         return addMapping(arriveMappings, mapping, methods);
     }
 
     @Override
-    public SimpleScope addFallbackMapping(RestMapping mapping, HttpMethod... methods) {
+    public GenericScope addFallbackMapping(RestMapping mapping, HttpMethod... methods) {
         return addMapping(fallbackMappings, mapping, methods);
     }
 
     @Override
-    public SimpleScope addErrorMapping(RestMapping mapping, HttpMethod... methods) {
+    public GenericScope addErrorMapping(RestMapping mapping, HttpMethod... methods) {
         return addMapping(errorMappings, mapping, methods);
     }
 
-    private SimpleScope addMapping(RestMappings mappings, RestMapping mapping, HttpMethod... methods) {
+    private GenericScope addMapping(RestMappings mappings, RestMapping mapping, HttpMethod... methods) {
         for (HttpMethod method : methods) {
             mappings.addMapping(method, mapping);
         }
@@ -206,21 +169,19 @@ public class SimpleScope implements BasicScope {
         relativeMapping.put(relative, mapping);
     }
 
-    public void setFallbackScope(BasicScope fallbackScope) {
+    public void setFallbackScope(Scope fallbackScope) {
         this.fallbackScope = fallbackScope;
     }
 
-    public void setDefinitionClass(Class entityClass) {
-        this.entityClass = entityClass;
-    }
-
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    public SimpleScope type(String type) {
-        this.type = type;
+    public GenericScope addRelativeScope(String relative, Supplier<Scope> supplier){
+        relativeScopes.put(relative, supplier);
         return this;
+    }
+
+    public Scope getRelativeScope(String relative){
+        if (!relativeScopes.containsKey(relative)) {
+            throw new RestException("Relative scope not available: " + relative);
+        }
+        return relativeScopes.get(relative).get();
     }
 }
