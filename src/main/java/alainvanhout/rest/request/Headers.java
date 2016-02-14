@@ -4,35 +4,19 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
-public class Headers {
+public class Headers  extends Parameters{
     private static final List<String> COMMA_SEPARATED = Arrays.asList("accept", "accept-encoding", "accept-language");
 
-    Map<String, List<String>> headers = new HashMap<>();
-
-    public void add(String key, String value) {
-        if (!headers.containsKey(key)) {
-            headers.put(key, new ArrayList<>());
-        }
-
+    @Override
+    public Parameters add(String key, String value) {
         if (COMMA_SEPARATED.contains(key)) {
             String[] split = value.split(",");
             for (String headerValue : split) {
-                addValue(key, headerValue);
+                super.add(key, headerValue);
             }
         } else {
-            addValue(key, value);
+            super.add(key, value);
         }
-    }
-
-    private void addValue(String key, String value){
-        headers.get(key).add(StringUtils.trim(value));
-    }
-
-    public boolean hasHeader(String key, String value) {
-        return headers.containsKey(key) && headers.get(key).contains(value);
-    }
-
-    public boolean hasHeader(String key) {
-        return headers.containsKey(key);
+        return this;
     }
 }

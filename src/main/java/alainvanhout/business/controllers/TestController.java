@@ -86,6 +86,8 @@ public class TestController {
     public String test(HttpServletRequest httpRequest) {
         HttpMethod method = HttpMethod.valueOf(httpRequest.getMethod());
         RestRequest restRequest = RestRequest.fromQuery(httpRequest.getRequestURI(), "/test/", method);
+        restRequest.getParameters().addAll(httpRequest.getParameterMap());
+
 
         List<String> headerNames = Collections.list(httpRequest.getHeaderNames());
         for (String headerName : headerNames) {

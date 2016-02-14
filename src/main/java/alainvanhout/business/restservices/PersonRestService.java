@@ -2,19 +2,18 @@ package alainvanhout.business.restservices;
 
 import alainvanhout.business.Person;
 import alainvanhout.business.repositories.PersonRepository;
-import alainvanhout.renderering.renderer.basic.StringRenderer;
-import alainvanhout.rest.RestException;
+import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.rest.RestResponse;
 import alainvanhout.rest.annotations.*;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.scope.ScopeContainer;
+import alainvanhout.rest.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +30,7 @@ public class PersonRestService implements ScopeContainer {
     @RestInstanceRelative(value = "pets")
     public RestResponse foo(RestRequest restRequest) {
         Person person = (Person) restRequest.getContext().get("person");
-        return new RestResponse().renderer(new StringRenderer(ToStringBuilder.reflectionToString(person.getPets().toArray(), ToStringStyle.JSON_STYLE)));
+        return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(person.getPets())));
     }
 
     @RestInstance
@@ -44,7 +43,7 @@ public class PersonRestService implements ScopeContainer {
     @RestInstance
     public RestResponse idArrive(RestRequest restRequest) {
         Person person = restRequest.getFromContext("person");
-        return new RestResponse().renderer(new StringRenderer(ToStringBuilder.reflectionToString(person, ToStringStyle.JSON_STYLE)));
+        return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(person)));
     }
 
     @RestEntity
@@ -54,19 +53,15 @@ public class PersonRestService implements ScopeContainer {
 
     @RestEntity
     public RestResponse arrive(RestRequest restRequest) {
-        String content = personRepository.findAll().stream()
-                .map(p -> ToStringBuilder.reflectionToString(p, ToStringStyle.JSON_STYLE))
-                .collect(Collectors.joining(","));
-        return new RestResponse().renderer(new StringRenderer("[" + content + "]"));
+        return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(personRepository.findAll())));
     }
 
     @RestRelative("women")
     public RestResponse women(RestRequest restRequest) {
-        String content = personRepository.findAll().stream()
+        List<Person> women = personRepository.findAll().stream()
                 .filter(p -> StringUtils.equals(p.getFirstName(), "Jane"))
-                .map(p -> ToStringBuilder.reflectionToString(p, ToStringStyle.JSON_STYLE))
-                .collect(Collectors.joining(","));
-        return new RestResponse().renderer(new StringRenderer("[" + content + "]"));
+                .collect(Collectors.toList());
+        return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(women)));
     }
 
 //    @RestEntity(methods = HttpMethod.OPTIONS)
@@ -79,7 +74,7 @@ public class PersonRestService implements ScopeContainer {
 //    public RestResponse error(RestRequest restRequest) {
 //        RestException exception = restRequest.getFromContext("exception");
 //        return new RestResponse().renderer(new StringRenderer("An error has occurred: " + exception.getMessage() + " "
-//                + exception.getContext().entrySet().stream().map(e -> e.getKey() + ":" + ToStringBuilder.reflectionToString(e.getValue(), ToStringStyle.JSON_STYLE)).collect(Collectors.joining(","))));
+//                + exception.getContext().entrySet().stream().map(e -> e.getKey() + ":" + JsonUtils.objectToJson(e.getValue())).collect(Collectors.joining(","))));
 //    }
 
 }

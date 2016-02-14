@@ -13,8 +13,8 @@ public class RestRequest {
 
     private Path path;
     private HttpMethod method;
-    public Headers headers = new Headers();
-    private Map<String, String> parameters = new HashMap<>();
+    private Headers headers = new Headers();
+    private Parameters parameters = new Parameters();
 
     private Map<String, Object> context = new HashMap<>();
     private String query = "";
@@ -40,19 +40,19 @@ public class RestRequest {
     }
 
     public boolean hasParameter(String key) {
-        return parameters.containsKey(key);
+        return parameters.contains(key);
     }
 
     public String getParameter(String key) {
-        return parameters.get(key);
+        return parameters.getValue(key);
     }
 
-    public Map<String, String> getParameters() {
+    public Parameters getParameters() {
         return parameters;
     }
 
-    public RestRequest parameters(Map<String, String> parameters) {
-        this.parameters = parameters;
+    public RestRequest parameters(Map<String, String> parameterMap) {
+        parameters.add(parameterMap);
         return this;
     }
 

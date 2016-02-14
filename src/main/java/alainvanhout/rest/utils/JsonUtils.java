@@ -11,4 +11,9 @@ public class JsonUtils {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(definitionMap);
     }
+
+    public static String objectToJson(Object object) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(object);
+    }
 }

@@ -1,6 +1,7 @@
 package alainvanhout.rest.scope;
 
 import alainvanhout.renderering.renderer.basic.StringRenderer;
+import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.rest.RestException;
 import alainvanhout.rest.RestResponse;
 import alainvanhout.rest.request.HttpMethod;
@@ -51,7 +52,11 @@ public class GenericScope implements Scope {
                 } else if (HttpMethod.OPTIONS.equals(restRequest.getMethod())) {
                     Map<String, Object> definitionMap = definition.getMap();
                     String json = JsonUtils.definitionToJson(definitionMap);
-                    return new RestResponse().renderer(new StringRenderer(json));
+                    if (restRequest.getHeaders().contains("accept", "text/html")){
+                        return new RestResponse().renderer(new PreRenderer(json));
+                    } else {
+                        return new RestResponse().renderer(new StringRenderer(json));
+                    }
                 }
                 throw new RestException("No arrival mapping available");
             }
