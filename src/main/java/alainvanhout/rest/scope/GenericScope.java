@@ -1,6 +1,7 @@
 package alainvanhout.rest.scope;
 
 import alainvanhout.renderering.renderer.basic.StringRenderer;
+import alainvanhout.renderering.renderer.html.basic.documentbody.LinkRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.rest.RestException;
 import alainvanhout.rest.RestResponse;
@@ -14,6 +15,7 @@ import alainvanhout.rest.utils.JsonUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -51,10 +53,20 @@ public class GenericScope implements Scope {
                     return call(arriveMappings, restRequest);
                 } else if (HttpMethod.OPTIONS.equals(restRequest.getMethod())) {
                     Map<String, Object> definitionMap = definition.getMap();
-                    String json = JsonUtils.definitionToJson(definitionMap);
                     if (restRequest.getHeaders().contains("accept", "text/html")){
+                        if (definitionMap.containsKey("relative")) {
+                            Map<String, Object> relative = (Map)definitionMap.get("relative");
+                            Map<String, Object> map = new LinkedHashMap<>();
+                            for (String key : relative.keySet()) {
+                                map.put(new LinkRenderer().href(key + "/?OPTIONS").add(key).render(), relative.get(key));
+                            }
+                            definitionMap.replace("relative", map);
+                        }
+                        String json = JsonUtils.definitionToJson(definitionMap);
+
                         return new RestResponse().renderer(new PreRenderer(json));
                     } else {
+                        String json = JsonUtils.definitionToJson(definitionMap);
                         return new RestResponse().renderer(new StringRenderer(json));
                     }
                 }
@@ -111,15 +123,13 @@ public class GenericScope implements Scope {
                     Field field = mapping.getField();
                     field.setAccessible(true);
                     ScopeContainer target = (ScopeContainer) field.get(mapping.getOwner());
-                    Scope scope = scopeManager.getScopeForContainer(target);
-                    return scope.follow(restRequest);
+                    return scopeManager.follow(target, restRequest);
                 case METHOD:
                     Method method = mapping.getMethod();
                     method.setAccessible(true);
                     return (RestResponse) method.invoke(mapping.getOwner(), restRequest);
                 case SCOPE_CONTAINER:
-                    ScopeContainer container = mapping.getScopeContainer();
-                    return scopeManager.getScopeForContainer(container).follow(restRequest);
+                    return scopeManager.follow(mapping.getScopeContainer(), restRequest);
                 default:
                     throw new RestException("Unsupported type:" + mapping.getType());
             }
@@ -188,5 +198,14 @@ public class GenericScope implements Scope {
             throw new RestException("Relative scope not available: " + relative);
         }
         return relativeScopes.get(relative).get();
+    }
+
+    @Override
+    public String toString() {
+        return definition.toString();
+    }
+
+    public Map<String, Supplier<Scope>> getRelativeScopes() {
+        return relativeScopes;
     }
 }

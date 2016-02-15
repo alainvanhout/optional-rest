@@ -31,6 +31,6 @@ public class AttributesRenderer implements Renderer {
 
     @Override
     public String render() {
-        return attributes.entrySet().stream().map(attr -> attr.getKey() + "=" + "\"" + attr.getValue().render() + "\"").collect(Collectors.joining(" "));
+        return attributes.entrySet().stream().map(attr -> attr.getKey() + "=" + "'" + attr.getValue().render() + "'").collect(Collectors.joining(" "));
     }
 }

@@ -8,7 +8,7 @@ import java.util.Map;
 public class JsonUtils {
 
     public static String definitionToJson(Map<String, Object> definitionMap) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
         return gson.toJson(definitionMap);
     }
 

@@ -1,6 +1,7 @@
 package alainvanhout.rest.scope;
 
 import alainvanhout.rest.utils.RestUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
@@ -10,6 +11,7 @@ import java.util.Map;
 public class ScopeDefinition {
     private String name;
     private String type;
+    private Class containerClass;
     private Class internalClass;
     private Map<String, ScopeDefinition> relativeDefinitions = new LinkedHashMap<>();
     private Map<String, Object> internalMap = new LinkedHashMap<>();
@@ -106,5 +108,24 @@ public class ScopeDefinition {
         relativeDefinitions.put(fallback, definition);
         formFallbackMap();
         return this;
+    }
+
+    public Class getContainerClass() {
+        return containerClass;
+    }
+
+    public ScopeDefinition containerClass(Class containerClass) {
+        this.containerClass = containerClass;
+        return this;
+    }
+
+    public ScopeDefinition container(ScopeContainer container) {
+        this.containerClass = container.getClass();
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtils.firstNonNull(name, internalClass, containerClass).toString();
     }
 }

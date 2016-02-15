@@ -8,6 +8,7 @@ import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.scope.Scope;
 import alainvanhout.rest.scope.ScopeContainer;
 import alainvanhout.rest.scope.GenericScope;
+import alainvanhout.rest.scope.ScopeDefinition;
 import alainvanhout.rest.utils.ReflectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,8 @@ import java.util.function.Supplier;
 @Service
 public class ScopeManager {
 
-    private Map<ScopeContainer, Scope> instanceMap = new HashMap<>();
-    private Map<Class, Scope> classMap = new HashMap<>();
+    @Autowired
+    private ScopeRegistry scopeRegistry;
 
     @Autowired
     private Collection<ScopeContainer> containers;
@@ -35,28 +36,39 @@ public class ScopeManager {
     public void setup() {
         for (ScopeContainer scopeContainer : containers) {
             Scope scope = processScopeContainer(scopeContainer);
-            instanceMap.put(scopeContainer, scope);
-            classMap.put(scopeContainer.getClass(), scope);
+            scopeRegistry.add(scopeContainer, scope);
+        }
+
+        postProcessScopes();
+    }
+
+    public void postProcessScopes() {
+        // set definitions' relative scopes
+        for (Scope scope : scopeRegistry.getScopes()) {
+            if (scope instanceof GenericScope){
+                ScopeDefinition definition = scope.getDefinition();
+                GenericScope genericScope = (GenericScope)scope;
+                Map<String, Supplier<Scope>> relativeScopes = genericScope.getRelativeScopes();
+                for (Map.Entry<String, Supplier<Scope>> relative: relativeScopes.entrySet()) {
+                    Scope relativeScope = relative.getValue().get();
+                    definition.getRelativeMap().put(relative.getKey(), relativeScope.getDefinition().getType());
+                }
+
+            }
         }
     }
 
     public RestResponse follow(ScopeContainer container, RestRequest restRequest) {
-        if (!instanceMap.containsKey(container)) {
-            throw new RestException("No ScopeContainer registered for " + container.getClass().getName());
-        }
-        return instanceMap.get(container).follow(restRequest);
+        return getScopeForContainer(container).follow(restRequest);
     }
 
     public Scope getScopeForContainer(ScopeContainer container) {
-        if (!instanceMap.containsKey(container)) {
-            throw new RestException("No scope found for container " + container.getClass().getName());
-        }
-        return instanceMap.get(container);
+        return scopeRegistry.findByContainer(container);
     }
 
     public Scope processScopeContainer(ScopeContainer container) {
         GenericScope entityScope = new GenericScope(this);
-        entityScope.getDefinition().type("entity");
+        entityScope.getDefinition().type("entity").container(container);
         GenericScope instanceScope = new GenericScope(this);
         instanceScope.getDefinition().type("instance");
         entityScope.setFallbackScope(instanceScope);
@@ -78,6 +90,9 @@ public class ScopeManager {
             instanceScope.getDefinition().name(restEntityDefinition.name()).internalClass(restEntityDefinition.instanceClass());
         }
         entityScope.getDefinition().addFallback("instance", instanceScope.getDefinition());
+
+        scopeRegistry.add(entityScope);
+        scopeRegistry.add(instanceScope);
 
         return entityScope;
     }
@@ -128,9 +143,11 @@ public class ScopeManager {
     private void addRelative(String relative, AccessibleObject accessibleObject, ScopeContainer owner, GenericScope scope) {
         if (accessibleObject instanceof Field) {
             scope.addRelativeScope(relative, toScopeSupplier(owner, (Field) accessibleObject));
+//            scope.getDefinition().getRelativeMap().put(relative, "");
         } else if (accessibleObject instanceof Method) {
             Method method = (Method) accessibleObject;
-            scope.addRelativeMapping(relative, new RestMapping(owner).method(method));
+//            scope.addRelativeMapping(relative, new RestMapping(owner).method(method));
+            scope.getDefinition().getRelativeMap().put(relative, "");
         } else {
             throw new RestException("Relative mapping does not support type " + accessibleObject.getClass().getName());
         }
