@@ -1,7 +1,7 @@
 package alainvanhout.rest.scope;
 
 import alainvanhout.rest.RestResponse;
-import alainvanhout.rest.request.HttpMethod;
+import alainvanhout.rest.request.meta.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.services.RestMapping;
 

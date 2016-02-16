@@ -1,6 +1,6 @@
 package alainvanhout.business.contextproviders;
 
-import alainvanhout.business.Person;
+import alainvanhout.business.entities.Person;
 import alainvanhout.business.repositories.PersonRepository;
 import alainvanhout.context.provider.ContextProvider;
 import alainvanhout.routing.path.Path;

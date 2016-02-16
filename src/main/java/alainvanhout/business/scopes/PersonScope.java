@@ -1,6 +1,6 @@
-package alainvanhout.business.restservices;
+package alainvanhout.business.scopes;
 
-import alainvanhout.business.Person;
+import alainvanhout.business.entities.Person;
 import alainvanhout.business.repositories.PersonRepository;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.rest.RestResponse;
@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RestEntityDefinition(name = "person", instanceClass = Person.class)
-public class PersonRestService implements ScopeContainer {
+public class PersonScope implements ScopeContainer {
 
     @Autowired
     @RestInstanceRelative(value = "address")
-    private AddressRestService addressRestService;
+    private AddressScope addressRestService;
 
     @Autowired
     private PersonRepository personRepository;

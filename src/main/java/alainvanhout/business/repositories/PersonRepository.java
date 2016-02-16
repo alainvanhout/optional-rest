@@ -1,6 +1,6 @@
 package alainvanhout.business.repositories;
 
-import alainvanhout.business.Person;
+import alainvanhout.business.entities.Person;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

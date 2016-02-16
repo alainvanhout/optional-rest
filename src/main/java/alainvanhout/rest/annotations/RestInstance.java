@@ -1,6 +1,6 @@
 package alainvanhout.rest.annotations;
 
-import alainvanhout.rest.request.HttpMethod;
+import alainvanhout.rest.request.meta.HttpMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

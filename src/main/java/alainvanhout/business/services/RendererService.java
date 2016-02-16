@@ -1,6 +1,6 @@
 package alainvanhout.business.services;
 
-import alainvanhout.business.Person;
+import alainvanhout.business.entities.Person;
 import alainvanhout.business.Template;
 import alainvanhout.business.renderers.PersonRenderer;
 import alainvanhout.renderering.renderer.Renderer;

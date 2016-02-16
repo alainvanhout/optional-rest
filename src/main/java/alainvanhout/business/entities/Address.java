@@ -1,4 +1,4 @@
-package alainvanhout.business;
+package alainvanhout.business.entities;
 
 import java.util.Random;
 

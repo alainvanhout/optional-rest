@@ -1,5 +1,6 @@
 package alainvanhout.rest.request;
 
+import alainvanhout.rest.request.meta.HttpMethod;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;

@@ -1,6 +1,6 @@
 package alainvanhout.rest.services;
 
-import alainvanhout.rest.request.HttpMethod;
+import alainvanhout.rest.request.meta.HttpMethod;
 
 import java.util.HashMap;
 import java.util.Map;

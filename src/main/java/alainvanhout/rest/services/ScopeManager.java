@@ -3,7 +3,7 @@ package alainvanhout.rest.services;
 import alainvanhout.rest.RestException;
 import alainvanhout.rest.RestResponse;
 import alainvanhout.rest.annotations.*;
-import alainvanhout.rest.request.HttpMethod;
+import alainvanhout.rest.request.meta.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.scope.Scope;
 import alainvanhout.rest.scope.ScopeContainer;
@@ -19,7 +19,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 

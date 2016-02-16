@@ -1,7 +1,7 @@
 package alainvanhout.business.renderers;
 
-import alainvanhout.business.Address;
-import alainvanhout.business.Person;
+import alainvanhout.business.entities.Address;
+import alainvanhout.business.entities.Person;
 import alainvanhout.context.impl.SimpleRendererContext;
 import alainvanhout.renderering.renderer.context.SimpleContextRenderer;
 import alainvanhout.renderering.renderer.model.SimpleModelRenderer;

@@ -1,10 +1,10 @@
-package alainvanhout.business.restservices;
+package alainvanhout.business.scopes;
 
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.rest.RestResponse;
 import alainvanhout.rest.annotations.RestEntity;
 import alainvanhout.rest.annotations.RestRelative;
-import alainvanhout.rest.request.HttpMethod;
+import alainvanhout.rest.request.meta.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.scope.ScopeContainer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +15,11 @@ public class RootScope implements ScopeContainer{
 
     @Autowired
     @RestRelative("persons")
-    private PersonRestService personRestService;
+    private PersonScope personRestService;
 
     @Autowired
     @RestRelative("addresses")
-    private AddressRestService addressRestService;
+    private AddressScope addressRestService;
 
     @RestEntity
     private RestResponse arrive(RestRequest restRequest){

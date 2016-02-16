@@ -1,6 +1,6 @@
 package alainvanhout.business.sections;
 
-import alainvanhout.business.Person;
+import alainvanhout.business.entities.Person;
 import alainvanhout.business.renderers.PersonRenderer;
 import alainvanhout.business.repositories.PersonRepository;
 import alainvanhout.business.services.RendererService;

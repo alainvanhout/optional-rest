@@ -5,7 +5,7 @@ import alainvanhout.renderering.renderer.html.basic.documentbody.LinkRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.rest.RestException;
 import alainvanhout.rest.RestResponse;
-import alainvanhout.rest.request.HttpMethod;
+import alainvanhout.rest.request.meta.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.services.RestMapping;
 import alainvanhout.rest.services.RestMappings;

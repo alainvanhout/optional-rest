@@ -1,10 +1,10 @@
 package alainvanhout.business.controllers;
 
-import alainvanhout.business.Address;
+import alainvanhout.business.entities.Address;
 import alainvanhout.business.renderers.PersonRenderer;
 import alainvanhout.business.repositories.PersonRepository;
-import alainvanhout.business.restservices.PersonRestService;
-import alainvanhout.business.restservices.RootScope;
+import alainvanhout.business.scopes.PersonScope;
+import alainvanhout.business.scopes.RootScope;
 import alainvanhout.business.services.RendererService;
 import alainvanhout.cms.dtos.stored.StoredRoute;
 import alainvanhout.cms.repositories.SwitchRouteRepository;
@@ -17,7 +17,7 @@ import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
 import alainvanhout.renderering.renderer.retrieve.FetchingRenderer;
 import alainvanhout.renderering.renderer.webpage.WebpageRenderer;
 import alainvanhout.rest.RestResponse;
-import alainvanhout.rest.request.HttpMethod;
+import alainvanhout.rest.request.meta.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.services.ScopeManager;
 import alainvanhout.routing.path.Path;
@@ -30,13 +30,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 @Controller
 @ResponseBody
 @RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
-public class TestController {
+public class RootController {
 
     @Autowired
     private RendererService rendererService;
@@ -60,7 +59,7 @@ public class TestController {
     private SectionService sectionService;
 
     @Autowired
-    private PersonRestService personRestService;
+    private PersonScope personRestService;
 
     @Autowired
     private RootScope rootScope;

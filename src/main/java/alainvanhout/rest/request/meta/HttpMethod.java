@@ -1,4 +1,4 @@
-package alainvanhout.rest.request;
+package alainvanhout.rest.request.meta;
 
 public enum HttpMethod {
     GET,
