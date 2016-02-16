@@ -14,5 +14,5 @@ import static alainvanhout.rest.request.meta.Header.*;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface RestScope {
     HttpMethod[] methods() default {HttpMethod.GET};
-    String[] accepts() default {Accept.HTML, Accept.JSON};
+    String[] accepts() default {Accept.Text.HTML, Accept.Application.JSON};
 }
