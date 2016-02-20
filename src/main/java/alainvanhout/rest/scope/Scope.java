@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface Scope {
 
-    Map<String,Object> buildDefinitionMap(int deep);
+    Map<String,Object> buildDefinitionMap(int deep, boolean asHtml);
 
     ScopeDefinition getDefinition();
 

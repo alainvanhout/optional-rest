@@ -1,8 +1,14 @@
 package alainvanhout.business.scopes;
 
+import alainvanhout.business.entities.Address;
 import alainvanhout.business.entities.Person;
+import alainvanhout.business.renderers.PersonRenderer;
 import alainvanhout.business.repositories.PersonRepository;
+import alainvanhout.cms.repositories.TemplateRepository;
+import alainvanhout.cms.services.TemplateService;
+import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
+import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
 import alainvanhout.rest.RestResponse;
 import alainvanhout.rest.annotations.*;
 import alainvanhout.rest.annotations.entity.RestEntity;
@@ -10,26 +16,44 @@ import alainvanhout.rest.annotations.instance.RestInstance;
 import alainvanhout.rest.annotations.instance.RestInstanceRelative;
 import alainvanhout.rest.annotations.resource.RestRelative;
 import alainvanhout.rest.request.RestRequest;
+import alainvanhout.rest.request.meta.Header;
 import alainvanhout.rest.scope.ScopeContainer;
 import alainvanhout.rest.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static alainvanhout.rest.request.meta.Header.Accept.Text.HTML;
 
 @Service
 @RestEntityDefinition(entityName = "person", instanceClass = Person.class)
 public class PersonScope implements ScopeContainer {
 
-    @Autowired
     @RestInstanceRelative(path = "address")
     private AddressScope addressScope;
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private TemplateService templateService;
+
+    private PersonRenderer personRenderer;
+    private SimpleModelRenderer<Address> adressRenderer;
+
+    private int viewCount;
+
+    @PostConstruct
+    private void setup(){
+        personRenderer = new PersonRenderer(templateService.findBodyAsRenderer("person-large"));
+        adressRenderer = new SimpleModelRenderer<>(templateService.findBodyAsRenderer("address"));
+        personRenderer.set(adressRenderer);
+    }
 
     @RestInstanceRelative(path = "pets")
     public RestResponse foo(RestRequest restRequest) {
@@ -46,13 +70,19 @@ public class PersonScope implements ScopeContainer {
 
     @RestInstance
     public RestResponse idArrive(RestRequest restRequest) {
+        viewCount++;
         Person person = restRequest.getFromContext("person");
+        if (restRequest.getHeaders().contains("accept", HTML)) {
+            personRenderer.set(person);
+            adressRenderer.set(person.getAddress());
+            return new RestResponse().renderer(personRenderer);
+        }
         return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(person)));
     }
 
-    @RestEntity
-    public void pass(RestRequest restRequest) {
-        restRequest.getContext().put("persons", "passed");
+    @RestRelative(path = "views")
+    private RestResponse viewCount(RestRequest restRequest){
+        return new RestResponse().renderer(new StringRenderer("View count:" + viewCount));
     }
 
     @RestEntity

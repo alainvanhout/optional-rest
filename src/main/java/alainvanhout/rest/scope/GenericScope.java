@@ -43,17 +43,10 @@ public class GenericScope implements Scope {
                     return call(arriveMappings, restRequest);
                 } else if (HttpMethod.OPTIONS.equals(restRequest.getMethod())) {
                     int deep = Integer.parseInt(StringUtils.defaultString(restRequest.getParameters().getValue("deep"), "1"));
-                    Map<String, Object> definitionMap = buildDefinitionMap(deep);
+                    boolean asHtml = restRequest.getHeaders().contains("accept", "text/html");
+                    Map<String, Object> definitionMap = buildDefinitionMap(deep, asHtml);
 
-                    if (restRequest.getHeaders().contains("accept", "text/html")) {
-                        if (definitionMap.containsKey("relative")) {
-                            Map<String, Object> relative = (Map) definitionMap.get("relative");
-                            Map<String, Object> map = new LinkedHashMap<>();
-                            for (String key : relative.keySet()) {
-                                map.put(new LinkRenderer().href(key + "/?OPTIONS").add(key).render(), relative.get(key));
-                            }
-                            definitionMap.replace("relative", map);
-                        }
+                    if (asHtml) {
                         String json = JsonUtils.definitionToJson(definitionMap);
 
                         return new RestResponse().renderer(new PreRenderer(json));
@@ -90,7 +83,7 @@ public class GenericScope implements Scope {
     }
 
     @Override
-    public Map<String,Object> buildDefinitionMap(int deep) {
+    public Map<String,Object> buildDefinitionMap(int deep, boolean asHtml) {
         Map<String, Object> map = new LinkedHashMap<>();
         if (StringUtils.isNotBlank(definition.getName())) {
             map.put("name", definition.getName());
@@ -113,12 +106,18 @@ public class GenericScope implements Scope {
 
         if (deep > 0) {
             if (instanceScope != null) {
-                map.put("instance", instanceScope.buildDefinitionMap(deep - 1));
+                map.put("instance", instanceScope.buildDefinitionMap(deep - 1, asHtml));
             }
             if (relativeScopes.size() > 0) {
                 Map<String, Object> relativeMap = new LinkedHashMap<>();
                 for (Map.Entry<String, Scope> entry : relativeScopes.entrySet()) {
-                    relativeMap.put(entry.getKey(), entry.getValue().buildDefinitionMap(deep - 1));
+                    String key = entry.getKey();
+                    Map<String, Object> value = entry.getValue().buildDefinitionMap(deep - 1, asHtml);
+                    if (asHtml){
+                        relativeMap.put(new LinkRenderer().href(key + "/?OPTIONS").add(key).render(), value);
+                    } else {
+                        relativeMap.put(key, value);
+                    }
                 }
                 map.put("relative", relativeMap);
             }

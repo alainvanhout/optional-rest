@@ -36,6 +36,4 @@ public class RootScope implements ScopeContainer{
             restRequest.method(HttpMethod.OPTIONS);
         }
     }
-
-
 }
