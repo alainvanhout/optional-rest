@@ -57,7 +57,7 @@ public class EntityScopeFactory implements ScopeFactory {
     }
 
     private Scope produceEntityScope(String scopeName, ScopeContainer container) {
-        Scope scope = scopeRegistry.produceScope(scopeName, container, ENTITY);
+        Scope scope = scopeRegistry.produceScope(scopeName, container);
         scope.getDefinition().type(ENTITY);
         return scope;
     }

@@ -49,7 +49,7 @@ public class InstanceScopeFactory implements ScopeFactory {
 
         if (annRestInstance != null) {
             String parentName = ScopeFactoryUtils.determineParentName(annRestInstance.parentScope(), container);
-            Scope parentScope = produceEntityScope(parentName);
+            Scope parentScope = produceEntityScope(parentName, container);
 
             String instanceName = getInstanceName(accessibleObject, parentName, annRestInstance.instanceScope());
             Scope instanceScope = produceInstanceScope(instanceName);
@@ -62,6 +62,7 @@ public class InstanceScopeFactory implements ScopeFactory {
                     instanceScope.addArriveMapping(mapping, annRestInstance.methods());
                 }
             } else {
+                // TODO?
                 throw new RestException("Type of accessible object not supported: " + accessibleObject.getClass().getCanonicalName());
             }
 
@@ -70,14 +71,17 @@ public class InstanceScopeFactory implements ScopeFactory {
             String relative = annRestInstanceRelative.path();
 
             String parentName = ScopeFactoryUtils.determineParentName(annRestInstanceRelative.parentScope(), container);
-            Scope parentScope = produceEntityScope(parentName);
+            Scope parentScope = produceEntityScope(parentName, container);
 
             String instanceName = ScopeFactoryUtils.determineInstanceName(annRestInstanceRelative.instanceScope(), parentName);
             Scope instanceScope = produceInstanceScope(instanceName);
+            parentScope.setInstanceScope(instanceScope);
 
             String relativeName = getRelativeName(accessibleObject, relative, instanceName, annRestInstanceRelative.relativeScope());
             Scope relativeScope = produceInstanceScope(relativeName);
+            instanceScope.addRelativeScope(annRestInstanceRelative.path(), relativeScope);
 
+            // only necessary for Method
             if (accessibleObject instanceof Method) {
                 if (passing) {
                     relativeScope.addPassMapping(mapping, annRestInstanceRelative.methods());
@@ -85,15 +89,12 @@ public class InstanceScopeFactory implements ScopeFactory {
                     relativeScope.addArriveMapping(mapping, annRestInstanceRelative.methods());
                 }
             }
-
-            parentScope.setInstanceScope(instanceScope);
-            instanceScope.addRelativeScope(annRestInstanceRelative.path(), relativeScope);
         }
 
         // error mapping
         if (annRestError != null) {
             String scopeName = ScopeFactoryUtils.determineParentName(annRestError.scope(), container);
-            Scope scope = scopeRegistry.produceScope(scopeName, container, ResourceScopeFactory.RESOURCE);
+            Scope scope = scopeRegistry.produceScope(scopeName, container);
             scope.addErrorMapping(mapping, annRestError.methods());
         }
     }
@@ -122,13 +123,8 @@ public class InstanceScopeFactory implements ScopeFactory {
         throw new RestException("Type not supported: " + accessibleObject.getClass());
     }
 
-    private Scope produceEntityScope(String scopeName) {
-        Scope scope = scopeRegistry.findByName(scopeName);
-        if (scope == null) {
-            scope = new GenericScope();
-            scope.getDefinition().name(scopeName);
-            scopeRegistry.add(scopeName, scope);
-        }
+    private Scope produceEntityScope(String scopeName, ScopeContainer container) {
+        Scope scope = scopeRegistry.produceScope(scopeName, container);
         scope.getDefinition().type(EntityScopeFactory.ENTITY);
         return scope;
     }

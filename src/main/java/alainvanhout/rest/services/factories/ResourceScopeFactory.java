@@ -50,7 +50,7 @@ public class ResourceScopeFactory implements ScopeFactory {
         // pass and arrive mapping
         if (annRestScope != null) {
             String scopeName = ScopeFactoryUtils.determineParentName(annRestScope.scope(), container);
-            Scope scope = scopeRegistry.produceScope(scopeName, container, RESOURCE);
+            Scope scope = scopeRegistry.produceScope(scopeName, container);
             if (passing) {
                 scope.addPassMapping(mapping, annRestScope.methods());
             } else {
@@ -61,7 +61,7 @@ public class ResourceScopeFactory implements ScopeFactory {
         // error mapping
         if (annRestError != null) {
             String scopeName = ScopeFactoryUtils.determineParentName(annRestError.scope(), container);
-            Scope scope = scopeRegistry.produceScope(scopeName, container, RESOURCE);
+            Scope scope = scopeRegistry.produceScope(scopeName, container);
             scope.addErrorMapping(mapping, annRestError.methods());
         }
 
@@ -69,13 +69,13 @@ public class ResourceScopeFactory implements ScopeFactory {
         if (annRestRelative != null) {
             String relative = annRestRelative.path();
 
-            // parentName: either custom or container class name
             String parentName = ScopeFactoryUtils.determineParentName(annRestRelative.parentScope(), container);
-            Scope parentScope = scopeRegistry.produceScope(parentName, container, RESOURCE);
-            // relativeName: either custom or parentName with suffix that includes relative path
-            String relativeName = getRelativeName(accessibleObject, relative, parentName, annRestRelative.relativeScope());
-            Scope relativeScope = scopeRegistry.produceScope(relativeName, null, RESOURCE);
+            Scope parentScope = scopeRegistry.produceScope(parentName, container);
 
+            String relativeName = getRelativeName(accessibleObject, relative, parentName, annRestRelative.relativeScope());
+            Scope relativeScope = scopeRegistry.produceScope(relativeName, null);
+
+            // only necessary for Method
             if (accessibleObject instanceof Method) {
                 if (passing) {
                     relativeScope.addPassMapping(mapping, annRestRelative.methods());

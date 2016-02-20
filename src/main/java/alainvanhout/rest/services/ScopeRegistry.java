@@ -13,6 +13,7 @@ import java.util.Map;
 @Service
 public class ScopeRegistry {
 
+    public static final String RESOURCE = "resource";
     Map<String, Scope> scopeNameMap = new LinkedHashMap<>();
     Map<Class, Scope> scopeContainerMap = new LinkedHashMap<>();
 
@@ -45,6 +46,10 @@ public class ScopeRegistry {
 
     public Collection<Scope> getScopes() {
         return scopeNameMap.values();
+    }
+
+    public Scope produceScope(String scopeName, ScopeContainer container) {
+        return produceScope(scopeName, container, RESOURCE);
     }
 
     public Scope produceScope(String scopeName, ScopeContainer container, String scopeType) {
