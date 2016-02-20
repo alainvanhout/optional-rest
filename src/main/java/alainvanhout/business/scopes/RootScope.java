@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class RootScope implements ScopeContainer{
 
+    public static final String OPTIONS = "OPTIONS";
+
     @Autowired
     @RestRelative(path = "persons")
     private PersonScope personRestService;
@@ -28,7 +30,7 @@ public class RootScope implements ScopeContainer{
 
     @RestEntity
     private void pass(RestRequest restRequest){
-        if (restRequest.getParameters().contains("OPTIONS")){
+        if (restRequest.getParameters().contains(OPTIONS)){
             restRequest.method(HttpMethod.OPTIONS);
         }
     }

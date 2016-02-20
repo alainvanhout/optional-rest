@@ -9,7 +9,6 @@ import alainvanhout.rest.services.ScopeRegistry;
 import alainvanhout.rest.services.mapping.Mapping;
 import alainvanhout.rest.services.mapping.MethodMapping;
 import alainvanhout.rest.utils.ReflectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +34,6 @@ public class EntityScopeFactory implements ScopeFactory {
             }
 
             for (Field field : container.getClass().getDeclaredFields()) {
-//                Mapping mapping = new ScopeMapping(() -> scopeRegistry.findByName(field.getType().getCanonicalName()));
                 processAccessibleObject(container, field, null, false);
             }
         } catch (SecurityException e) {
@@ -48,8 +46,8 @@ public class EntityScopeFactory implements ScopeFactory {
 
         // pass and arrive mapping
         if (annRestEntity != null) {
-            String scopeName = determineParentName(annRestEntity.scope(), container);
-            Scope scope = retrieveScope(scopeName, container);
+            String scopeName = ScopeFactoryUtils.determineParentName(annRestEntity.scope(), container);
+            Scope scope = produceEntityScope(scopeName, container);
             if (passing) {
                 scope.addPassMapping(mapping, annRestEntity.methods());
             } else {
@@ -58,24 +56,9 @@ public class EntityScopeFactory implements ScopeFactory {
         }
     }
 
-    private Scope retrieveScope(String scopeName, ScopeContainer container) {
-        Scope scope = scopeRegistry.findByName(scopeName);
-        if (scope == null) {
-            scope = new GenericScope();
-            scope.getDefinition().name(scopeName);
-            scopeRegistry.add(scopeName, scope);
-            if (container != null) {
-                scopeRegistry.add(container, scope);
-            }
-        }
+    private Scope produceEntityScope(String scopeName, ScopeContainer container) {
+        Scope scope = scopeRegistry.produceScope(scopeName, container, ENTITY);
         scope.getDefinition().type(ENTITY);
         return scope;
-    }
-
-    private String determineParentName(String parentName, ScopeContainer container) {
-        if (StringUtils.isBlank(parentName)) {
-            return container.getClass().getCanonicalName();
-        }
-        return parentName;
     }
 }

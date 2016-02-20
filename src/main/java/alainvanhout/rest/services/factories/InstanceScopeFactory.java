@@ -11,7 +11,6 @@ import alainvanhout.rest.services.ScopeRegistry;
 import alainvanhout.rest.services.mapping.Mapping;
 import alainvanhout.rest.services.mapping.MethodMapping;
 import alainvanhout.rest.utils.ReflectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,13 +48,11 @@ public class InstanceScopeFactory implements ScopeFactory {
         RestError annRestError = ReflectionUtils.retrieveAnnotation(accessibleObject, RestError.class);
 
         if (annRestInstance != null) {
-            String parentName = determineParentName(annRestInstance.parentScope(), container);
-            Scope parentScope = retrieveEntityScope(parentName);
+            String parentName = ScopeFactoryUtils.determineParentName(annRestInstance.parentScope(), container);
+            Scope parentScope = produceEntityScope(parentName);
 
-            String instanceName = getInstanceName(accessibleObject,  parentName, annRestInstance.instanceScope());
-//            String instanceName = determineInstanceName(annRestInstance.instanceScope(), parentName);
-            Scope instanceScope = retrieveInstanceScope(instanceName);
-
+            String instanceName = getInstanceName(accessibleObject, parentName, annRestInstance.instanceScope());
+            Scope instanceScope = produceInstanceScope(instanceName);
             parentScope.setInstanceScope(instanceScope);
 
             if (accessibleObject instanceof Method) {
@@ -67,20 +64,21 @@ public class InstanceScopeFactory implements ScopeFactory {
             } else {
                 throw new RestException("Type of accessible object not supported: " + accessibleObject.getClass().getCanonicalName());
             }
+
         }
         if (annRestInstanceRelative != null) {
             String relative = annRestInstanceRelative.path();
 
-            String parentName = determineParentName(annRestInstanceRelative.parentScope(), container);
-            Scope parentScope = retrieveEntityScope(parentName);
+            String parentName = ScopeFactoryUtils.determineParentName(annRestInstanceRelative.parentScope(), container);
+            Scope parentScope = produceEntityScope(parentName);
 
-            String instanceName = determineInstanceName(annRestInstanceRelative.instanceScope(),  parentName);
-            Scope instanceScope = retrieveInstanceScope(instanceName);
+            String instanceName = ScopeFactoryUtils.determineInstanceName(annRestInstanceRelative.instanceScope(), parentName);
+            Scope instanceScope = produceInstanceScope(instanceName);
 
             String relativeName = getRelativeName(accessibleObject, relative, instanceName, annRestInstanceRelative.relativeScope());
-            Scope relativeScope = retrieveInstanceScope(relativeName);
+            Scope relativeScope = produceInstanceScope(relativeName);
 
-            if (accessibleObject instanceof Method){
+            if (accessibleObject instanceof Method) {
                 if (passing) {
                     relativeScope.addPassMapping(mapping, annRestInstanceRelative.methods());
                 } else {
@@ -94,7 +92,7 @@ public class InstanceScopeFactory implements ScopeFactory {
 
         // error mapping
         if (annRestError != null) {
-            String scopeName = determineParentName(annRestError.scope(), container);
+            String scopeName = ScopeFactoryUtils.determineParentName(annRestError.scope(), container);
             Scope scope = scopeRegistry.produceScope(scopeName, container, ResourceScopeFactory.RESOURCE);
             scope.addErrorMapping(mapping, annRestError.methods());
         }
@@ -102,7 +100,7 @@ public class InstanceScopeFactory implements ScopeFactory {
 
     private String getInstanceName(AccessibleObject accessibleObject, String parentName, String customInstanceName) {
         if (accessibleObject instanceof Method) {
-            return determineInstanceName(customInstanceName, parentName);
+            return ScopeFactoryUtils.determineInstanceName(customInstanceName, parentName);
         }
         if (accessibleObject instanceof Field) {
             if (ScopeContainer.class.isAssignableFrom(((Field) accessibleObject).getType())) {
@@ -114,7 +112,7 @@ public class InstanceScopeFactory implements ScopeFactory {
 
     private String getRelativeName(AccessibleObject accessibleObject, String relative, String parentName, String customRelativeName) {
         if (accessibleObject instanceof Method) {
-            return determineRelativeName(customRelativeName, relative, parentName);
+            return ScopeFactoryUtils.determineRelativeName(customRelativeName, relative, parentName);
         }
         if (accessibleObject instanceof Field) {
             if (ScopeContainer.class.isAssignableFrom(((Field) accessibleObject).getType())) {
@@ -124,7 +122,7 @@ public class InstanceScopeFactory implements ScopeFactory {
         throw new RestException("Type not supported: " + accessibleObject.getClass());
     }
 
-    private Scope retrieveEntityScope(String scopeName) {
+    private Scope produceEntityScope(String scopeName) {
         Scope scope = scopeRegistry.findByName(scopeName);
         if (scope == null) {
             scope = new GenericScope();
@@ -135,7 +133,7 @@ public class InstanceScopeFactory implements ScopeFactory {
         return scope;
     }
 
-    private Scope retrieveInstanceScope(String scopeName) {
+    private Scope produceInstanceScope(String scopeName) {
         Scope scope = scopeRegistry.findByName(scopeName);
         if (scope == null) {
             scope = new GenericScope();
@@ -144,39 +142,5 @@ public class InstanceScopeFactory implements ScopeFactory {
         }
         scope.getDefinition().type(INSTANCE);
         return scope;
-    }
-
-    private Scope retrieveScope(String scopeName, ScopeContainer container) {
-        Scope scope = scopeRegistry.findByName(scopeName);
-        if (scope == null) {
-            scope = new GenericScope();
-            scope.getDefinition().type(ResourceScopeFactory.RESOURCE);
-            scopeRegistry.add(scopeName, scope);
-            if (container != null) {
-                scopeRegistry.add(container, scope);
-            }
-        }
-        return scope;
-    }
-
-    private String determineParentName(String name, ScopeContainer container) {
-        if (StringUtils.isBlank(name)) {
-            return container.getClass().getCanonicalName();
-        }
-        return name;
-    }
-
-    private String determineInstanceName(String name, String parentName) {
-        if (StringUtils.isBlank(name)) {
-            return parentName + ":" + INSTANCE;
-        }
-        return name;
-    }
-
-    private String determineRelativeName(String childName, String relative, String parentName) {
-        if (StringUtils.isBlank(childName)) {
-            return parentName + ":" + relative;
-        }
-        return childName;
     }
 }
