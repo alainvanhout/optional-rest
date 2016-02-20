@@ -1,6 +1,8 @@
 package alainvanhout.rest.utils;
 
 import alainvanhout.rest.RestException;
+import alainvanhout.rest.annotations.RestEntityDefinition;
+import alainvanhout.rest.scope.ScopeContainer;
 
 import java.lang.reflect.*;
 

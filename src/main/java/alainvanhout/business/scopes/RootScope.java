@@ -15,13 +15,15 @@ public class RootScope implements ScopeContainer{
 
     public static final String OPTIONS = "OPTIONS";
 
-    @Autowired
     @RestRelative(path = "persons")
-    private PersonScope personRestService;
+    private PersonScope personScope;
+
+    @RestRelative(path = "person")
+    private PersonScope personScopeAlternate;
 
     @Autowired
     @RestRelative(path = "addresses")
-    private AddressScope addressRestService;
+    private AddressScope addressScope;
 
     @RestEntity
     private RestResponse arrive(RestRequest restRequest){

@@ -59,7 +59,7 @@ public class RootController {
     private SectionService sectionService;
 
     @Autowired
-    private PersonScope personRestService;
+    private PersonScope personScope;
 
     @Autowired
     private RootScope rootScope;

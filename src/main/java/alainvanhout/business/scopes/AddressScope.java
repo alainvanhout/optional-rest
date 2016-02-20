@@ -13,7 +13,7 @@ import alainvanhout.rest.utils.JsonUtils;
 import org.springframework.stereotype.Service;
 
 @Service
-@RestEntityDefinition(name = "address", instanceClass = Address.class)
+@RestEntityDefinition(entityName = "address", instanceClass = Address.class)
 public class AddressScope implements ScopeContainer {
 
     // TODO: this should be RestInstance + Address should have its own repository

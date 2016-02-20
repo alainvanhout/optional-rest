@@ -1,6 +1,7 @@
 package alainvanhout.rest.services.factories;
 
 import alainvanhout.rest.RestException;
+import alainvanhout.rest.annotations.RestEntityDefinition;
 import alainvanhout.rest.annotations.instance.RestInstance;
 import alainvanhout.rest.annotations.instance.RestInstanceRelative;
 import alainvanhout.rest.annotations.resource.RestError;
@@ -39,6 +40,18 @@ public class InstanceScopeFactory implements ScopeFactory {
             }
         } catch (SecurityException e) {
             throw new RestException("Could not process class: " + container.getClass(), e);
+        }
+
+        RestEntityDefinition restEntityDefinition = ReflectionUtils.retrieveAnnotation(container.getClass(), RestEntityDefinition.class);
+        if (restEntityDefinition != null) {
+            String parentName = ScopeFactoryUtils.determineParentName(restEntityDefinition.entityScope(), container);
+            Scope parentScope = produceEntityScope(parentName, container);
+
+            String instanceName = ScopeFactoryUtils.determineInstanceName(restEntityDefinition.instanceScope(), parentName);
+            Scope instanceScope = produceInstanceScope(instanceName);
+            parentScope.setInstanceScope(instanceScope);
+
+            instanceScope.getDefinition().setInternalClass(restEntityDefinition.instanceClass());
         }
     }
 

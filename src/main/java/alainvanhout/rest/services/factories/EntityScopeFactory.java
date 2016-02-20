@@ -1,8 +1,8 @@
 package alainvanhout.rest.services.factories;
 
 import alainvanhout.rest.RestException;
+import alainvanhout.rest.annotations.RestEntityDefinition;
 import alainvanhout.rest.annotations.entity.RestEntity;
-import alainvanhout.rest.scope.GenericScope;
 import alainvanhout.rest.scope.Scope;
 import alainvanhout.rest.scope.ScopeContainer;
 import alainvanhout.rest.services.ScopeRegistry;
@@ -26,7 +26,6 @@ public class EntityScopeFactory implements ScopeFactory {
 
     @Override
     public void processContainer(ScopeContainer container) {
-
         try {
             for (Method method : container.getClass().getDeclaredMethods()) {
                 Mapping mapping = new MethodMapping(container, method);

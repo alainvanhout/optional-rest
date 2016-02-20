@@ -1,5 +1,6 @@
 package alainvanhout.rest.request;
 
+import alainvanhout.rest.RestException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -50,8 +51,11 @@ public class Parameters {
 
     public String getValue(String key){
         List<String> values = map.get(key);
+        if (values == null) {
+            return null;
+        }
         if (values.size() != 1){
-            // TODO: exception
+            throw new RestException("More tha one value found for key " + key);
         }
         return values.get(0);
     }

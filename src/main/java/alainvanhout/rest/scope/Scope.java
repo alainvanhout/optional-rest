@@ -5,7 +5,11 @@ import alainvanhout.rest.request.meta.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.services.mapping.Mapping;
 
+import java.util.Map;
+
 public interface Scope {
+
+    Map<String,Object> buildDefinitionMap(int deep);
 
     ScopeDefinition getDefinition();
 

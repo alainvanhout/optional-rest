@@ -3,10 +3,8 @@ package alainvanhout.rest.services;
 import alainvanhout.rest.scope.GenericScope;
 import alainvanhout.rest.scope.Scope;
 import alainvanhout.rest.scope.ScopeContainer;
-import alainvanhout.rest.services.factories.ResourceScopeFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -42,10 +40,6 @@ public class ScopeRegistry {
 
     public Scope findByContainerClass(Class containerClass) {
         return findByName(containerClass.getName());
-    }
-
-    public Collection<Scope> getScopes() {
-        return scopeNameMap.values();
     }
 
     public Scope produceScope(String scopeName, ScopeContainer container) {

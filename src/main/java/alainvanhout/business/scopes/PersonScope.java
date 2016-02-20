@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RestEntityDefinition(name = "person", instanceClass = Person.class)
+@RestEntityDefinition(entityName = "person", instanceClass = Person.class)
 public class PersonScope implements ScopeContainer {
 
     @Autowired
     @RestInstanceRelative(path = "address")
-    private AddressScope addressRestService;
+    private AddressScope addressScope;
 
     @Autowired
     private PersonRepository personRepository;

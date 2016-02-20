@@ -109,6 +109,14 @@ public class ScopeDefinition {
         return this;
     }
 
+    public Class getInternalClass() {
+        return internalClass;
+    }
+
+    public void setInternalClass(Class internalClass) {
+        this.internalClass = internalClass;
+    }
+
     @Override
     public String toString() {
         return ObjectUtils.firstNonNull(name, internalClass).toString();
