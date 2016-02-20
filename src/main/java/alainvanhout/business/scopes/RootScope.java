@@ -2,8 +2,8 @@ package alainvanhout.business.scopes;
 
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.rest.RestResponse;
-import alainvanhout.rest.annotations.RestEntity;
-import alainvanhout.rest.annotations.RestRelative;
+import alainvanhout.rest.annotations.entity.RestEntity;
+import alainvanhout.rest.annotations.resource.RestRelative;
 import alainvanhout.rest.request.meta.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.scope.ScopeContainer;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Service;
 public class RootScope implements ScopeContainer{
 
     @Autowired
-    @RestRelative("persons")
+    @RestRelative(path = "persons")
     private PersonScope personRestService;
 
     @Autowired
-    @RestRelative("addresses")
+    @RestRelative(path = "addresses")
     private AddressScope addressRestService;
 
     @RestEntity

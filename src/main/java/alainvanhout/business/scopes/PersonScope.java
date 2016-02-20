@@ -5,6 +5,10 @@ import alainvanhout.business.repositories.PersonRepository;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.rest.RestResponse;
 import alainvanhout.rest.annotations.*;
+import alainvanhout.rest.annotations.entity.RestEntity;
+import alainvanhout.rest.annotations.instance.RestInstance;
+import alainvanhout.rest.annotations.instance.RestInstanceRelative;
+import alainvanhout.rest.annotations.resource.RestRelative;
 import alainvanhout.rest.request.RestRequest;
 import alainvanhout.rest.scope.ScopeContainer;
 import alainvanhout.rest.utils.JsonUtils;
@@ -21,13 +25,13 @@ import java.util.stream.Collectors;
 public class PersonScope implements ScopeContainer {
 
     @Autowired
-    @RestInstanceRelative(value = "address")
+    @RestInstanceRelative(path = "address")
     private AddressScope addressRestService;
 
     @Autowired
     private PersonRepository personRepository;
 
-    @RestInstanceRelative(value = "pets")
+    @RestInstanceRelative(path = "pets")
     public RestResponse foo(RestRequest restRequest) {
         Person person = (Person) restRequest.getContext().get("person");
         return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(person.getPets())));
@@ -56,7 +60,7 @@ public class PersonScope implements ScopeContainer {
         return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(personRepository.findAll())));
     }
 
-    @RestRelative("women")
+    @RestRelative(path = "women")
     public RestResponse women(RestRequest restRequest) {
         List<Person> women = personRepository.findAll().stream()
                 .filter(p -> StringUtils.equals(p.getFirstName(), "Jane"))

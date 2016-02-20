@@ -1,4 +1,4 @@
-package alainvanhout.rest.annotations;
+package alainvanhout.rest.annotations.instance;
 
 import alainvanhout.rest.request.meta.HttpMethod;
 
@@ -9,6 +9,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
-public @interface RestEntity {
+public @interface RestInstance {
+    String parentScope() default "";
+
+    String instanceScope() default "";
+
     HttpMethod[] methods() default {HttpMethod.GET};
 }

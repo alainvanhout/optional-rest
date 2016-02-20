@@ -1,37 +1,38 @@
 package alainvanhout.rest.services;
 
-import alainvanhout.rest.RestException;
+import alainvanhout.rest.scope.GenericScope;
 import alainvanhout.rest.scope.Scope;
 import alainvanhout.rest.scope.ScopeContainer;
-import org.apache.commons.lang3.StringUtils;
+import alainvanhout.rest.services.factories.ResourceScopeFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 public class ScopeRegistry {
 
-    Set<Scope> scopes = new HashSet<>();
-    Map<Class, Scope> containerMap = new HashMap<>();
+    Map<String, Scope> scopeNameMap = new LinkedHashMap<>();
+    Map<Class, Scope> scopeContainerMap = new LinkedHashMap<>();
 
-    public void add(Scope scope) {
-        scopes.add(scope);
+    public void add(String scopeName, Scope scope) {
+        scopeNameMap.put(scopeName, scope);
     }
 
     public void add(ScopeContainer container, Scope scope) {
-        containerMap.put(container.getClass(), scope);
-        add(scope);
+        add(container.getClass(), scope);
+    }
+
+    public void add(Class containerClass, Scope scope) {
+        scopeContainerMap.put(containerClass, scope);
     }
 
     public Scope findByName(String scopeName) {
-        // TODO: exception
-        return scopes.stream()
-                .filter(s -> StringUtils.equals(s.getDefinition().getName(), scopeName))
-                .findFirst()
-                .orElse(null);
+        if (scopeNameMap.containsKey(scopeName)) {
+            return scopeNameMap.get(scopeName);
+        }
+        return null;
     }
 
     public Scope findByContainer(ScopeContainer container) {
@@ -39,13 +40,23 @@ public class ScopeRegistry {
     }
 
     public Scope findByContainerClass(Class containerClass) {
-        if (!containerMap.containsKey(containerClass)) {
-            throw new RestException("No scope available for container " + containerClass);
-        }
-        return containerMap.get(containerClass);
+        return findByName(containerClass.getName());
     }
 
-    public Set<Scope> getScopes() {
-        return scopes;
+    public Collection<Scope> getScopes() {
+        return scopeNameMap.values();
+    }
+
+    public Scope produceScope(String scopeName, ScopeContainer container, String scopeType) {
+        Scope scope = findByName(scopeName);
+        if (scope == null) {
+            scope = new GenericScope();
+            scope.getDefinition().name(scopeName).type(scopeType);
+            add(scopeName, scope);
+            if (container != null) {
+                add(container, scope);
+            }
+        }
+        return scope;
     }
 }

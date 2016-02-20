@@ -5,39 +5,26 @@ import alainvanhout.renderering.renderer.html.basic.documentbody.LinkRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.rest.RestException;
 import alainvanhout.rest.RestResponse;
-import alainvanhout.rest.request.meta.HttpMethod;
 import alainvanhout.rest.request.RestRequest;
-import alainvanhout.rest.services.RestMapping;
-import alainvanhout.rest.services.RestMappings;
-import alainvanhout.rest.services.ScopeManager;
+import alainvanhout.rest.request.meta.HttpMethod;
+import alainvanhout.rest.services.mapping.Mapping;
+import alainvanhout.rest.services.mapping.RestMappings;
 import alainvanhout.rest.utils.JsonUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class GenericScope implements Scope {
 
-    private ScopeManager scopeManager;
     private ScopeDefinition definition = new ScopeDefinition();
-    // primitive and relative mappings
+
     private RestMappings passMappings = new RestMappings();
     private RestMappings arriveMappings = new RestMappings();
-    private Map<String, RestMapping> relativeMapping = new HashMap<>();
-    // error mappings
     private RestMappings errorMappings = new RestMappings();
-    // fallback mappings
-    private Scope fallbackScope;
-    private RestMappings fallbackMappings = new RestMappings();
 
-    private Map<String, Supplier<Scope>> relativeScopes = new HashMap<>();
-
-    public GenericScope(ScopeManager scopeManager) {
-        this.scopeManager = scopeManager;
-    }
+    private Scope instanceScope;
+    private Map<String, Scope> relativeScopes = new HashMap<>();
 
     @Override
     public RestResponse follow(RestRequest restRequest) {
@@ -53,9 +40,9 @@ public class GenericScope implements Scope {
                     return call(arriveMappings, restRequest);
                 } else if (HttpMethod.OPTIONS.equals(restRequest.getMethod())) {
                     Map<String, Object> definitionMap = definition.getMap();
-                    if (restRequest.getHeaders().contains("accept", "text/html")){
+                    if (restRequest.getHeaders().contains("accept", "text/html")) {
                         if (definitionMap.containsKey("relative")) {
-                            Map<String, Object> relative = (Map)definitionMap.get("relative");
+                            Map<String, Object> relative = (Map) definitionMap.get("relative");
                             Map<String, Object> map = new LinkedHashMap<>();
                             for (String key : relative.keySet()) {
                                 map.put(new LinkRenderer().href(key + "/?OPTIONS").add(key).render(), relative.get(key));
@@ -81,20 +68,9 @@ public class GenericScope implements Scope {
                 return call(relativeScopes.get(step), restRequest);
             }
 
-            // then check relative mappings
-            if (relativeMapping.containsKey(step)) {
-                return call(relativeMapping.get(step), restRequest);
-            }
-
-            // then check fallback mapping
-            // (this takes priority over fallback scope because the latter is inherently a catch-all)
-            if (fallbackMappings.contains(restRequest.getMethod())) {
-                return call(fallbackMappings, restRequest);
-            }
-
             // and finally check fallback scope
-            if (fallbackScope != null) {
-                return fallbackScope.follow(restRequest);
+            if (instanceScope != null) {
+                return instanceScope.follow(restRequest);
             }
 
         } catch (Exception e) {
@@ -108,31 +84,17 @@ public class GenericScope implements Scope {
         throw new RestException("No appropriate mapping found for scope " + this.getClass().getSimpleName());
     }
 
-    private RestResponse call(Supplier<Scope> scopeSupplier, RestRequest restRequest) {
-        return scopeSupplier.get().follow(restRequest);
+    private RestResponse call(Scope scope, RestRequest restRequest) {
+        return scope.follow(restRequest);
     }
 
     private RestResponse call(RestMappings mappings, RestRequest restRequest) {
         return call(mappings.get(restRequest.getMethod()), restRequest);
     }
 
-    private RestResponse call(RestMapping mapping, RestRequest restRequest) {
+    private RestResponse call(Mapping mapping, RestRequest restRequest) {
         try {
-            switch (mapping.getType()) {
-                case FIELD:
-                    Field field = mapping.getField();
-                    field.setAccessible(true);
-                    ScopeContainer target = (ScopeContainer) field.get(mapping.getOwner());
-                    return scopeManager.follow(target, restRequest);
-                case METHOD:
-                    Method method = mapping.getMethod();
-                    method.setAccessible(true);
-                    return (RestResponse) method.invoke(mapping.getOwner(), restRequest);
-                case SCOPE_CONTAINER:
-                    return scopeManager.follow(mapping.getScopeContainer(), restRequest);
-                default:
-                    throw new RestException("Unsupported type:" + mapping.getType());
-            }
+            return mapping.call(restRequest);
         } catch (RestException e) {
             e.add("mapping", mapping);
             throw e;
@@ -150,26 +112,21 @@ public class GenericScope implements Scope {
     }
 
     @Override
-    public GenericScope addPassMapping(RestMapping mapping, HttpMethod... methods) {
+    public GenericScope addPassMapping(Mapping mapping, HttpMethod... methods) {
         return addMapping(passMappings, mapping, methods);
     }
 
     @Override
-    public GenericScope addArriveMapping(RestMapping mapping, HttpMethod... methods) {
+    public GenericScope addArriveMapping(Mapping mapping, HttpMethod... methods) {
         return addMapping(arriveMappings, mapping, methods);
     }
 
     @Override
-    public GenericScope addFallbackMapping(RestMapping mapping, HttpMethod... methods) {
-        return addMapping(fallbackMappings, mapping, methods);
-    }
-
-    @Override
-    public GenericScope addErrorMapping(RestMapping mapping, HttpMethod... methods) {
+    public GenericScope addErrorMapping(Mapping mapping, HttpMethod... methods) {
         return addMapping(errorMappings, mapping, methods);
     }
 
-    private GenericScope addMapping(RestMappings mappings, RestMapping mapping, HttpMethod... methods) {
+    private GenericScope addMapping(RestMappings mappings, Mapping mapping, HttpMethod... methods) {
         for (HttpMethod method : methods) {
             mappings.addMapping(method, mapping);
         }
@@ -177,27 +134,13 @@ public class GenericScope implements Scope {
     }
 
     @Override
-    public void addRelativeMapping(String relative, RestMapping mapping) {
-        if (relativeMapping.containsKey(relative)) {
-            throw new RestException("Relative mapping already defined: " + relative);
-        }
-        relativeMapping.put(relative, mapping);
+    public void setInstanceScope(Scope scope) {
+        this.instanceScope = scope;
     }
 
-    public void setFallbackScope(Scope fallbackScope) {
-        this.fallbackScope = fallbackScope;
-    }
-
-    public GenericScope addRelativeScope(String relative, Supplier<Scope> supplier){
-        relativeScopes.put(relative, supplier);
-        return this;
-    }
-
-    public Scope getRelativeScope(String relative){
-        if (!relativeScopes.containsKey(relative)) {
-            throw new RestException("Relative scope not available: " + relative);
-        }
-        return relativeScopes.get(relative).get();
+    @Override
+    public void addRelativeScope(String relative, Scope scope) {
+        relativeScopes.put(relative, scope);
     }
 
     @Override
@@ -205,7 +148,4 @@ public class GenericScope implements Scope {
         return definition.toString();
     }
 
-    public Map<String, Supplier<Scope>> getRelativeScopes() {
-        return relativeScopes;
-    }
 }

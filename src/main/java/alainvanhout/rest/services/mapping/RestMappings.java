@@ -1,4 +1,4 @@
-package alainvanhout.rest.services;
+package alainvanhout.rest.services.mapping;
 
 import alainvanhout.rest.request.meta.HttpMethod;
 
@@ -7,9 +7,9 @@ import java.util.Map;
 
 public class RestMappings {
 
-    private Map<HttpMethod, RestMapping> mappings = new HashMap<>();
+    private Map<HttpMethod, Mapping> mappings = new HashMap<>();
 
-    public void addMapping(HttpMethod method, RestMapping mapping){
+    public void addMapping(HttpMethod method, Mapping mapping){
         mappings.put(method, mapping);
     }
 
@@ -17,7 +17,7 @@ public class RestMappings {
         return mappings.containsKey(method);
     }
 
-    public RestMapping get(HttpMethod method){
+    public Mapping get(HttpMethod method){
         return mappings.get(method);
     }
 }
