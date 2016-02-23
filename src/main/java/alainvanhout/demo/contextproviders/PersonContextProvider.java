@@ -1,7 +1,7 @@
-package alainvanhout.business.contextproviders;
+package alainvanhout.demo.contextproviders;
 
-import alainvanhout.business.entities.Person;
-import alainvanhout.business.repositories.PersonRepository;
+import alainvanhout.demo.entities.Person;
+import alainvanhout.demo.repositories.PersonRepository;
 import alainvanhout.context.provider.ContextProvider;
 import alainvanhout.routing.path.Path;
 import org.springframework.beans.factory.annotation.Autowired;

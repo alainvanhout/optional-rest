@@ -1,11 +1,11 @@
-package alainvanhout.business.controllers;
+package alainvanhout.demo.controllers;
 
-import alainvanhout.business.entities.Address;
-import alainvanhout.business.renderers.PersonRenderer;
-import alainvanhout.business.repositories.PersonRepository;
-import alainvanhout.business.scopes.PersonScope;
-import alainvanhout.business.scopes.RootScope;
-import alainvanhout.business.services.RendererService;
+import alainvanhout.demo.entities.Address;
+import alainvanhout.demo.renderers.PersonRenderer;
+import alainvanhout.demo.repositories.PersonRepository;
+import alainvanhout.demo.scopes.PersonScope;
+import alainvanhout.demo.scopes.RootScope;
+import alainvanhout.demo.services.RendererService;
 import alainvanhout.cms.dtos.stored.StoredRoute;
 import alainvanhout.cms.repositories.SwitchRouteRepository;
 import alainvanhout.cms.repositories.TemplateRepository;

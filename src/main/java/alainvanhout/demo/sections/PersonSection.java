@@ -1,10 +1,10 @@
-package alainvanhout.business.sections;
+package alainvanhout.demo.sections;
 
-import alainvanhout.business.entities.Address;
-import alainvanhout.business.entities.Person;
-import alainvanhout.business.renderers.PersonRenderer;
-import alainvanhout.business.repositories.PersonRepository;
-import alainvanhout.business.services.RendererService;
+import alainvanhout.demo.entities.Address;
+import alainvanhout.demo.entities.Person;
+import alainvanhout.demo.renderers.PersonRenderer;
+import alainvanhout.demo.repositories.PersonRepository;
+import alainvanhout.demo.services.RendererService;
 import alainvanhout.context.Context;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.model.SimpleModelRenderer;

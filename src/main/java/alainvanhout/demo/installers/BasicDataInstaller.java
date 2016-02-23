@@ -1,9 +1,9 @@
-package alainvanhout.business.installers;
+package alainvanhout.demo.installers;
 
-import alainvanhout.business.entities.Address;
-import alainvanhout.business.entities.Person;
-import alainvanhout.business.Template;
-import alainvanhout.business.repositories.PersonRepository;
+import alainvanhout.demo.entities.Address;
+import alainvanhout.demo.entities.Person;
+import alainvanhout.demo.Template;
+import alainvanhout.demo.repositories.PersonRepository;
 import alainvanhout.renderering.renderer.retrieve.TextResourceRenderer;
 import alainvanhout.cms.repositories.SwitchRouteRepository;
 import alainvanhout.cms.repositories.TemplateRepository;

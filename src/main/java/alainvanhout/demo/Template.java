@@ -1,4 +1,4 @@
-package alainvanhout.business;
+package alainvanhout.demo;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

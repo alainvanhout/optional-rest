@@ -1,6 +1,6 @@
 package alainvanhout.cms.services;
 
-import alainvanhout.business.services.RendererService;
+import alainvanhout.demo.services.RendererService;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.cms.repositories.SectionRepository;
 import alainvanhout.routing.path.Path;

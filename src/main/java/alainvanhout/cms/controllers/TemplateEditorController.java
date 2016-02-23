@@ -1,7 +1,7 @@
 package alainvanhout.cms.controllers;
 
-import alainvanhout.business.Template;
-import alainvanhout.business.services.RendererService;
+import alainvanhout.demo.Template;
+import alainvanhout.demo.services.RendererService;
 import alainvanhout.context.RendererContext;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.basic.StringRenderer;

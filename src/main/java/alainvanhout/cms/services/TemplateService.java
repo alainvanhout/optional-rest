@@ -1,6 +1,6 @@
 package alainvanhout.cms.services;
 
-import alainvanhout.business.Template;
+import alainvanhout.demo.Template;
 import alainvanhout.cms.exceptions.TemplateException;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.basic.StringRenderer;

@@ -1,6 +1,6 @@
-package alainvanhout.business.routes;
+package alainvanhout.demo.routes;
 
-import alainvanhout.business.services.RendererService;
+import alainvanhout.demo.services.RendererService;
 import alainvanhout.cms.services.ContextService;
 import alainvanhout.cms.services.SectionService;
 import alainvanhout.cms.services.TemplateService;

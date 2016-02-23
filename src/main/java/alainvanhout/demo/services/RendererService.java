@@ -1,13 +1,13 @@
-package alainvanhout.business.services;
+package alainvanhout.demo.services;
 
-import alainvanhout.business.entities.Person;
-import alainvanhout.business.Template;
-import alainvanhout.business.renderers.PersonRenderer;
+import alainvanhout.demo.entities.Person;
+import alainvanhout.demo.Template;
+import alainvanhout.demo.renderers.PersonRenderer;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.list.UnorderedListRenderer;
 import alainvanhout.renderering.renderer.retrieve.FetchingRenderer;
-import alainvanhout.business.repositories.PersonRepository;
+import alainvanhout.demo.repositories.PersonRepository;
 import alainvanhout.cms.repositories.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

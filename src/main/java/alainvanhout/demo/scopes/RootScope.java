@@ -1,4 +1,4 @@
-package alainvanhout.business.scopes;
+package alainvanhout.demo.scopes;
 
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.rest.RestResponse;

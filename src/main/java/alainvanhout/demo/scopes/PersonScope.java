@@ -1,10 +1,9 @@
-package alainvanhout.business.scopes;
+package alainvanhout.demo.scopes;
 
-import alainvanhout.business.entities.Address;
-import alainvanhout.business.entities.Person;
-import alainvanhout.business.renderers.PersonRenderer;
-import alainvanhout.business.repositories.PersonRepository;
-import alainvanhout.cms.repositories.TemplateRepository;
+import alainvanhout.demo.entities.Address;
+import alainvanhout.demo.entities.Person;
+import alainvanhout.demo.renderers.PersonRenderer;
+import alainvanhout.demo.repositories.PersonRepository;
 import alainvanhout.cms.services.TemplateService;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
@@ -16,7 +15,6 @@ import alainvanhout.rest.annotations.instance.RestInstance;
 import alainvanhout.rest.annotations.instance.RestInstanceRelative;
 import alainvanhout.rest.annotations.resource.RestRelative;
 import alainvanhout.rest.request.RestRequest;
-import alainvanhout.rest.request.meta.Header;
 import alainvanhout.rest.scope.ScopeContainer;
 import alainvanhout.rest.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;

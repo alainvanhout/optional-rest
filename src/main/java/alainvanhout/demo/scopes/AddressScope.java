@@ -1,7 +1,7 @@
-package alainvanhout.business.scopes;
+package alainvanhout.demo.scopes;
 
-import alainvanhout.business.entities.Address;
-import alainvanhout.business.entities.Person;
+import alainvanhout.demo.entities.Address;
+import alainvanhout.demo.entities.Person;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.rest.RestResponse;
 import alainvanhout.rest.annotations.entity.RestEntity;

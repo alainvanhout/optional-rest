@@ -1,4 +1,4 @@
-package alainvanhout.business.contexts;
+package alainvanhout.demo.contexts;
 
 import alainvanhout.cms.dtos.custom.CustomContext;
 import alainvanhout.context.UpdateableContext;

@@ -1,6 +1,6 @@
 package alainvanhout.cms.controllers;
 
-import alainvanhout.business.Template;
+import alainvanhout.demo.Template;
 import alainvanhout.cms.repositories.TemplateRepository;
 import alainvanhout.routing.Route;
 import org.springframework.beans.factory.annotation.Autowired;
