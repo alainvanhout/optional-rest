@@ -11,6 +11,7 @@ import java.util.Map;
 public class ScopeDefinition {
     private String name;
     private String type;
+    private String description;
     private Class internalClass;
     private Map<String, ScopeDefinition> relativeDefinitions = new LinkedHashMap<>();
     private Map<String, Object> internalMap = new LinkedHashMap<>();
@@ -56,6 +57,15 @@ public class ScopeDefinition {
 
     public Map<String, Object> getRelativeMap() {
         return relativeMap;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public ScopeDefinition description(String description) {
+        this.description = description;
+        return this;
     }
 
     public Map<String, Object> getMap() {

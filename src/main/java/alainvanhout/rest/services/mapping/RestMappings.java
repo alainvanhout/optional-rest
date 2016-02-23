@@ -3,7 +3,9 @@ package alainvanhout.rest.services.mapping;
 import alainvanhout.rest.request.meta.HttpMethod;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class RestMappings {
 
@@ -19,5 +21,9 @@ public class RestMappings {
 
     public Mapping get(HttpMethod method){
         return mappings.get(method);
+    }
+
+    public Set<HttpMethod> supportedMethods(){
+        return new HashSet<>(mappings.keySet());
     }
 }

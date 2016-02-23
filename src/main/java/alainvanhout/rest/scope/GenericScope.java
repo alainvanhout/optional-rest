@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class GenericScope implements Scope {
 
@@ -88,8 +89,17 @@ public class GenericScope implements Scope {
         if (StringUtils.isNotBlank(definition.getName())) {
             map.put("name", definition.getName());
         }
+        if (StringUtils.isNotBlank(definition.getName())) {
+            map.put("description", definition.getName());
+        }
         if (StringUtils.isNotBlank(definition.getType())) {
             map.put("type", definition.getType());
+        }
+
+        Set<HttpMethod> methods = arriveMappings.supportedMethods();
+        if (methods.size() > 0){
+            methods.add(HttpMethod.OPTIONS);
+            map.put("methods", methods);
         }
 
         if (definition.getInternalClass() != null){
