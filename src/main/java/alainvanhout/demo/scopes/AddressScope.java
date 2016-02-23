@@ -3,13 +3,13 @@ package alainvanhout.demo.scopes;
 import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
-import alainvanhout.rest.RestResponse;
-import alainvanhout.rest.annotations.entity.RestEntity;
-import alainvanhout.rest.annotations.RestEntityDefinition;
-import alainvanhout.rest.annotations.resource.RestError;
-import alainvanhout.rest.request.RestRequest;
-import alainvanhout.rest.scope.ScopeContainer;
-import alainvanhout.rest.utils.JsonUtils;
+import alainvanhout.optionalrest.RestResponse;
+import alainvanhout.optionalrest.annotations.entity.RestEntity;
+import alainvanhout.optionalrest.annotations.RestEntityDefinition;
+import alainvanhout.optionalrest.annotations.resource.RestError;
+import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.utils.JsonUtils;
 import org.springframework.stereotype.Service;
 
 @Service

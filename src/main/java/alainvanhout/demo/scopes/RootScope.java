@@ -1,12 +1,12 @@
 package alainvanhout.demo.scopes;
 
 import alainvanhout.renderering.renderer.basic.StringRenderer;
-import alainvanhout.rest.RestResponse;
-import alainvanhout.rest.annotations.entity.RestEntity;
-import alainvanhout.rest.annotations.resource.RestRelative;
-import alainvanhout.rest.request.meta.HttpMethod;
-import alainvanhout.rest.request.RestRequest;
-import alainvanhout.rest.scope.ScopeContainer;
+import alainvanhout.optionalrest.RestResponse;
+import alainvanhout.optionalrest.annotations.entity.RestEntity;
+import alainvanhout.optionalrest.annotations.resource.RestRelative;
+import alainvanhout.optionalrest.request.meta.HttpMethod;
+import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.scope.ScopeContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

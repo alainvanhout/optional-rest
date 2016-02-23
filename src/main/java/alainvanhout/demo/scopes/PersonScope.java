@@ -8,15 +8,15 @@ import alainvanhout.cms.services.TemplateService;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
-import alainvanhout.rest.RestResponse;
-import alainvanhout.rest.annotations.*;
-import alainvanhout.rest.annotations.entity.RestEntity;
-import alainvanhout.rest.annotations.instance.RestInstance;
-import alainvanhout.rest.annotations.instance.RestInstanceRelative;
-import alainvanhout.rest.annotations.resource.RestRelative;
-import alainvanhout.rest.request.RestRequest;
-import alainvanhout.rest.scope.ScopeContainer;
-import alainvanhout.rest.utils.JsonUtils;
+import alainvanhout.optionalrest.RestResponse;
+import alainvanhout.optionalrest.annotations.*;
+import alainvanhout.optionalrest.annotations.entity.RestEntity;
+import alainvanhout.optionalrest.annotations.instance.RestInstance;
+import alainvanhout.optionalrest.annotations.instance.RestInstanceRelative;
+import alainvanhout.optionalrest.annotations.resource.RestRelative;
+import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static alainvanhout.rest.request.meta.Header.Accept.Text.HTML;
+import static alainvanhout.optionalrest.request.meta.Header.Accept.Text.HTML;
 
 @Service
 @RestEntityDefinition(entityName = "person", instanceClass = Person.class)
