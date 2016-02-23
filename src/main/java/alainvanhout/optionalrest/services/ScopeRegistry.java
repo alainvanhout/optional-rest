@@ -12,11 +12,11 @@ import java.util.Map;
 public class ScopeRegistry {
 
     public static final String RESOURCE = "resource";
-    Map<String, Scope> scopeNameMap = new LinkedHashMap<>();
+    Map<String, Scope> scopeIdMap = new LinkedHashMap<>();
     Map<Class, Scope> scopeContainerMap = new LinkedHashMap<>();
 
-    public void add(String scopeName, Scope scope) {
-        scopeNameMap.put(scopeName, scope);
+    public void add(String scopeId, Scope scope) {
+        scopeIdMap.put(scopeId, scope);
     }
 
     public void add(ScopeContainer container, Scope scope) {
@@ -27,9 +27,9 @@ public class ScopeRegistry {
         scopeContainerMap.put(containerClass, scope);
     }
 
-    public Scope findByName(String scopeName) {
-        if (scopeNameMap.containsKey(scopeName)) {
-            return scopeNameMap.get(scopeName);
+    public Scope findByName(String scopeId) {
+        if (scopeIdMap.containsKey(scopeId)) {
+            return scopeIdMap.get(scopeId);
         }
         return null;
     }
@@ -42,16 +42,16 @@ public class ScopeRegistry {
         return findByName(containerClass.getName());
     }
 
-    public Scope produceScope(String scopeName, ScopeContainer container) {
-        return produceScope(scopeName, container, RESOURCE);
+    public Scope produceScope(String scopeId, ScopeContainer container) {
+        return produceScope(scopeId, container, RESOURCE);
     }
 
-    public Scope produceScope(String scopeName, ScopeContainer container, String scopeType) {
-        Scope scope = findByName(scopeName);
+    public Scope produceScope(String scopeId, ScopeContainer container, String scopeType) {
+        Scope scope = findByName(scopeId);
         if (scope == null) {
-            scope = new GenericScope();
-            scope.getDefinition().name(scopeName).type(scopeType);
-            add(scopeName, scope);
+            scope = new GenericScope().scopeId(scopeId);
+            scope.getDefinition().type(scopeType);
+            add(scopeId, scope);
             if (container != null) {
                 add(container, scope);
             }

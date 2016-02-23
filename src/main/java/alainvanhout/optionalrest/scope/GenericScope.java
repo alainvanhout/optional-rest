@@ -21,6 +21,7 @@ import java.util.Set;
 
 public class GenericScope implements Scope {
 
+    private String scopeId;
     private ScopeDefinition definition = new ScopeDefinition();
 
     private RestMappings passMappings = new RestMappings();
@@ -86,15 +87,10 @@ public class GenericScope implements Scope {
     @Override
     public Map<String,Object> buildDefinitionMap(int deep, boolean asHtml) {
         Map<String, Object> map = new LinkedHashMap<>();
-        if (StringUtils.isNotBlank(definition.getName())) {
-            map.put("name", definition.getName());
-        }
-        if (StringUtils.isNotBlank(definition.getName())) {
-            map.put("description", definition.getName());
-        }
-        if (StringUtils.isNotBlank(definition.getType())) {
-            map.put("type", definition.getType());
-        }
+
+        conditionalAdd(map, "name", definition.getName());
+        conditionalAdd(map, "description", definition.getDescription());
+        conditionalAdd(map, "type", definition.getType());
 
         Set<HttpMethod> methods = arriveMappings.supportedMethods();
         if (methods.size() > 0){
@@ -133,6 +129,12 @@ public class GenericScope implements Scope {
             }
         }
         return map;
+    }
+
+    public void conditionalAdd(Map<String, Object> map, String key, String value) {
+        if (StringUtils.isNotBlank(value)) {
+            map.put(key, value);
+        }
     }
 
     private RestResponse call(Scope scope, RestRequest restRequest) {
@@ -199,4 +201,14 @@ public class GenericScope implements Scope {
         return definition.toString();
     }
 
+    @Override
+    public GenericScope scopeId(String scopeId) {
+        this.scopeId = scopeId;
+        return this;
+    }
+
+    @Override
+    public String getScopeId() {
+        return scopeId;
+    }
 }

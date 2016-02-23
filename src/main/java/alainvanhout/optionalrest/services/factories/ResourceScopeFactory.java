@@ -49,8 +49,8 @@ public class ResourceScopeFactory implements ScopeFactory {
 
         // pass and arrive mapping
         if (annRestScope != null) {
-            String scopeName = ScopeFactoryUtils.determineParentName(annRestScope.scope(), container);
-            Scope scope = scopeRegistry.produceScope(scopeName, container);
+            String scopeId = ScopeFactoryUtils.determineParentName(annRestScope.scope(), container);
+            Scope scope = scopeRegistry.produceScope(scopeId, container);
             if (passing) {
                 scope.addPassMapping(mapping, annRestScope.methods());
             } else {
@@ -60,8 +60,8 @@ public class ResourceScopeFactory implements ScopeFactory {
 
         // error mapping
         if (annRestError != null) {
-            String scopeName = ScopeFactoryUtils.determineParentName(annRestError.scope(), container);
-            Scope scope = scopeRegistry.produceScope(scopeName, container);
+            String scopeId = ScopeFactoryUtils.determineParentName(annRestError.scope(), container);
+            Scope scope = scopeRegistry.produceScope(scopeId, container);
             scope.addErrorMapping(mapping, annRestError.methods());
         }
 

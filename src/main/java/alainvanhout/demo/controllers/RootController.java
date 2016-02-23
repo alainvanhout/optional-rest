@@ -67,7 +67,7 @@ public class RootController {
     @Autowired
     private ScopeManager scopeManager;
 
-    @RequestMapping(value = "/root/**")
+    @RequestMapping(value = "/test/**")
     public String root(HttpServletRequest request) {
 
         Path path = Path.fromQuery(request.getRequestURI(), "/root/");
@@ -80,13 +80,12 @@ public class RootController {
         return page.render();
     }
 
-    @RequestMapping(value = "/test/**",
+    @RequestMapping(value = "/root/**",
             method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
     public String test(HttpServletRequest httpRequest) {
         HttpMethod method = HttpMethod.valueOf(httpRequest.getMethod());
-        RestRequest restRequest = RestRequest.fromQuery(httpRequest.getRequestURI(), "/test/", method);
+        RestRequest restRequest = RestRequest.fromQuery(httpRequest.getRequestURI(), "/root/", method);
         restRequest.getParameters().addAll(httpRequest.getParameterMap());
-
 
         List<String> headerNames = Collections.list(httpRequest.getHeaderNames());
         for (String headerName : headerNames) {

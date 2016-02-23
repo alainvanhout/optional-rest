@@ -106,8 +106,8 @@ public class InstanceScopeFactory implements ScopeFactory {
 
         // error mapping
         if (annRestError != null) {
-            String scopeName = ScopeFactoryUtils.determineParentName(annRestError.scope(), container);
-            Scope scope = scopeRegistry.produceScope(scopeName, container);
+            String scopeId = ScopeFactoryUtils.determineParentName(annRestError.scope(), container);
+            Scope scope = scopeRegistry.produceScope(scopeId, container);
             scope.addErrorMapping(mapping, annRestError.methods());
         }
     }
@@ -136,18 +136,17 @@ public class InstanceScopeFactory implements ScopeFactory {
         throw new RestException("Type not supported: " + accessibleObject.getClass());
     }
 
-    private Scope produceEntityScope(String scopeName, ScopeContainer container) {
-        Scope scope = scopeRegistry.produceScope(scopeName, container);
+    private Scope produceEntityScope(String scopeId, ScopeContainer container) {
+        Scope scope = scopeRegistry.produceScope(scopeId, container);
         scope.getDefinition().type(EntityScopeFactory.ENTITY);
         return scope;
     }
 
-    private Scope produceInstanceScope(String scopeName) {
-        Scope scope = scopeRegistry.findByName(scopeName);
+    private Scope produceInstanceScope(String scopeId) {
+        Scope scope = scopeRegistry.findByName(scopeId);
         if (scope == null) {
-            scope = new GenericScope();
-            scope.getDefinition().name(scopeName);
-            scopeRegistry.add(scopeName, scope);
+            scope = new GenericScope().scopeId(scopeId);
+            scopeRegistry.add(scopeId, scope);
         }
         scope.getDefinition().type(INSTANCE);
         return scope;

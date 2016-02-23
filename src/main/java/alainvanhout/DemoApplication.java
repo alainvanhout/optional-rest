@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.DispatcherServlet;
 
 @SpringBootApplication
-public class ContentDrivenRenderingApplication {
+public class DemoApplication {
 
     @Bean
     public DispatcherServlet dispatcherServlet() {
@@ -16,6 +16,6 @@ public class ContentDrivenRenderingApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(ContentDrivenRenderingApplication.class, args);
+        SpringApplication.run(DemoApplication.class, args);
     }
 }

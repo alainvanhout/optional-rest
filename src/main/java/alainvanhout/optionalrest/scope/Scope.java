@@ -25,4 +25,7 @@ public interface Scope {
 
     void addRelativeScope(String relative, Scope scope);
 
+    GenericScope scopeId(String scopeId);
+
+    String getScopeId();
 }

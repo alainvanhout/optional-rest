@@ -44,8 +44,8 @@ public class EntityScopeFactory implements ScopeFactory {
 
         // pass and arrive mapping
         if (annRestEntity != null) {
-            String scopeName = ScopeFactoryUtils.determineParentName(annRestEntity.scope(), container);
-            Scope scope = produceEntityScope(scopeName, container);
+            String scopeId = ScopeFactoryUtils.determineParentName(annRestEntity.scope(), container);
+            Scope scope = produceEntityScope(scopeId, container);
             if (passing) {
                 scope.addPassMapping(mapping, annRestEntity.methods());
             } else {
@@ -54,8 +54,8 @@ public class EntityScopeFactory implements ScopeFactory {
         }
     }
 
-    private Scope produceEntityScope(String scopeName, ScopeContainer container) {
-        Scope scope = scopeRegistry.produceScope(scopeName, container);
+    private Scope produceEntityScope(String scopeId, ScopeContainer container) {
+        Scope scope = scopeRegistry.produceScope(scopeId, container);
         scope.getDefinition().type(ENTITY);
         return scope;
     }
