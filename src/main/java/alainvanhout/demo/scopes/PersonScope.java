@@ -29,7 +29,8 @@ import java.util.stream.Collectors;
 import static alainvanhout.optionalrest.request.meta.Header.Accept.Text.HTML;
 
 @Service
-@RestEntityDefinition(entityName = "person", instanceClass = Person.class)
+@ScopeDefinition(name = "person")
+@EntityDefinition(instanceClass = Person.class)
 public class PersonScope implements ScopeContainer {
 
     @RestInstanceRelative(path = "address")

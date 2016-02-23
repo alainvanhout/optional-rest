@@ -44,11 +44,14 @@ public class GenericScope implements Scope {
                 if (arriveMappings.contains(restRequest.getMethod())) {
                     return call(arriveMappings, restRequest);
                 } else if (HttpMethod.OPTIONS.equals(restRequest.getMethod())) {
-                    int deep = Integer.parseInt(StringUtils.defaultString(restRequest.getParameters().getValue("deep"), "1"));
-                    boolean asHtml = restRequest.getHeaders().contains("accept", "text/html");
-                    Map<String, Object> definitionMap = buildDefinitionMap(deep, asHtml);
 
-                    if (asHtml) {
+                    int deep = restRequest.getParameters().getIntValue("deep", 1);
+                    BuildParameters buildParameters = new BuildParameters()
+                            .includeScopeId(restRequest.getParameters().contains("SCOPE_ID"))
+                            .asHtml(restRequest.getHeaders().contains("accept", "text/html"));
+                    Map<String, Object> definitionMap = buildDefinitionMap(deep, buildParameters);
+
+                    if (buildParameters.getAsHtml()) {
                         String json = JsonUtils.definitionToJson(definitionMap);
 
                         return new RestResponse().renderer(new PreRenderer(json));
@@ -85,9 +88,12 @@ public class GenericScope implements Scope {
     }
 
     @Override
-    public Map<String,Object> buildDefinitionMap(int deep, boolean asHtml) {
+    public Map<String, Object> buildDefinitionMap(int deep, BuildParameters params) {
         Map<String, Object> map = new LinkedHashMap<>();
 
+        if (params.getIncludeScopeId()) {
+            conditionalAdd(map, "id", scopeId);
+        };
         conditionalAdd(map, "name", definition.getName());
         conditionalAdd(map, "description", definition.getDescription());
         conditionalAdd(map, "type", definition.getType());
@@ -112,14 +118,14 @@ public class GenericScope implements Scope {
 
         if (deep > 0) {
             if (instanceScope != null) {
-                map.put("instance", instanceScope.buildDefinitionMap(deep - 1, asHtml));
+                map.put("instance", instanceScope.buildDefinitionMap(deep - 1, params));
             }
             if (relativeScopes.size() > 0) {
                 Map<String, Object> relativeMap = new LinkedHashMap<>();
                 for (Map.Entry<String, Scope> entry : relativeScopes.entrySet()) {
                     String key = entry.getKey();
-                    Map<String, Object> value = entry.getValue().buildDefinitionMap(deep - 1, asHtml);
-                    if (asHtml){
+                    Map<String, Object> value = entry.getValue().buildDefinitionMap(deep - 1 , params);
+                    if (params.getAsHtml()){
                         relativeMap.put(new LinkRenderer().href(key + "/?OPTIONS").add(key).render(), value);
                     } else {
                         relativeMap.put(key, value);

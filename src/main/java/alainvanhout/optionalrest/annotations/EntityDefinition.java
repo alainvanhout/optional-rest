@@ -7,12 +7,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface RestEntityDefinition {
+public @interface EntityDefinition {
     String entityScope() default "";
 
     String instanceScope() default "";
-
-    String entityName() default "";
 
     Class instanceClass() default Void.class;
 }

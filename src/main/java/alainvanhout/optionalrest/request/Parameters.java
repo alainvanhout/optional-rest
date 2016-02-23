@@ -49,6 +49,25 @@ public class Parameters {
         return map.get(key);
     }
 
+    public Boolean getBooleanValue(String key){
+        String value = getValue(key);
+        return getBooleanValue(key, false);
+    }
+
+    public Boolean getBooleanValue(String key, Boolean defaultValue){
+        String value = getValue(key);
+        return value != null ? Boolean.parseBoolean(value) : defaultValue;
+    }
+
+    public Integer getIntValue(String key, Integer defaultValue){
+        String value = getValue(key);
+        return value != null ? Integer.parseInt(value) : defaultValue;
+    }
+
+    public Integer getIntValue(String key){
+        return getIntValue(key, null);
+    }
+
     public String getValue(String key){
         List<String> values = map.get(key);
         if (values == null) {

@@ -1,7 +1,8 @@
 package alainvanhout.optionalrest.services.factories;
 
 import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.annotations.RestEntityDefinition;
+import alainvanhout.optionalrest.annotations.EntityDefinition;
+import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.annotations.instance.RestInstance;
 import alainvanhout.optionalrest.annotations.instance.RestInstanceRelative;
 import alainvanhout.optionalrest.annotations.resource.RestError;
@@ -42,7 +43,14 @@ public class InstanceScopeFactory implements ScopeFactory {
             throw new RestException("Could not process class: " + container.getClass(), e);
         }
 
-        RestEntityDefinition restEntityDefinition = ReflectionUtils.retrieveAnnotation(container.getClass(), RestEntityDefinition.class);
+        ScopeDefinition scopeDefinition = ReflectionUtils.retrieveAnnotation(container.getClass(), ScopeDefinition.class);
+        if (scopeDefinition != null) {
+            String parentName = ScopeFactoryUtils.determineParentName(scopeDefinition.id(), container);
+            Scope parentScope = produceEntityScope(parentName, container);
+            parentScope.getDefinition().name(scopeDefinition.name());
+        }
+
+        EntityDefinition restEntityDefinition = ReflectionUtils.retrieveAnnotation(container.getClass(), EntityDefinition.class);
         if (restEntityDefinition != null) {
             String parentName = ScopeFactoryUtils.determineParentName(restEntityDefinition.entityScope(), container);
             Scope parentScope = produceEntityScope(parentName, container);
