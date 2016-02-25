@@ -5,11 +5,15 @@ import alainvanhout.optionalrest.request.RestRequest;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import alainvanhout.optionalrest.services.factories.ResourceScopeFactory;
 import alainvanhout.optionalrest.services.factories.ScopeFactory;
+import alainvanhout.optionalrest.services.mapping.providers.ParameterMapperProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 @Service
 public class ScopeManager {
@@ -26,11 +30,20 @@ public class ScopeManager {
     @Autowired
     private Collection<ScopeFactory> factories;
 
+    @Autowired
+    private Collection<ParameterMapperProvider> parameterMapperProviders;
+
+    private Map<Class, Function<RestRequest, Object>> parameterMappers = new HashMap<>();
+
     @PostConstruct
     public void setup() {
+        for (ParameterMapperProvider parameterMapperProvider : parameterMapperProviders) {
+            parameterMappers.putAll(parameterMapperProvider.getParameterMappers());
+        }
+
         for (ScopeFactory factory : factories) {
             for (ScopeContainer scopeContainer : containers) {
-                factory.processContainer(scopeContainer);
+                factory.processContainer(scopeContainer, parameterMappers);
             }
         }
     }

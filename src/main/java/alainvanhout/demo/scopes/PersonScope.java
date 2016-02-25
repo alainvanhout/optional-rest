@@ -1,25 +1,30 @@
 package alainvanhout.demo.scopes;
 
+import alainvanhout.cms.services.TemplateService;
 import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.renderers.PersonRenderer;
 import alainvanhout.demo.repositories.PersonRepository;
-import alainvanhout.cms.services.TemplateService;
-import alainvanhout.renderering.renderer.basic.StringRenderer;
-import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
-import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
 import alainvanhout.optionalrest.RestResponse;
-import alainvanhout.optionalrest.annotations.*;
+import alainvanhout.optionalrest.annotations.EntityDefinition;
+import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.annotations.entity.RestEntity;
 import alainvanhout.optionalrest.annotations.instance.RestInstance;
 import alainvanhout.optionalrest.annotations.instance.RestInstanceRelative;
 import alainvanhout.optionalrest.annotations.resource.RestRelative;
+import alainvanhout.optionalrest.request.Headers;
+import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import alainvanhout.optionalrest.utils.JsonUtils;
+import alainvanhout.renderering.renderer.basic.StringRenderer;
+import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
+import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
@@ -48,7 +53,7 @@ public class PersonScope implements ScopeContainer {
     private int viewCount;
 
     @PostConstruct
-    private void setup(){
+    private void setup() {
         personRenderer = new PersonRenderer(templateService.findBodyAsRenderer("person-large"));
         adressRenderer = new SimpleModelRenderer<>(templateService.findBodyAsRenderer("address"));
         personRenderer.set(adressRenderer);
@@ -60,16 +65,18 @@ public class PersonScope implements ScopeContainer {
         return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(person.getPets())));
     }
 
-    @RestInstance
-    public void id(RestRequest restRequest) {
-        String id = restRequest.getPath().getStep();
-        Person person = personRepository.findOne(BigInteger.valueOf(Long.valueOf(id)));
-        restRequest.addToContext("person", person);
+    @RestInstance(methods = {HttpMethod.GET, HttpMethod.OPTIONS})
+    public void id(RestRequest restRequest, HttpMethod method, Headers headers, Parameters parameters) {
+        if (!RequestMethod.OPTIONS.equals(method)) {
+            viewCount++;
+            String id = restRequest.getPath().getStep();
+            Person person = personRepository.findOne(BigInteger.valueOf(Long.valueOf(id)));
+            restRequest.addToContext("person", person);
+        }
     }
 
     @RestInstance
     public RestResponse idArrive(RestRequest restRequest) {
-        viewCount++;
         Person person = restRequest.getFromContext("person");
         if (restRequest.getHeaders().contains("accept", HTML)) {
             personRenderer.set(person);
@@ -80,7 +87,7 @@ public class PersonScope implements ScopeContainer {
     }
 
     @RestRelative(path = "views")
-    private RestResponse viewCount(RestRequest restRequest){
+    private RestResponse viewCount(RestRequest restRequest) {
         return new RestResponse().renderer(new StringRenderer("View count:" + viewCount));
     }
 

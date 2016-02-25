@@ -6,6 +6,7 @@ import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.annotations.instance.RestInstance;
 import alainvanhout.optionalrest.annotations.instance.RestInstanceRelative;
 import alainvanhout.optionalrest.annotations.resource.RestError;
+import alainvanhout.optionalrest.request.RestRequest;
 import alainvanhout.optionalrest.scope.GenericScope;
 import alainvanhout.optionalrest.scope.Scope;
 import alainvanhout.optionalrest.scope.ScopeContainer;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.function.Function;
 
 @Service
 public class InstanceScopeFactory implements ScopeFactory {
@@ -28,11 +31,11 @@ public class InstanceScopeFactory implements ScopeFactory {
     private ScopeRegistry scopeRegistry;
 
     @Override
-    public void processContainer(ScopeContainer container) {
+    public void processContainer(ScopeContainer container, Map<Class, Function<RestRequest, Object>> parameterMappers) {
 
         try {
             for (Method method : container.getClass().getDeclaredMethods()) {
-                Mapping mapping = new MethodMapping(container, method);
+                Mapping mapping = new MethodMapping(container, method).parameterMappers(parameterMappers);
                 processAccessibleObject(container, method, mapping, method.getReturnType().equals(Void.TYPE));
             }
 
