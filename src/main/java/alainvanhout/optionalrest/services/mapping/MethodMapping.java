@@ -12,13 +12,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class MethodMapping implements Mapping {
 
     private ScopeContainer container;
     private Method method;
-    private Map<Class, Function<RestRequest, Object>> parameterMappers = new HashMap<>();
+    private Map<Class, BiFunction<Parameter, RestRequest, Object>> parameterMappers = new HashMap<>();
     private List<Function<RestRequest, Object>> mappers;
 
     public MethodMapping(ScopeContainer container, Method method) {
@@ -28,9 +29,6 @@ public class MethodMapping implements Mapping {
 
     @Override
     public RestResponse call(RestRequest restRequest) {
-        if (mappers == null) {
-            formMappers();
-        }
         try {
             method.setAccessible(true);
             Object[] params = mappers.stream().map(m -> m.apply(restRequest)).toArray();
@@ -41,8 +39,9 @@ public class MethodMapping implements Mapping {
         }
     }
 
-    public MethodMapping parameterMappers(Map<Class, Function<RestRequest, Object>> parameterMappers) {
+    public MethodMapping parameterMappers(Map<Class, BiFunction<Parameter, RestRequest, Object>> parameterMappers) {
         this.parameterMappers.putAll(parameterMappers);
+        formMappers();
         return this;
     }
 
@@ -50,7 +49,7 @@ public class MethodMapping implements Mapping {
         mappers = new ArrayList<>();
         for (Parameter parameter : method.getParameters()) {
             if (parameterMappers.containsKey(parameter.getType())) {
-                mappers.add(parameterMappers.get(parameter.getType()));
+                mappers.add( r -> parameterMappers.get(parameter.getType()).apply(parameter, r));
             } else {
                 throw new RestException("Method parameter type not suppported: " + parameter.getType());
             }

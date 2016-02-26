@@ -6,21 +6,22 @@ import alainvanhout.optionalrest.request.RestRequest;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 @Service
 public class BasicParameterMapperProvider implements ParameterMapperProvider {
 
     @Override
-    public Map<Class, Function<RestRequest, Object>> getParameterMappers() {
-        Map<Class, Function<RestRequest, Object>> map = new HashMap<>();
+    public Map<Class, BiFunction<Parameter, RestRequest, Object>> getParameterMappers() {
+        Map<Class, BiFunction<Parameter, RestRequest, Object>> map = new HashMap<>();
 
-        map.put(RestRequest.class, r -> r);
-        map.put(HttpMethod.class, r -> r.getMethod());
-        map.put(Headers.class, r -> r.getHeaders());
-        map.put(Parameters.class, r -> r.getParameters());
+        map.put(RestRequest.class, (p, r) -> r);
+        map.put(HttpMethod.class, (p, r) -> r.getMethod());
+        map.put(Headers.class, (p, r) -> r.getHeaders());
+        map.put(Parameters.class, (p, r) -> r.getParameters());
 
         return map;
     }

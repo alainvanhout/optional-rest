@@ -10,10 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 @Service
 public class ScopeManager {
@@ -33,7 +34,7 @@ public class ScopeManager {
     @Autowired
     private Collection<ParameterMapperProvider> parameterMapperProviders;
 
-    private Map<Class, Function<RestRequest, Object>> parameterMappers = new HashMap<>();
+    private Map<Class, BiFunction<Parameter, RestRequest, Object>> parameterMappers = new HashMap<>();
 
     @PostConstruct
     public void setup() {

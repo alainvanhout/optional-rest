@@ -15,8 +15,9 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 @Service
 public class EntityScopeFactory implements ScopeFactory {
@@ -27,11 +28,13 @@ public class EntityScopeFactory implements ScopeFactory {
     private ScopeRegistry scopeRegistry;
 
     @Override
-    public void processContainer(ScopeContainer container, Map<Class, Function<RestRequest, Object>> parameterMappers) {
+    public void processContainer(ScopeContainer container, Map<Class, BiFunction<Parameter, RestRequest, Object>> parameterMappers) {
         try {
             for (Method method : container.getClass().getDeclaredMethods()) {
-                Mapping mapping = new MethodMapping(container, method).parameterMappers(parameterMappers);
-                processAccessibleObject(container, method, mapping, method.getReturnType().equals(Void.TYPE));
+                MethodMapping mapping = new MethodMapping(container, method);
+                if (processAccessibleObject(container, method, mapping, method.getReturnType().equals(Void.TYPE))) {
+                    mapping.parameterMappers(parameterMappers);
+                }
             }
 
             for (Field field : container.getClass().getDeclaredFields()) {
@@ -42,7 +45,7 @@ public class EntityScopeFactory implements ScopeFactory {
         }
     }
 
-    private void processAccessibleObject(ScopeContainer container, AccessibleObject accessibleObject, Mapping mapping, boolean passing) {
+    private boolean processAccessibleObject(ScopeContainer container, AccessibleObject accessibleObject, Mapping mapping, boolean passing) {
         RestEntity annRestEntity = ReflectionUtils.retrieveAnnotation(accessibleObject, RestEntity.class);
 
         // pass and arrive mapping
@@ -54,7 +57,10 @@ public class EntityScopeFactory implements ScopeFactory {
             } else {
                 scope.addArriveMapping(mapping, annRestEntity.methods());
             }
+            return true;
         }
+
+        return false;
     }
 
     private Scope produceEntityScope(String scopeId, ScopeContainer container) {
