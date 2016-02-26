@@ -11,6 +11,7 @@ import alainvanhout.optionalrest.annotations.resource.RestError;
 import alainvanhout.optionalrest.request.RestRequest;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import alainvanhout.optionalrest.utils.JsonUtils;
+import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import org.springframework.stereotype.Service;
 
@@ -26,13 +27,13 @@ public class AddressScope implements ScopeContainer {
     }
 
     @RestEntity
-    public RestResponse arriveInstance(RestRequest restRequest) {
+    public Renderer arriveInstance(RestRequest restRequest) {
         Person person = restRequest.getFromContext("person");
-        return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(person.getAddress())));
+        return new PreRenderer(JsonUtils.objectToJson(person.getAddress()));
     }
 
     @RestError
-    public RestResponse error(RestException exception) {
-        return new RestResponse().renderer(new PreRenderer("An address error has occurred > " + exception.getMessage()));
+    public String error(RestException exception) {
+        return "An address error has occurred > " + exception.getMessage();
     }
 }

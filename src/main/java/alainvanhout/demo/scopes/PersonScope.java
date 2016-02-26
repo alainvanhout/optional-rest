@@ -5,7 +5,6 @@ import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.renderers.PersonRenderer;
 import alainvanhout.demo.repositories.PersonRepository;
-import alainvanhout.optionalrest.RestResponse;
 import alainvanhout.optionalrest.annotations.EntityDefinition;
 import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.annotations.entity.RestEntity;
@@ -19,6 +18,7 @@ import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import alainvanhout.optionalrest.services.factories.FromContext;
 import alainvanhout.optionalrest.utils.JsonUtils;
+import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
@@ -60,8 +60,8 @@ public class PersonScope implements ScopeContainer {
     }
 
     @RestInstanceRelative(path = "pets")
-    public RestResponse foo(RestRequest restRequest, @FromContext("person") Person person) {
-        return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(person.getPets())));
+    public Renderer foo(RestRequest restRequest, @FromContext("person") Person person) {
+        return new PreRenderer(JsonUtils.objectToJson(person.getPets()));
     }
 
     @RestInstance(methods = {HttpMethod.GET, HttpMethod.OPTIONS})
@@ -75,31 +75,31 @@ public class PersonScope implements ScopeContainer {
     }
 
     @RestInstance
-    public RestResponse idArrive(RestRequest restRequest) {
+    public Renderer idArrive(RestRequest restRequest) {
         Person person = restRequest.getFromContext("person");
         if (restRequest.getHeaders().contains("accept", HTML)) {
             personRenderer.set(person);
             adressRenderer.set(person.getAddress());
-            return new RestResponse().renderer(personRenderer);
+            return personRenderer;
         }
-        return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(person)));
+        return new PreRenderer(JsonUtils.objectToJson(person));
     }
 
     @RestRelative(path = "views")
-    private RestResponse viewCount(RestRequest restRequest) {
-        return new RestResponse().renderer(new StringRenderer("View count:" + viewCount));
+    private String viewCount(RestRequest restRequest) {
+        return "View count:" + viewCount;
     }
 
     @RestEntity
-    public RestResponse arrive(RestRequest restRequest) {
-        return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(personRepository.findAll())));
+    public Renderer arrive(RestRequest restRequest) {
+        return new PreRenderer(JsonUtils.objectToJson(personRepository.findAll()));
     }
 
     @RestRelative(path = "women")
-    public RestResponse women(RestRequest restRequest) {
+    public Renderer women(RestRequest restRequest) {
         List<Person> women = personRepository.findAll().stream()
                 .filter(p -> StringUtils.equals(p.getFirstName(), "Jane"))
                 .collect(Collectors.toList());
-        return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(women)));
+        return new PreRenderer(JsonUtils.objectToJson(women));
     }
 }

@@ -20,7 +20,8 @@ public class MethodMapping implements Mapping {
     private ScopeContainer container;
     private Method method;
     private Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers = new HashMap<>();
-    private List<Function<RestRequest, Object>> mappers;
+    private Map<Class, Function<Object, Object>> responseTypeMappers = new HashMap<>();
+    private List<Function<RestRequest, Object>> requestMappers;
 
     public MethodMapping(ScopeContainer container, Method method) {
         this.container = container;
@@ -31,11 +32,29 @@ public class MethodMapping implements Mapping {
     public RestResponse call(RestRequest restRequest) {
         try {
             method.setAccessible(true);
-            Object[] params = mappers.stream().map(m -> m.apply(restRequest)).toArray();
-            return (RestResponse) method.invoke(container, params);
+            Object[] params = requestMappers.stream().map(m -> m.apply(restRequest)).toArray();
+            Object invoke = method.invoke(container, params);
+            if (Void.TYPE.equals(method.getReturnType())) {
+                return (RestResponse) invoke;
+            } else {
+                return processResponse(invoke);
+            }
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new RestException("Encountered error while calling mapping method: "
                     + method.getName() + " for container " + container.getClass().getCanonicalName(), e);
+        }
+    }
+
+    private RestResponse processResponse(Object response) {
+        if (response instanceof RestResponse) {
+            return (RestResponse) response;
+        } else {
+            for (Map.Entry<Class, Function<Object, Object>> entry : responseTypeMappers.entrySet()) {
+                if (entry.getKey().isAssignableFrom(response.getClass())) {
+                    return processResponse(entry.getValue().apply(response));
+                }
+            }
+            throw new RestException("No response mapping available for type " + response.getClass());
         }
     }
 
@@ -46,19 +65,24 @@ public class MethodMapping implements Mapping {
     }
 
     private void formMappers() {
-        mappers = new ArrayList<>();
+        requestMappers = new ArrayList<>();
         for (Parameter parameter : method.getParameters()) {
             BiFunction<Parameter, RestRequest, Object> mapper = getMapper(parameter);
-            mappers.add(r -> mapper.apply(parameter, r));
+            requestMappers.add(r -> mapper.apply(parameter, r));
         }
     }
 
     private BiFunction<Parameter, RestRequest, Object> getMapper(Parameter parameter) {
-        for (Map.Entry<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> entry: parameterMappers.entrySet()) {
+        for (Map.Entry<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> entry : parameterMappers.entrySet()) {
             if (entry.getKey().apply(parameter)) {
                 return entry.getValue();
             }
         }
         throw new RestException("No mapper found for parameter " + parameter);
+    }
+
+    public MethodMapping responseTypeMappers(Map<Class, Function<Object, Object>> responseTypeMappers) {
+        this.responseTypeMappers.putAll(responseTypeMappers);
+        return this;
     }
 }

@@ -10,5 +10,5 @@ import java.util.function.Function;
 
 public interface ScopeFactory {
 
-    void processContainer(ScopeContainer container, Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers);
+    void processContainer(ScopeContainer container, Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers, Map<Class, Function<Object, Object>> responseTypeMappers);
 }

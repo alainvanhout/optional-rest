@@ -33,13 +33,12 @@ public class InstanceScopeFactory implements ScopeFactory {
     private ScopeRegistry scopeRegistry;
 
     @Override
-    public void processContainer(ScopeContainer container, Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers) {
-
+    public void processContainer(ScopeContainer container, Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers, Map<Class, Function<Object, Object>> responseTypeMappers) {
         try {
             for (Method method : container.getClass().getDeclaredMethods()) {
                 MethodMapping mapping = new MethodMapping(container, method);
                 if (processAccessibleObject(container, method, mapping, method.getReturnType().equals(Void.TYPE))) {
-                    mapping.parameterMappers(parameterMappers);
+                    mapping.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);
                 }
             }
 
