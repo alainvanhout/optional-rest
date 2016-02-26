@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Service
 public class ResourceScopeFactory implements ScopeFactory {
@@ -28,7 +29,7 @@ public class ResourceScopeFactory implements ScopeFactory {
     private ScopeRegistry scopeRegistry;
 
     @Override
-    public void processContainer(ScopeContainer container, Map<Class, BiFunction<Parameter, RestRequest, Object>> parameterMappers) {
+    public void processContainer(ScopeContainer container, Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers) {
 
         try {
             for (Method method : container.getClass().getDeclaredMethods()) {

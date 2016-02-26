@@ -19,7 +19,7 @@ public class MethodMapping implements Mapping {
 
     private ScopeContainer container;
     private Method method;
-    private Map<Class, BiFunction<Parameter, RestRequest, Object>> parameterMappers = new HashMap<>();
+    private Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers = new HashMap<>();
     private List<Function<RestRequest, Object>> mappers;
 
     public MethodMapping(ScopeContainer container, Method method) {
@@ -39,7 +39,7 @@ public class MethodMapping implements Mapping {
         }
     }
 
-    public MethodMapping parameterMappers(Map<Class, BiFunction<Parameter, RestRequest, Object>> parameterMappers) {
+    public MethodMapping parameterMappers(Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers) {
         this.parameterMappers.putAll(parameterMappers);
         formMappers();
         return this;
@@ -48,11 +48,17 @@ public class MethodMapping implements Mapping {
     private void formMappers() {
         mappers = new ArrayList<>();
         for (Parameter parameter : method.getParameters()) {
-            if (parameterMappers.containsKey(parameter.getType())) {
-                mappers.add( r -> parameterMappers.get(parameter.getType()).apply(parameter, r));
-            } else {
-                throw new RestException("Method parameter type not suppported: " + parameter.getType());
+            BiFunction<Parameter, RestRequest, Object> mapper = getMapper(parameter);
+            mappers.add(r -> mapper.apply(parameter, r));
+        }
+    }
+
+    private BiFunction<Parameter, RestRequest, Object> getMapper(Parameter parameter) {
+        for (Map.Entry<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> entry: parameterMappers.entrySet()) {
+            if (entry.getKey().apply(parameter)) {
+                return entry.getValue();
             }
         }
+        throw new RestException("No mapper found for parameter " + parameter);
     }
 }

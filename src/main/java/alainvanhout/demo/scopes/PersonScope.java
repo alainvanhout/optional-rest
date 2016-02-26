@@ -24,7 +24,6 @@ import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
@@ -67,7 +66,7 @@ public class PersonScope implements ScopeContainer {
 
     @RestInstance(methods = {HttpMethod.GET, HttpMethod.OPTIONS})
     public void id(RestRequest restRequest, HttpMethod method, Headers headers, Parameters parameters) {
-        if (!RequestMethod.OPTIONS.equals(method)) {
+        if (!HttpMethod.OPTIONS.equals(method)) {
             viewCount++;
             String id = restRequest.getPath().getStep();
             Person person = personRepository.findOne(BigInteger.valueOf(Long.valueOf(id)));
@@ -103,18 +102,4 @@ public class PersonScope implements ScopeContainer {
                 .collect(Collectors.toList());
         return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(women)));
     }
-
-//    @RestEntity(methods = HttpMethod.OPTIONS)
-//    public RestResponse entityOptions(RestRequest restRequest) {
-//        String json = JsonUtils.entityToJson(Person.class);
-//        return new RestResponse().renderer(new StringRenderer(json));
-//    }
-
-//    @RestError
-//    public RestResponse error(RestRequest restRequest) {
-//        RestException exception = restRequest.getFromContext("exception");
-//        return new RestResponse().renderer(new StringRenderer("An error has occurred: " + exception.getMessage() + " "
-//                + exception.getContext().entrySet().stream().map(e -> e.getKey() + ":" + JsonUtils.objectToJson(e.getValue())).collect(Collectors.joining(","))));
-//    }
-
 }

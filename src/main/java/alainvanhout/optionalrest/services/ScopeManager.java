@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Service
 public class ScopeManager {
@@ -34,7 +35,7 @@ public class ScopeManager {
     @Autowired
     private Collection<ParameterMapperProvider> parameterMapperProviders;
 
-    private Map<Class, BiFunction<Parameter, RestRequest, Object>> parameterMappers = new HashMap<>();
+    private Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers = new HashMap<>();
 
     @PostConstruct
     public void setup() {

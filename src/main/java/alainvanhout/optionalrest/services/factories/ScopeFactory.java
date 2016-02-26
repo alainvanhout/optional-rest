@@ -6,8 +6,9 @@ import alainvanhout.optionalrest.scope.ScopeContainer;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public interface ScopeFactory {
 
-    void processContainer(ScopeContainer container, Map<Class, BiFunction<Parameter, RestRequest, Object>> parameterMappers);
+    void processContainer(ScopeContainer container, Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers);
 }

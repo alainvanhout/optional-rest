@@ -1,5 +1,6 @@
 package alainvanhout.optionalrest.services.mapping.providers;
 
+import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.Headers;
 import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.RestRequest;
@@ -15,13 +16,15 @@ import java.util.function.BiFunction;
 public class BasicParameterMapperProvider implements ParameterMapperProvider {
 
     @Override
-    public Map<Class, BiFunction<Parameter, RestRequest, Object>> getParameterMappers() {
+    public Map<Class, BiFunction<Parameter, RestRequest, Object>> getParameterMappersForClass() {
         Map<Class, BiFunction<Parameter, RestRequest, Object>> map = new HashMap<>();
 
         map.put(RestRequest.class, (p, r) -> r);
         map.put(HttpMethod.class, (p, r) -> r.getMethod());
         map.put(Headers.class, (p, r) -> r.getHeaders());
         map.put(Parameters.class, (p, r) -> r.getParameters());
+        map.put(RestException.class, (p, r) -> r.getContext().get("exception"));
+
 
         return map;
     }
