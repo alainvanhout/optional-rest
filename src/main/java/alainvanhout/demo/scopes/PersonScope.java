@@ -17,6 +17,7 @@ import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.RestRequest;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.services.factories.FromContext;
 import alainvanhout.optionalrest.utils.JsonUtils;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
@@ -59,8 +60,7 @@ public class PersonScope implements ScopeContainer {
     }
 
     @RestInstanceRelative(path = "pets")
-    public RestResponse foo(RestRequest restRequest) {
-        Person person = (Person) restRequest.getContext().get("person");
+    public RestResponse foo(RestRequest restRequest, @FromContext("person") Person person) {
         return new RestResponse().renderer(new PreRenderer(JsonUtils.objectToJson(person.getPets())));
     }
 

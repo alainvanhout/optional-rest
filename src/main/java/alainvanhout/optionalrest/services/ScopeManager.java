@@ -40,7 +40,7 @@ public class ScopeManager {
     @PostConstruct
     public void setup() {
         for (ParameterMapperProvider parameterMapperProvider : parameterMapperProviders) {
-            parameterMappers.putAll(parameterMapperProvider.getParameterMappers());
+            parameterMappers.putAll(parameterMapperProvider.getCombinedParameterMappers());
         }
 
         for (ScopeFactory factory : factories) {
