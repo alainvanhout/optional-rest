@@ -60,6 +60,9 @@ public class BasicDataInstaller {
 
     private void installTemplates() {
         createTemplate("main", "templates/main.html");
+        createTemplate("person-large", "templates/person-large.html");
+        createTemplate("person-small", "templates/person-small.html");
+        createTemplate("address", "templates/address.html");
     }
 
     private void createTemplate(String main, String resource) {

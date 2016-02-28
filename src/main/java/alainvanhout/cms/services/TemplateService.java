@@ -2,6 +2,7 @@ package alainvanhout.cms.services;
 
 import alainvanhout.demo.Template;
 import alainvanhout.cms.exceptions.TemplateException;
+import alainvanhout.demo.installers.BasicDataInstaller;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.cms.repositories.TemplateRepository;
@@ -13,6 +14,9 @@ public class TemplateService {
 
     @Autowired
     private TemplateRepository templateRepository;
+
+    @Autowired
+    private BasicDataInstaller basicDataInstaller;
 
     public String findBody(String templateId){
         Template template = templateRepository.findOne(templateId);
