@@ -1,7 +1,8 @@
 package alainvanhout.optionalrest.services.mapping;
 
-import alainvanhout.optionalrest.RestResponse;
+import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.Scope;
 
 import java.util.function.Supplier;
@@ -15,7 +16,7 @@ public class ScopeMapping implements Mapping {
     }
 
     @Override
-    public RestResponse call(RestRequest restRequest) {
+    public Response call(RestRequest restRequest) {
         Scope scope = supplier.get();
         return scope.follow(restRequest);
     }

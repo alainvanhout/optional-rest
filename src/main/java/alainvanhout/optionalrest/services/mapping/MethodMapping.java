@@ -1,8 +1,9 @@
 package alainvanhout.optionalrest.services.mapping;
 
 import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.RestResponse;
+import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 
 import java.lang.reflect.InvocationTargetException;
@@ -29,13 +30,13 @@ public class MethodMapping implements Mapping {
     }
 
     @Override
-    public RestResponse call(RestRequest restRequest) {
+    public Response call(RestRequest restRequest) {
         try {
             method.setAccessible(true);
             Object[] params = requestMappers.stream().map(m -> m.apply(restRequest)).toArray();
             Object invoke = method.invoke(container, params);
             if (Void.TYPE.equals(method.getReturnType())) {
-                return (RestResponse) invoke;
+                return (RendererResponse) invoke;
             } else {
                 return processResponse(invoke);
             }
@@ -45,9 +46,9 @@ public class MethodMapping implements Mapping {
         }
     }
 
-    private RestResponse processResponse(Object response) {
-        if (response instanceof RestResponse) {
-            return (RestResponse) response;
+    private Response processResponse(Object response) {
+        if (response instanceof RendererResponse) {
+            return (RendererResponse) response;
         } else {
             for (Map.Entry<Class, Function<Object, Object>> entry : responseTypeMappers.entrySet()) {
                 if (entry.getKey().isAssignableFrom(response.getClass())) {

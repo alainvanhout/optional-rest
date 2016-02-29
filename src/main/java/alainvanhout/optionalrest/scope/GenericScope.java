@@ -1,10 +1,11 @@
 package alainvanhout.optionalrest.scope;
 
+import alainvanhout.optionalrest.response.Response;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.LinkRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.RestResponse;
+import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.request.RestRequest;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.services.mapping.Mapping;
@@ -32,7 +33,7 @@ public class GenericScope implements Scope {
     private Map<String, Scope> relativeScopes = new HashMap<>();
 
     @Override
-    public RestResponse follow(RestRequest restRequest) {
+    public Response follow(RestRequest restRequest) {
         try {
             // always call passing scope
             if (passMappings.contains(restRequest.getMethod())) {
@@ -54,10 +55,10 @@ public class GenericScope implements Scope {
                     if (buildParameters.getAsHtml()) {
                         String json = JsonUtils.definitionToJson(definitionMap);
 
-                        return new RestResponse().renderer(new PreRenderer(json));
+                        return new RendererResponse().renderer(new PreRenderer(json));
                     } else {
                         String json = JsonUtils.definitionToJson(definitionMap);
-                        return new RestResponse().renderer(new StringRenderer(json));
+                        return new RendererResponse().renderer(new StringRenderer(json));
                     }
                 }
                 throw new RestException("No arrival mapping available");
@@ -143,15 +144,15 @@ public class GenericScope implements Scope {
         }
     }
 
-    private RestResponse call(Scope scope, RestRequest restRequest) {
+    private Response call(Scope scope, RestRequest restRequest) {
         return scope.follow(restRequest);
     }
 
-    private RestResponse call(RestMappings mappings, RestRequest restRequest) {
+    private Response call(RestMappings mappings, RestRequest restRequest) {
         return call(mappings.get(restRequest.getMethod()), restRequest);
     }
 
-    private RestResponse call(Mapping mapping, RestRequest restRequest) {
+    private Response call(Mapping mapping, RestRequest restRequest) {
         try {
             return mapping.call(restRequest);
         } catch (RestException e) {

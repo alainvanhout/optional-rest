@@ -1,19 +1,19 @@
 package alainvanhout.optionalrest.scope;
 
-import alainvanhout.optionalrest.RestResponse;
-import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.meta.HttpMethod;
+import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.services.mapping.Mapping;
 
 import java.util.Map;
 
 public interface Scope {
 
-    Map<String,Object> buildDefinitionMap(int deep, BuildParameters params);
+    Map<String, Object> buildDefinitionMap(int deep, BuildParameters params);
 
     ScopeDefinition getDefinition();
 
-    RestResponse follow(RestRequest restRequest);
+    Response follow(RestRequest restRequest);
 
     Scope addPassMapping(Mapping mapping, HttpMethod... methods);
 

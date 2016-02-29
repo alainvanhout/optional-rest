@@ -1,7 +1,8 @@
 package alainvanhout.demo.scopes;
 
+import alainvanhout.optionalrest.response.Response;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
-import alainvanhout.optionalrest.RestResponse;
+import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.annotations.entity.RestEntity;
 import alainvanhout.optionalrest.annotations.resource.RestRelative;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
@@ -26,8 +27,8 @@ public class RootScope implements ScopeContainer{
     private AddressScope addressScope;
 
     @RestEntity
-    private RestResponse arrive(RestRequest restRequest){
-        return new RestResponse().renderer(new StringRenderer("Root"));
+    private Response arrive(RestRequest restRequest){
+        return new RendererResponse().renderer(new StringRenderer("Root"));
     }
 
     @RestEntity

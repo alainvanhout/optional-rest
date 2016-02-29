@@ -1,8 +1,8 @@
 package alainvanhout.optionalrest.services.mapping;
 
 import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.RestResponse;
 import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import alainvanhout.optionalrest.services.ScopeManager;
 
@@ -21,7 +21,7 @@ public class FieldMapping implements Mapping {
     }
 
     @Override
-    public RestResponse call(RestRequest restRequest) {
+    public Response call(RestRequest restRequest) {
         try {
             field.setAccessible(true);
             ScopeContainer target = (ScopeContainer) field.get(container);

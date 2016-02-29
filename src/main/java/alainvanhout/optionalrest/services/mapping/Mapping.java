@@ -1,8 +1,8 @@
 package alainvanhout.optionalrest.services.mapping;
 
-import alainvanhout.optionalrest.RestResponse;
 import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.response.Response;
 
 public interface Mapping {
-    RestResponse call(RestRequest restRequest);
+    Response call(RestRequest restRequest);
 }

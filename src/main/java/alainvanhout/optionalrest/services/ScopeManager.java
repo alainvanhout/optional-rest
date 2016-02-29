@@ -1,7 +1,8 @@
 package alainvanhout.optionalrest.services;
 
-import alainvanhout.optionalrest.RestResponse;
+import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import alainvanhout.optionalrest.services.factories.ResourceScopeFactory;
 import alainvanhout.optionalrest.services.factories.ScopeFactory;
@@ -60,7 +61,7 @@ public class ScopeManager {
         }
     }
 
-    public RestResponse follow(ScopeContainer container, RestRequest restRequest) {
+    public Response follow(ScopeContainer container, RestRequest restRequest) {
         return scopeRegistry.findByContainer(container).follow(restRequest);
     }
 }
