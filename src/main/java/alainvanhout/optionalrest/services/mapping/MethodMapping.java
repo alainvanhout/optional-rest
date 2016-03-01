@@ -1,8 +1,8 @@
 package alainvanhout.optionalrest.services.mapping;
 
 import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class MethodMapping implements Mapping {
+public class MethodMapping extends BasicMapping {
 
     private ScopeContainer container;
     private Method method;

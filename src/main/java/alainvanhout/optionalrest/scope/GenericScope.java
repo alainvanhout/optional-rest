@@ -1,55 +1,55 @@
 package alainvanhout.optionalrest.scope;
 
+import alainvanhout.optionalrest.RestException;
+import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.meta.HttpMethod;
+import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.response.Response;
+import alainvanhout.optionalrest.services.mapping.Mapping;
+import alainvanhout.optionalrest.services.mapping.Mappings;
+import alainvanhout.optionalrest.utils.JsonUtils;
+import alainvanhout.optionalrest.utils.RestUtils;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.LinkRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
-import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.response.RendererResponse;
-import alainvanhout.optionalrest.request.RestRequest;
-import alainvanhout.optionalrest.request.meta.HttpMethod;
-import alainvanhout.optionalrest.services.mapping.Mapping;
-import alainvanhout.optionalrest.services.mapping.RestMappings;
-import alainvanhout.optionalrest.utils.JsonUtils;
-import alainvanhout.optionalrest.utils.RestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static alainvanhout.optionalrest.request.meta.HttpMethod.OPTIONS;
 
 public class GenericScope implements Scope {
 
     private String scopeId;
     private ScopeDefinition definition = new ScopeDefinition();
 
-    private RestMappings passMappings = new RestMappings();
-    private RestMappings arriveMappings = new RestMappings();
-    private RestMappings errorMappings = new RestMappings();
+    private Mappings passMappings = new Mappings();
+    private Mappings arriveMappings = new Mappings();
+    private Mappings errorMappings = new Mappings();
 
     private Scope instanceScope;
     private Map<String, Scope> relativeScopes = new HashMap<>();
 
     @Override
-    public Response follow(RestRequest restRequest) {
+    public Response follow(RestRequest request) {
         try {
             // always call passing scope
-            if (passMappings.contains(restRequest.getMethod())) {
-                call(passMappings, restRequest);
+            Mapping passMapping = passMappings.getMapping(request);
+            if (passMapping != null) {
+                call(passMapping, request);
             }
 
             // arriving at scope
-            if (restRequest.getPath().isDone()) {
-                if (arriveMappings.contains(restRequest.getMethod())) {
-                    return call(arriveMappings, restRequest);
-                } else if (HttpMethod.OPTIONS.equals(restRequest.getMethod())) {
-
-                    int deep = restRequest.getParameters().getIntValue("deep", 1);
+            if (request.getPath().isDone()) {
+                Mapping arriveMapping = arriveMappings.getMapping(request);
+                if (arriveMapping != null) {
+                    return call(arriveMapping, request);
+                } else if (OPTIONS.equals(request.getMethod())) {
+                    int deep = request.getParameters().getIntValue("deep", 1);
                     BuildParameters buildParameters = new BuildParameters()
-                            .includeScopeId(restRequest.getParameters().contains("SCOPE_ID"))
-                            .asHtml(restRequest.getHeaders().contains("accept", "text/html"));
+                            .includeScopeId(request.getParameters().contains("SCOPE_ID"))
+                            .asHtml(request.getHeaders().contains("accept", "text/html"));
                     Map<String, Object> definitionMap = buildDefinitionMap(deep, buildParameters);
 
                     if (buildParameters.getAsHtml()) {
@@ -65,22 +65,23 @@ public class GenericScope implements Scope {
             }
 
             // not yet arrived
-            String step = restRequest.getPath().nextStep();
+            String step = request.getPath().nextStep();
 
             // first check relative scopes
             if (relativeScopes.containsKey(step)) {
-                return call(relativeScopes.get(step), restRequest);
+                return call(relativeScopes.get(step), request);
             }
 
             // and finally check fallback scope
             if (instanceScope != null) {
-                return instanceScope.follow(restRequest);
+                return instanceScope.follow(request);
             }
 
         } catch (Exception e) {
-            if (errorMappings.contains(restRequest.getMethod())) {
-                restRequest.addToContext("exception", e);
-                return call(errorMappings, restRequest);
+            Mapping errorMapping = errorMappings.getMapping(request);
+            if (errorMapping != null) {
+                request.addToContext("exception", e);
+                return call(errorMapping, request);
             }
             throw e;
         }
@@ -94,18 +95,19 @@ public class GenericScope implements Scope {
 
         if (params.getIncludeScopeId()) {
             conditionalAdd(map, "id", scopeId);
-        };
+        }
+        ;
         conditionalAdd(map, "name", definition.getName());
         conditionalAdd(map, "description", definition.getDescription());
         conditionalAdd(map, "type", definition.getType());
 
-        Set<HttpMethod> methods = arriveMappings.supportedMethods();
-        if (methods.size() > 0){
-            methods.add(HttpMethod.OPTIONS);
+        Set<HttpMethod> methods = arriveMappings.supported(HttpMethod.class.getName());
+        if (methods.size() > 0) {
+            methods.add(OPTIONS);
             map.put("methods", methods);
         }
 
-        if (definition.getInternalClass() != null){
+        if (definition.getInternalClass() != null) {
             Map<String, Object> internalMap = new LinkedHashMap<>();
             Field[] fields = definition.getInternalClass().getDeclaredFields();
             for (Field field : fields) {
@@ -125,8 +127,8 @@ public class GenericScope implements Scope {
                 Map<String, Object> relativeMap = new LinkedHashMap<>();
                 for (Map.Entry<String, Scope> entry : relativeScopes.entrySet()) {
                     String key = entry.getKey();
-                    Map<String, Object> value = entry.getValue().buildDefinitionMap(deep - 1 , params);
-                    if (params.getAsHtml()){
+                    Map<String, Object> value = entry.getValue().buildDefinitionMap(deep - 1, params);
+                    if (params.getAsHtml()) {
                         relativeMap.put(new LinkRenderer().href(key + "/?OPTIONS").add(key).render(), value);
                     } else {
                         relativeMap.put(key, value);
@@ -146,10 +148,6 @@ public class GenericScope implements Scope {
 
     private Response call(Scope scope, RestRequest restRequest) {
         return scope.follow(restRequest);
-    }
-
-    private Response call(RestMappings mappings, RestRequest restRequest) {
-        return call(mappings.get(restRequest.getMethod()), restRequest);
     }
 
     private Response call(Mapping mapping, RestRequest restRequest) {
@@ -186,10 +184,9 @@ public class GenericScope implements Scope {
         return addMapping(errorMappings, mapping, methods);
     }
 
-    private GenericScope addMapping(RestMappings mappings, Mapping mapping, HttpMethod... methods) {
-        for (HttpMethod method : methods) {
-            mappings.addMapping(method, mapping);
-        }
+    private GenericScope addMapping(Mappings mappings, Mapping mapping, HttpMethod... methods) {
+        mapping.supportAll(HttpMethod.class.getName(), Arrays.asList(methods));
+        mappings.add(mapping);
         return this;
     }
 

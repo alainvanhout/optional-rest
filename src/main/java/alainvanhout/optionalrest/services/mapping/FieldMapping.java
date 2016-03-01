@@ -8,7 +8,7 @@ import alainvanhout.optionalrest.services.ScopeManager;
 
 import java.lang.reflect.Field;
 
-public class FieldMapping implements Mapping {
+public class FieldMapping extends BasicMapping {
 
     private ScopeManager scopeManager;
     private ScopeContainer container;
