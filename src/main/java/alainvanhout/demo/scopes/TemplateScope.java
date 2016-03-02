@@ -23,6 +23,9 @@ import alainvanhout.optionalrest.utils.JsonUtils;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.context.ContextRenderer;
 import alainvanhout.renderering.renderer.context.SimpleContextRenderer;
+import alainvanhout.renderering.renderer.html.basic.documentbody.DivRenderer;
+import alainvanhout.renderering.renderer.html.basic.documentbody.LinkRenderer;
+import alainvanhout.renderering.renderer.html.basic.documentbody.ParagraphRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.select.OptionRenderer;
 import alainvanhout.renderering.renderer.list.GenericListRenderer;
@@ -32,6 +35,7 @@ import alainvanhout.renderering.renderer.retrieve.TextResourceRenderer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
@@ -51,15 +55,22 @@ public class TemplateScope implements ScopeContainer {
     @Autowired
     private TemplateRepository templateRepository;
 
-    @RestInstance
+    @RestInstance(methods = {HttpMethod.GET, HttpMethod.POST})
     public Renderer idArrive(Request request) {
         String id = request.getPath().getStep();
+        Template template = templateRepository.findByName(id);
+
+        if (HttpMethod.POST.equals(request.getMethod())){
+            Parameters parameters = request.getParameters();
+            template.setBody(parameters.getValue("templateBody"));
+            template.setName(parameters.getValue("templateId"));
+            templateRepository.save(template);
+        }
+        String templateBody = template.getBody();
 
         ContextRenderer form = new SimpleContextRenderer(new TextResourceRenderer("templates/edit-templates.html"));
-        String templateBody = templateRepository.findByName(id).getBody();
-
         ListRenderer renderer = new GenericListRenderer<Template>()
-                .preProcess(t -> new OptionRenderer().add(t.getName()))
+                .preProcess(t -> new OptionRenderer().add(new LinkRenderer().href(t.getName()).add(t.getName())))
                 .addAll(templateRepository.findAll());
 
         if (id != null && StringUtils.isNotBlank(templateBody)) {

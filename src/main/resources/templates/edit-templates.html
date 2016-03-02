@@ -1,12 +1,11 @@
-<form action="" id="templateGet" method="GET">
+<form action="../" id="templateGet" method="GET">
     <p>
-        <select name="templateId" form="templateGet">
+        <select onChange="window.location.href=this.value" >
             {{templateList}}
         </select>
-        <input type="submit" form="templateGet" value="Select">
     </p>
 </form>
-<form action="store" id="templatePost" method="POST">
+<form id="templatePost" method="POST">
     <div>
         Id: <input type="text" name="templateId" form="templatePost" value="{{templateId}}">
     </div>
