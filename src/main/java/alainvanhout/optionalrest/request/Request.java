@@ -1,8 +1,12 @@
 package alainvanhout.optionalrest.request;
 
+import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,6 +25,28 @@ public class Request {
     private String query = "";
     private String queryPath = "";
     private String queryParameters = "";
+
+    private Reader reader;
+
+    public Reader getReader() {
+        return reader;
+    }
+
+    public Request reader(Reader reader) {
+        this.reader = reader;
+        return this;
+    }
+
+    public String bodyAsString(){
+        String body = null;
+        try {
+            body = IOUtils.toString(reader);
+            IOUtils.closeQuietly(reader);
+        } catch (IOException e) {
+            throw new RestException("Encountered error while parsing request body", e);
+        }
+        return body;
+    }
 
     public HttpMethod getMethod() {
         return method;

@@ -20,15 +20,6 @@ public abstract class BasicMapping implements Mapping {
     }
 
     @Override
-    public Mapping support(String key, Object value) {
-        if (!map.containsKey(key)) {
-            map.put(key, new HashSet<>());
-        }
-        map.get(key).add(value);
-        return this;
-    }
-
-    @Override
     public Mapping supportAll(String key, Collection<Object> value) {
         if (!map.containsKey(key)) {
             map.put(key, new HashSet<>());
