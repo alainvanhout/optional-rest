@@ -1,7 +1,7 @@
 package alainvanhout.optionalrest.services.mapping;
 
 import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.ScopeContainer;
@@ -20,9 +20,9 @@ public class MethodMapping extends BasicMapping {
 
     private ScopeContainer container;
     private Method method;
-    private Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers = new HashMap<>();
+    private Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers = new HashMap<>();
     private Map<Class, Function<Object, Object>> responseTypeMappers = new HashMap<>();
-    private List<Function<RestRequest, Object>> requestMappers;
+    private List<Function<Request, Object>> requestMappers;
 
     public MethodMapping(ScopeContainer container, Method method) {
         this.container = container;
@@ -30,10 +30,10 @@ public class MethodMapping extends BasicMapping {
     }
 
     @Override
-    public Response call(RestRequest restRequest) {
+    public Response call(Request request) {
         try {
             method.setAccessible(true);
-            Object[] params = requestMappers.stream().map(m -> m.apply(restRequest)).toArray();
+            Object[] params = requestMappers.stream().map(m -> m.apply(request)).toArray();
             Object invoke = method.invoke(container, params);
             if (Void.TYPE.equals(method.getReturnType())) {
                 return (RendererResponse) invoke;
@@ -59,7 +59,7 @@ public class MethodMapping extends BasicMapping {
         }
     }
 
-    public MethodMapping parameterMappers(Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers) {
+    public MethodMapping parameterMappers(Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers) {
         this.parameterMappers.putAll(parameterMappers);
         formMappers();
         return this;
@@ -68,13 +68,13 @@ public class MethodMapping extends BasicMapping {
     private void formMappers() {
         requestMappers = new ArrayList<>();
         for (Parameter parameter : method.getParameters()) {
-            BiFunction<Parameter, RestRequest, Object> mapper = getMapper(parameter);
+            BiFunction<Parameter, Request, Object> mapper = getMapper(parameter);
             requestMappers.add(r -> mapper.apply(parameter, r));
         }
     }
 
-    private BiFunction<Parameter, RestRequest, Object> getMapper(Parameter parameter) {
-        for (Map.Entry<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> entry : parameterMappers.entrySet()) {
+    private BiFunction<Parameter, Request, Object> getMapper(Parameter parameter) {
+        for (Map.Entry<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> entry : parameterMappers.entrySet()) {
             if (entry.getKey().apply(parameter)) {
                 return entry.getValue();
             }

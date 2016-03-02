@@ -1,6 +1,6 @@
 package alainvanhout.optionalrest.services.mapping.providers;
 
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
@@ -10,25 +10,25 @@ import java.util.function.Function;
 
 public interface ParameterMapperProvider {
 
-    default Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> getCombinedParameterMappers(){
-        Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> combinedMappers = new HashMap<>();
+    default Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> getCombinedParameterMappers(){
+        Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> combinedMappers = new HashMap<>();
 
-        Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> mappers = getParameterMappers();
+        Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> mappers = getParameterMappers();
         combinedMappers.putAll(mappers);
 
-        Map<Class, BiFunction<Parameter, RestRequest, Object>> mappersForClass = getParameterMappersForClass();
-        for (Map.Entry<Class, BiFunction<Parameter, RestRequest, Object>> entry : mappersForClass.entrySet()) {
+        Map<Class, BiFunction<Parameter, Request, Object>> mappersForClass = getParameterMappersForClass();
+        for (Map.Entry<Class, BiFunction<Parameter, Request, Object>> entry : mappersForClass.entrySet()) {
             combinedMappers.put(p -> p.getType().equals(entry.getKey()), entry.getValue());
         }
 
         return combinedMappers;
     }
 
-    default Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> getParameterMappers(){
+    default Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> getParameterMappers(){
         return new HashMap<>();
     }
 
-    default Map<Class, BiFunction<Parameter, RestRequest, Object>> getParameterMappersForClass(){
+    default Map<Class, BiFunction<Parameter, Request, Object>> getParameterMappersForClass(){
         return new HashMap<>();
     }
 }

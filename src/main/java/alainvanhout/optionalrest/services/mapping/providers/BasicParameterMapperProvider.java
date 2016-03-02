@@ -3,7 +3,7 @@ package alainvanhout.optionalrest.services.mapping.providers;
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.Headers;
 import alainvanhout.optionalrest.request.Parameters;
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.services.factories.FromContext;
 import org.springframework.stereotype.Service;
@@ -18,10 +18,10 @@ import java.util.function.Function;
 public class BasicParameterMapperProvider implements ParameterMapperProvider {
 
     @Override
-    public Map<Class, BiFunction<Parameter, RestRequest, Object>> getParameterMappersForClass() {
-        Map<Class, BiFunction<Parameter, RestRequest, Object>> map = new HashMap<>();
+    public Map<Class, BiFunction<Parameter, Request, Object>> getParameterMappersForClass() {
+        Map<Class, BiFunction<Parameter, Request, Object>> map = new HashMap<>();
 
-        map.put(RestRequest.class, (p, r) -> r);
+        map.put(Request.class, (p, r) -> r);
         map.put(HttpMethod.class, (p, r) -> r.getMethod());
         map.put(Headers.class, (p, r) -> r.getHeaders());
         map.put(Parameters.class, (p, r) -> r.getParameters());
@@ -31,8 +31,8 @@ public class BasicParameterMapperProvider implements ParameterMapperProvider {
     }
 
     @Override
-    public Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> getParameterMappers() {
-        Map<Function<Parameter,Boolean>,BiFunction<Parameter,RestRequest,Object>> map = new HashMap<>();
+    public Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> getParameterMappers() {
+        Map<Function<Parameter,Boolean>,BiFunction<Parameter,Request,Object>> map = new HashMap<>();
 
         map.put(p -> p.getAnnotation(FromContext.class)!= null, (p, r) -> {
             FromContext fromContext = p.getAnnotation(FromContext.class);

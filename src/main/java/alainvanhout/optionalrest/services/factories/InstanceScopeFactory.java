@@ -6,7 +6,7 @@ import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.annotations.instance.RestInstance;
 import alainvanhout.optionalrest.annotations.instance.RestInstanceRelative;
 import alainvanhout.optionalrest.annotations.resource.RestError;
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.GenericScope;
 import alainvanhout.optionalrest.scope.Scope;
 import alainvanhout.optionalrest.scope.ScopeContainer;
@@ -33,7 +33,7 @@ public class InstanceScopeFactory implements ScopeFactory {
     private ScopeRegistry scopeRegistry;
 
     @Override
-    public void processContainer(ScopeContainer container, Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers, Map<Class, Function<Object, Object>> responseTypeMappers) {
+    public void processContainer(ScopeContainer container, Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers, Map<Class, Function<Object, Object>> responseTypeMappers) {
         try {
             for (Method method : container.getClass().getDeclaredMethods()) {
                 MethodMapping mapping = new MethodMapping(container, method);

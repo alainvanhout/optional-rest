@@ -1,7 +1,7 @@
 package alainvanhout.optionalrest.services.mapping;
 
 import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 
 import java.util.ArrayList;
@@ -19,9 +19,9 @@ public class Mappings {
         return this;
     }
 
-    public Mapping getMapping(RestRequest restRequest) {
+    public Mapping getMapping(Request request) {
         List<Mapping> matches = list.stream().filter(
-                m -> m.supports(HttpMethod.class.getName(), restRequest.getMethod())
+                m -> m.supports(HttpMethod.class.getName(), request.getMethod())
         ).collect(Collectors.toList());
         if (matches.size() == 0) {
             return null;

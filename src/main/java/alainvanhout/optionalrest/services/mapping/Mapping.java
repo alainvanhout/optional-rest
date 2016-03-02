@@ -1,13 +1,13 @@
 package alainvanhout.optionalrest.services.mapping;
 
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.response.Response;
 
 import java.util.Collection;
 import java.util.Set;
 
 public interface Mapping {
-    Response call(RestRequest restRequest);
+    Response call(Request request);
 
     Set<Object> supported(String key);
 

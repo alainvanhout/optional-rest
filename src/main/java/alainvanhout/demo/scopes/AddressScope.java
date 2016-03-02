@@ -7,7 +7,7 @@ import alainvanhout.optionalrest.annotations.EntityDefinition;
 import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.annotations.resource.RestError;
 import alainvanhout.optionalrest.annotations.resource.RestScope;
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import alainvanhout.optionalrest.utils.JsonUtils;
 import alainvanhout.renderering.renderer.Renderer;
@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 public class AddressScope implements ScopeContainer {
 
     @RestScope
-    public Renderer arrive(RestRequest restRequest) {
-        Person person = restRequest.getFromContext("person");
+    public Renderer arrive(Request request) {
+        Person person = request.getFromContext("person");
         return new PreRenderer(JsonUtils.objectToJson(person.getAddress()));
     }
 

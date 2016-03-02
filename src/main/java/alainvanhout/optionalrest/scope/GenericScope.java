@@ -1,7 +1,7 @@
 package alainvanhout.optionalrest.scope;
 
 import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.response.Response;
@@ -32,7 +32,7 @@ public class GenericScope implements Scope {
     private Map<String, Scope> relativeScopes = new HashMap<>();
 
     @Override
-    public Response follow(RestRequest request) {
+    public Response follow(Request request) {
         try {
             // always call passing scope
             Mapping passMapping = passMappings.getMapping(request);
@@ -146,13 +146,13 @@ public class GenericScope implements Scope {
         }
     }
 
-    private Response call(Scope scope, RestRequest restRequest) {
-        return scope.follow(restRequest);
+    private Response call(Scope scope, Request request) {
+        return scope.follow(request);
     }
 
-    private Response call(Mapping mapping, RestRequest restRequest) {
+    private Response call(Mapping mapping, Request request) {
         try {
-            return mapping.call(restRequest);
+            return mapping.call(request);
         } catch (RestException e) {
             e.add("mapping", mapping);
             throw e;

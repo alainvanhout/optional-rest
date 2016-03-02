@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RestRequest {
+public class Request {
     public static final String PATH_SEPARATOR = "/";
     public static final String PATH_PARAMETERS_SEPARATOR = "?";
     public static final String PARAMETER_SEPARATOR = "&";
@@ -30,12 +30,12 @@ public class RestRequest {
         return path;
     }
 
-    public RestRequest path(Path path) {
+    public Request path(Path path) {
         this.path = path;
         return this;
     }
 
-    public RestRequest method(HttpMethod method) {
+    public Request method(HttpMethod method) {
         this.method = method;
         return this;
     }
@@ -52,7 +52,7 @@ public class RestRequest {
         return parameters;
     }
 
-    public RestRequest parameters(Map<String, String> parameterMap) {
+    public Request parameters(Map<String, String> parameterMap) {
         parameters.add(parameterMap);
         return this;
     }
@@ -61,7 +61,7 @@ public class RestRequest {
         return queryParameters;
     }
 
-    public RestRequest queryParameters(String queryParameters) {
+    public Request queryParameters(String queryParameters) {
         this.queryParameters = queryParameters;
         return this;
     }
@@ -70,7 +70,7 @@ public class RestRequest {
         return queryPath;
     }
 
-    public RestRequest queryPath(String queryPath) {
+    public Request queryPath(String queryPath) {
         this.queryPath = queryPath;
         return this;
     }
@@ -79,7 +79,7 @@ public class RestRequest {
         return query;
     }
 
-    public RestRequest query(String query) {
+    public Request query(String query) {
         this.query = query;
         return this;
     }
@@ -104,20 +104,20 @@ public class RestRequest {
         return getPath().isDone();
     }
 
-    public static RestRequest fromQuery(String query, String root, HttpMethod method) {
+    public static Request fromQuery(String query, String root, HttpMethod method) {
         query = StringUtils.substringAfter(query, root);
 
-        RestRequest restRequest = new RestRequest()
+        Request request = new Request()
                 .query(query)
                 .queryPath(StringUtils.defaultString(StringUtils.substringBefore(query, PATH_PARAMETERS_SEPARATOR)))
                 .queryParameters(StringUtils.defaultString(StringUtils.substringAfter(query, PATH_PARAMETERS_SEPARATOR)));
 
-        restRequest
-                .path(new Path().steps(parsePath(restRequest.getQueryPath())))
-                .parameters(parseParameters(restRequest.getQueryParameters()))
+        request
+                .path(new Path().steps(parsePath(request.getQueryPath())))
+                .parameters(parseParameters(request.getQueryParameters()))
                 .method(method);
 
-        return restRequest;
+        return request;
     }
 
     private static Queue<String> parsePath(String queryPath) {

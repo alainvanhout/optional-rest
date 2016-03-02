@@ -6,7 +6,7 @@ import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.annotations.entity.RestEntity;
 import alainvanhout.optionalrest.annotations.resource.RestRelative;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,14 +27,14 @@ public class RootScope implements ScopeContainer{
     private AddressScope addressScope;
 
     @RestEntity
-    private Response arrive(RestRequest restRequest){
+    private Response arrive(Request request){
         return new RendererResponse().renderer(new StringRenderer("Root"));
     }
 
     @RestEntity
-    private void pass(RestRequest restRequest){
-        if (restRequest.getParameters().contains(OPTIONS)){
-            restRequest.method(HttpMethod.OPTIONS);
+    private void pass(Request request){
+        if (request.getParameters().contains(OPTIONS)){
+            request.method(HttpMethod.OPTIONS);
         }
     }
 }

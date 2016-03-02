@@ -1,22 +1,16 @@
 package alainvanhout.demo.controllers;
 
-import alainvanhout.demo.repositories.PersonRepository;
-import alainvanhout.demo.scopes.PersonScope;
 import alainvanhout.demo.scopes.RootScope;
-import alainvanhout.demo.services.RendererService;
 import alainvanhout.cms.dtos.stored.StoredRoute;
 import alainvanhout.cms.repositories.SwitchRouteRepository;
-import alainvanhout.cms.repositories.TemplateRepository;
-import alainvanhout.cms.services.ContextService;
 import alainvanhout.cms.services.RouteService;
-import alainvanhout.cms.services.SectionService;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.response.ResponseCode;
 import alainvanhout.optionalrest.utils.RequestUtils;
 import alainvanhout.optionalrest.utils.ResponseUtils;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.webpage.WebpageRenderer;
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.services.ScopeManager;
 import alainvanhout.routing.path.Path;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +56,8 @@ public class RootController {
     @RequestMapping(value = "/root/**",
             method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
     public ResponseEntity root(HttpServletRequest httpRequest) {
-        RestRequest restRequest = RequestUtils.toRequest(httpRequest);
-        Response response = scopeManager.follow(rootScope, restRequest).responseCode(ResponseCode.FOUND);
+        Request request = RequestUtils.toRequest(httpRequest);
+        Response response = scopeManager.follow(rootScope, request).responseCode(ResponseCode.FOUND);
         return ResponseUtils.toResponseEntity(response);
     }
 }

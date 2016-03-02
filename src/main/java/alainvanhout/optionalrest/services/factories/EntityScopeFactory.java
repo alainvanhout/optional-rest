@@ -2,7 +2,7 @@ package alainvanhout.optionalrest.services.factories;
 
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.annotations.entity.RestEntity;
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.Scope;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import alainvanhout.optionalrest.services.ScopeRegistry;
@@ -29,7 +29,7 @@ public class EntityScopeFactory implements ScopeFactory {
     private ScopeRegistry scopeRegistry;
 
     @Override
-    public void processContainer(ScopeContainer container, Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers, Map<Class, Function<Object, Object>> responseTypeMappers) {
+    public void processContainer(ScopeContainer container, Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers, Map<Class, Function<Object, Object>> responseTypeMappers) {
         try {
             for (Method method : container.getClass().getDeclaredMethods()) {
                 MethodMapping mapping = new MethodMapping(container, method);

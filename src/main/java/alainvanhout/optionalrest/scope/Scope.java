@@ -1,6 +1,6 @@
 package alainvanhout.optionalrest.scope;
 
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.services.mapping.Mapping;
@@ -13,7 +13,7 @@ public interface Scope {
 
     ScopeDefinition getDefinition();
 
-    Response follow(RestRequest restRequest);
+    Response follow(Request request);
 
     Scope addPassMapping(Mapping mapping, HttpMethod... methods);
 

@@ -1,7 +1,6 @@
 package alainvanhout.optionalrest.services;
 
-import alainvanhout.optionalrest.response.RendererResponse;
-import alainvanhout.optionalrest.request.RestRequest;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import alainvanhout.optionalrest.services.factories.ResourceScopeFactory;
@@ -40,7 +39,7 @@ public class ScopeManager {
     @Autowired
     private Collection<ResponseTypeMapperProvider> responseTypeMapperProviders;
 
-    private Map<Function<Parameter, Boolean>, BiFunction<Parameter, RestRequest, Object>> parameterMappers = new HashMap<>();
+    private Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers = new HashMap<>();
 
     private Map<Class, Function<Object, Object>> responseTypeMappers = new HashMap<>();
 
@@ -61,7 +60,7 @@ public class ScopeManager {
         }
     }
 
-    public Response follow(ScopeContainer container, RestRequest restRequest) {
-        return scopeRegistry.findByContainer(container).follow(restRequest);
+    public Response follow(ScopeContainer container, Request request) {
+        return scopeRegistry.findByContainer(container).follow(request);
     }
 }
