@@ -1,5 +1,6 @@
 package alainvanhout.demo.scopes;
 
+import alainvanhout.optionalrest.annotations.resource.RestScope;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.optionalrest.response.RendererResponse;
@@ -26,12 +27,16 @@ public class RootScope implements ScopeContainer{
     @RestRelative(path = "addresses")
     private AddressScope addressScope;
 
-    @RestEntity
+    @Autowired
+    @RestRelative(path = "templates")
+    private TemplateScope templateScope;
+
+    @RestScope
     private Response arrive(Request request){
         return new RendererResponse().renderer(new StringRenderer("Root"));
     }
 
-    @RestEntity
+    @RestScope
     private void pass(Request request){
         if (request.getParameters().contains(OPTIONS)){
             request.method(HttpMethod.OPTIONS);

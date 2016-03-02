@@ -37,7 +37,7 @@ public class Request {
         return this;
     }
 
-    public String bodyAsString(){
+    public String bodyAsString() {
         String body = null;
         try {
             body = IOUtils.toString(reader);
@@ -118,7 +118,7 @@ public class Request {
         this.context = context;
     }
 
-    public void addToContext(String key, Object value){
+    public void addToContext(String key, Object value) {
         context.put(key, value);
     }
 
@@ -126,7 +126,7 @@ public class Request {
         return (T) context.get(key);
     }
 
-    public boolean done(){
+    public boolean done() {
         return getPath().isDone();
     }
 
