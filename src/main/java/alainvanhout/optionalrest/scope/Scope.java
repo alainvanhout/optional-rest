@@ -3,6 +3,8 @@ package alainvanhout.optionalrest.scope;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.response.Response;
+import alainvanhout.optionalrest.scope.definition.BuildParameters;
+import alainvanhout.optionalrest.scope.definition.ScopeDefinition;
 import alainvanhout.optionalrest.services.mapping.Mapping;
 
 import java.util.Map;
@@ -25,7 +27,7 @@ public interface Scope {
 
     void addRelativeScope(String relative, Scope scope);
 
-    GenericScope scopeId(String scopeId);
+    Scope scopeId(String scopeId);
 
     String getScopeId();
 }

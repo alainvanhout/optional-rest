@@ -3,7 +3,7 @@ package alainvanhout.optionalrest.services.mapping;
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.response.Response;
-import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.ScopeManager;
 
 import java.lang.reflect.Field;

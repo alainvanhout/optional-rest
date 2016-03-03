@@ -2,7 +2,7 @@ package alainvanhout.optionalrest.services;
 
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.response.Response;
-import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.factories.ResourceScopeFactory;
 import alainvanhout.optionalrest.services.factories.ScopeFactory;
 import alainvanhout.optionalrest.services.mapping.providers.ParameterMapperProvider;

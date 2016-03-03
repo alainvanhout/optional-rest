@@ -5,6 +5,8 @@ import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.response.Response;
+import alainvanhout.optionalrest.scope.definition.BuildParameters;
+import alainvanhout.optionalrest.scope.definition.ScopeDefinition;
 import alainvanhout.optionalrest.services.mapping.Mapping;
 import alainvanhout.optionalrest.services.mapping.Mappings;
 import alainvanhout.optionalrest.utils.JsonUtils;
@@ -19,17 +21,15 @@ import java.util.*;
 
 import static alainvanhout.optionalrest.request.meta.HttpMethod.OPTIONS;
 
-public class GenericScope implements Scope {
+public class GenericScope extends BasicScope {
 
-    private String scopeId;
-    private ScopeDefinition definition = new ScopeDefinition();
+    private transient ScopeDefinition definition = new ScopeDefinition();
 
-    private Mappings passMappings = new Mappings();
-    private Mappings arriveMappings = new Mappings();
-    private Mappings errorMappings = new Mappings();
+    private transient Mappings passMappings = new Mappings();
+    private transient Mappings arriveMappings = new Mappings();
+    private transient Mappings errorMappings = new Mappings();
 
-    private Scope instanceScope;
-    private Map<String, Scope> relativeScopes = new HashMap<>();
+    private transient Scope instanceScope;
 
     @Override
     public Response follow(Request request) {
@@ -194,11 +194,6 @@ public class GenericScope implements Scope {
     @Override
     public void setInstanceScope(Scope scope) {
         this.instanceScope = scope;
-    }
-
-    @Override
-    public void addRelativeScope(String relative, Scope scope) {
-        relativeScopes.put(relative, scope);
     }
 
     @Override

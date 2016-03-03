@@ -4,7 +4,7 @@ import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.response.Response;
-import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

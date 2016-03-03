@@ -1,12 +1,6 @@
-package alainvanhout.optionalrest.scope;
+package alainvanhout.optionalrest.scope.definition;
 
-import alainvanhout.optionalrest.utils.RestUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.lang.reflect.Field;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class ScopeDefinition {
     private String name;

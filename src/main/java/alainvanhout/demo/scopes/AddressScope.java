@@ -8,7 +8,7 @@ import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.annotations.resource.RestError;
 import alainvanhout.optionalrest.annotations.resource.RestScope;
 import alainvanhout.optionalrest.request.Request;
-import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.utils.JsonUtils;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;

@@ -2,7 +2,7 @@ package alainvanhout.optionalrest.services;
 
 import alainvanhout.optionalrest.scope.GenericScope;
 import alainvanhout.optionalrest.scope.Scope;
-import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;

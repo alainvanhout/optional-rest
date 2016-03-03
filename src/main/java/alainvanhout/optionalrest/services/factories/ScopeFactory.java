@@ -1,7 +1,7 @@
 package alainvanhout.optionalrest.services.factories;
 
 import alainvanhout.optionalrest.request.Request;
-import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 
 import java.lang.reflect.Parameter;
 import java.util.Map;

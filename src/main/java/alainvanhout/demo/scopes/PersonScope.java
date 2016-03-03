@@ -15,7 +15,7 @@ import alainvanhout.optionalrest.request.Headers;
 import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
-import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.factories.FromContext;
 import alainvanhout.optionalrest.utils.JsonUtils;
 import alainvanhout.renderering.renderer.Renderer;

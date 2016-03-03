@@ -4,7 +4,7 @@ import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.annotations.entity.RestEntity;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.Scope;
-import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.ScopeRegistry;
 import alainvanhout.optionalrest.services.mapping.Mapping;
 import alainvanhout.optionalrest.services.mapping.MethodMapping;

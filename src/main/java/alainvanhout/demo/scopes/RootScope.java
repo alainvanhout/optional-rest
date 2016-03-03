@@ -6,12 +6,10 @@ import alainvanhout.optionalrest.services.factories.Header;
 import alainvanhout.optionalrest.services.factories.Param;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.optionalrest.response.RendererResponse;
-import alainvanhout.optionalrest.annotations.entity.RestEntity;
 import alainvanhout.optionalrest.annotations.resource.RestRelative;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.request.Request;
-import alainvanhout.optionalrest.scope.ScopeContainer;
-import org.springframework.beans.factory.annotation.Autowired;
+import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package alainvanhout.optionalrest.services.factories;
 
-import alainvanhout.optionalrest.scope.ScopeContainer;
+import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import org.apache.commons.lang3.StringUtils;
 
 public class ScopeFactoryUtils {

@@ -1,4 +1,4 @@
-package alainvanhout.optionalrest.scope;
+package alainvanhout.optionalrest.scope.definition;
 
 public class BuildParameters {
     private boolean asHtml;
