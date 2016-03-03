@@ -2,6 +2,8 @@ package alainvanhout.demo.scopes;
 
 import alainvanhout.optionalrest.annotations.resource.RestScope;
 import alainvanhout.optionalrest.response.Response;
+import alainvanhout.optionalrest.services.factories.Header;
+import alainvanhout.optionalrest.services.factories.Param;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.annotations.entity.RestEntity;
@@ -11,6 +13,8 @@ import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class RootScope implements ScopeContainer{
@@ -23,13 +27,14 @@ public class RootScope implements ScopeContainer{
     @RestRelative(path = "person")
     private PersonScope personScopeAlternate;
 
-    @Autowired
     @RestRelative(path = "addresses")
     private AddressScope addressScope;
 
-    @Autowired
     @RestRelative(path = "templates")
     private TemplateScope templateScope;
+
+    @RestRelative(path = "scopes")
+    private ScopeScope scopeScope;
 
     @RestScope
     private Response arrive(Request request){
@@ -37,8 +42,11 @@ public class RootScope implements ScopeContainer{
     }
 
     @RestScope
-    private void pass(Request request){
-        if (request.getParameters().contains(OPTIONS)){
+    private void pass(Request request,
+                      @Param("OPTIONS") List<String> options,
+                      @Header("accept") List<String> accept
+                      ){
+        if (options != null){
             request.method(HttpMethod.OPTIONS);
         }
     }

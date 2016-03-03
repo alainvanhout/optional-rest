@@ -45,7 +45,9 @@ public class Parameters {
     }
 
     public List<String> get(String key){
-        // TODO exception
+        if (!map.containsKey(key)){
+            return null;
+        }
         return map.get(key);
     }
 

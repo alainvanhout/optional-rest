@@ -5,6 +5,7 @@ import alainvanhout.optionalrest.scope.Scope;
 import alainvanhout.optionalrest.scope.ScopeContainer;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -57,5 +58,9 @@ public class ScopeRegistry {
             }
         }
         return scope;
+    }
+
+    public Collection<Scope> findAll() {
+        return scopeIdMap.values();
     }
 }

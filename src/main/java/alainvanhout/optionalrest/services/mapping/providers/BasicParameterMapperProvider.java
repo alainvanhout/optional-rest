@@ -6,6 +6,8 @@ import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.services.factories.FromContext;
+import alainvanhout.optionalrest.services.factories.Header;
+import alainvanhout.optionalrest.services.factories.Param;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Parameter;
@@ -32,9 +34,21 @@ public class BasicParameterMapperProvider implements ParameterMapperProvider {
 
     @Override
     public Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> getParameterMappers() {
-        Map<Function<Parameter,Boolean>,BiFunction<Parameter,Request,Object>> map = new HashMap<>();
+        Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> map = new HashMap<>();
 
-        map.put(p -> p.getAnnotation(FromContext.class)!= null, (p, r) -> {
+        // Parameter
+        map.put(p -> p.getAnnotation(Param.class) != null, (p, r) -> {
+            Param param = p.getAnnotation(Param.class);
+            return r.getParameters().get(param.value());
+
+        });
+        // Header
+        map.put(p -> p.getAnnotation(Header.class) != null, (p, r) -> {
+            Header header = p.getAnnotation(Header.class);
+            return r.getHeaders().get(header.value());
+        });
+        // FromContext
+        map.put(p -> p.getAnnotation(FromContext.class) != null, (p, r) -> {
             FromContext fromContext = p.getAnnotation(FromContext.class);
             return r.getContext().get(fromContext.value());
         });
