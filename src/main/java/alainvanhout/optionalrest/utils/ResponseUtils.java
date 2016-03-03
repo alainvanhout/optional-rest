@@ -13,7 +13,7 @@ public class ResponseUtils {
     public static ResponseEntity toResponseEntity(Response response) {
         if (response.getRedirectUrl() != null){
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", "http://localhost:8080/root/templates/edit-templates");//response.getRedirectUrl()
+            headers.add("Location", response.getRedirectUrl());
             return new ResponseEntity(null, headers, HttpStatus.FOUND);
         }
         try {

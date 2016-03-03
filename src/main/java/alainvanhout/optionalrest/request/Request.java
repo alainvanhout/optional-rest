@@ -132,10 +132,11 @@ public class Request {
     }
 
     public static Request fromQuery(String query, String root, HttpMethod method) {
+        String fullQuery = query;
         query = StringUtils.substringAfter(query, root);
 
         Request request = new Request()
-                .query(query)
+                .query(fullQuery)
                 .queryPath(StringUtils.defaultString(StringUtils.substringBefore(query, PATH_PARAMETERS_SEPARATOR)))
                 .queryParameters(StringUtils.defaultString(StringUtils.substringAfter(query, PATH_PARAMETERS_SEPARATOR)));
 
