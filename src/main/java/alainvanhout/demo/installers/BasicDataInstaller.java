@@ -63,6 +63,7 @@ public class BasicDataInstaller {
         createTemplate("person-large", "templates/person-large.html");
         createTemplate("person-small", "templates/person-small.html");
         createTemplate("address", "templates/address.html");
+        createTemplate("edit-templates", "templates/edit-templates.html");
     }
 
     private void createTemplate(String main, String resource) {

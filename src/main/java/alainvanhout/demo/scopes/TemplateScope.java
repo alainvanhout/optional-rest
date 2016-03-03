@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,13 +63,18 @@ public class TemplateScope implements ScopeContainer {
 
         if (HttpMethod.POST.equals(request.getMethod())){
             Parameters parameters = request.getParameters();
-            template.setBody(parameters.getValue("templateBody"));
+            String templateBody = parameters.getValue("templateBody");
+            templateBody = StringUtils.replace(templateBody, "{textarea", "<textarea");
+            templateBody = StringUtils.replace(templateBody, "textarea}", "textarea>");
+            template.setBody(templateBody);
             template.setName(parameters.getValue("templateId"));
             templateRepository.save(template);
         }
         String templateBody = template.getBody();
+        templateBody = StringUtils.replace(templateBody, "<textarea", "{textarea");
+        templateBody = StringUtils.replace(templateBody, "textarea>", "textarea}");
 
-        ContextRenderer form = new SimpleContextRenderer(new TextResourceRenderer("templates/edit-templates.html"));
+        ContextRenderer form = new SimpleContextRenderer(templateService.findBodyAsRenderer("edit-templates"));
         ListRenderer renderer = new GenericListRenderer<Template>()
                 .preProcess(t -> new OptionRenderer().add(new LinkRenderer().href(t.getName()).add(t.getName())))
                 .addAll(templateRepository.findAll());
