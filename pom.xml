@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>content-driven-rendering</groupId>
-    <artifactId>content-driven-rendering</artifactId>
+    <groupId>alainvanhout</groupId>
+    <artifactId>optional-rest-rendering</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>content-driven-rendering</name>
-    <description>Content-driven rendering</description>
+    <name>optional-rest-rendering</name>
+    <description>optional-rest-rendering</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
