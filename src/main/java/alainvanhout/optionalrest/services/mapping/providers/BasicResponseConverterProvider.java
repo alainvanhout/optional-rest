@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-public class BasicResponseTypeMapperProvider implements ResponseTypeMapperProvider {
+public class BasicResponseConverterProvider implements ResponseConverterProvider {
 
     @Override
-    public Map<Class, Function<Object, Object>> getResponseTypeMappers() {
+    public Map<Class, Function<Object, Object>> getResponseConverters() {
         Map<Class, Function<Object, Object>> map = new HashMap<>();
 
         map.put(Renderer.class, r -> new RendererResponse().renderer((Renderer) r));

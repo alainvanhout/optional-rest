@@ -6,7 +6,7 @@ import alainvanhout.optionalrest.scope.ScopeContainer;
 import alainvanhout.optionalrest.services.factories.ResourceScopeFactory;
 import alainvanhout.optionalrest.services.factories.ScopeFactory;
 import alainvanhout.optionalrest.services.mapping.providers.ParameterMapperProvider;
-import alainvanhout.optionalrest.services.mapping.providers.ResponseTypeMapperProvider;
+import alainvanhout.optionalrest.services.mapping.providers.ResponseConverterProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +37,7 @@ public class ScopeManager {
     private Collection<ParameterMapperProvider> parameterMapperProviders;
 
     @Autowired
-    private Collection<ResponseTypeMapperProvider> responseTypeMapperProviders;
+    private Collection<ResponseConverterProvider> responseConverterProviders;
 
     private Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers = new HashMap<>();
 
@@ -49,8 +49,8 @@ public class ScopeManager {
             parameterMappers.putAll(parameterMapperProvider.getCombinedParameterMappers());
         }
 
-        for (ResponseTypeMapperProvider responseTypeMapperProvider : responseTypeMapperProviders) {
-            responseTypeMappers.putAll(responseTypeMapperProvider.getResponseTypeMappers());
+        for (ResponseConverterProvider responseConverterProvider : responseConverterProviders) {
+            responseTypeMappers.putAll(responseConverterProvider.getResponseConverters());
         }
 
         for (ScopeFactory factory : factories) {
