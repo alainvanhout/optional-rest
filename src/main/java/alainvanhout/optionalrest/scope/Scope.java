@@ -27,6 +27,8 @@ public interface Scope {
 
     void addRelativeScope(String relative, Scope scope);
 
+    Map<String, Scope> getRelativeScopes();
+
     Scope scopeId(String scopeId);
 
     String getScopeId();

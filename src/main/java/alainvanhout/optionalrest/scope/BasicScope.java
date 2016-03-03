@@ -56,6 +56,11 @@ public class BasicScope implements Scope {
     }
 
     @Override
+    public Map<String, Scope> getRelativeScopes() {
+        return relativeScopes;
+    }
+
+    @Override
     public Scope scopeId(String scopeId) {
         this.scopeId = scopeId;
         return this;
