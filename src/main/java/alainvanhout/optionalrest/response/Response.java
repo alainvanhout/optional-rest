@@ -7,5 +7,9 @@ public interface Response {
 
     Response responseCode(int responseCode);
 
+    String getRedirectUrl();
+
+    Response redirectUrl(String redirectUrl);
+
     InputStream toStream();
 }

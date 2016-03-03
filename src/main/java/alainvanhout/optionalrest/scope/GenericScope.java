@@ -69,7 +69,8 @@ public class GenericScope implements Scope {
 
             // first check relative scopes
             if (relativeScopes.containsKey(step)) {
-                return call(relativeScopes.get(step), request);
+                Response call = call(relativeScopes.get(step), request);
+                return call;
             }
 
             // and finally check fallback scope

@@ -61,6 +61,7 @@ public class ScopeManager {
     }
 
     public Response follow(ScopeContainer container, Request request) {
-        return scopeRegistry.findByContainer(container).follow(request);
+        Response follow = scopeRegistry.findByContainer(container).follow(request);
+        return follow;
     }
 }

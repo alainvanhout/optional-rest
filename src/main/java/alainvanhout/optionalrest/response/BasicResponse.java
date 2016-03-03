@@ -6,7 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 public class BasicResponse implements Response {
-    private int responseCode;
+    private int responseCode = ResponseCode.FOUND;
+    private String redirectUrl;
 
     @Override
     public int getResponseCode() {
@@ -16,6 +17,17 @@ public class BasicResponse implements Response {
     @Override
     public Response responseCode(int responseCode) {
         this.responseCode = responseCode;
+        return this;
+    }
+
+    @Override
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    @Override
+    public Response redirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
         return this;
     }
 

@@ -10,6 +10,9 @@ public class RendererResponse extends BasicResponse {
     private Renderer renderer;
 
     public String render() {
+        if (renderer == null){
+            return "";
+        }
         return renderer.render();
     }
 

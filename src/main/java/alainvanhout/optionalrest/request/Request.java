@@ -22,6 +22,7 @@ public class Request {
     private Parameters parameters = new Parameters();
 
     private Map<String, Object> context = new HashMap<>();
+    private String url;
     private String query = "";
     private String queryPath = "";
     private String queryParameters = "";
