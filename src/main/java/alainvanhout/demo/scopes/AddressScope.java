@@ -21,7 +21,7 @@ public class AddressScope implements ScopeContainer {
 
     @RestScope
     public Renderer arrive(Request request) {
-        Person person = request.getFromContext("person");
+        Person person = request.getContext().get("person");
         return new PreRenderer(JsonUtils.objectToJson(person.getAddress()));
     }
 

@@ -1,5 +1,7 @@
 package alainvanhout.optionalrest.request;
 
+import alainvanhout.context.UpdateableContext;
+import alainvanhout.context.impl.MapContext;
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import org.apache.commons.io.IOUtils;
@@ -7,7 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class Request {
@@ -20,14 +25,12 @@ public class Request {
     private HttpMethod method;
     private Headers headers = new Headers();
     private Parameters parameters = new Parameters();
+    private UpdateableContext context = new MapContext();
+    private Reader reader;
 
-    private Map<String, Object> context = new HashMap<>();
-    private String url;
     private String query = "";
     private String queryPath = "";
     private String queryParameters = "";
-
-    private Reader reader;
 
     public Reader getReader() {
         return reader;
@@ -67,14 +70,6 @@ public class Request {
         return this;
     }
 
-    public boolean hasParameter(String key) {
-        return parameters.contains(key);
-    }
-
-    public String getParameter(String key) {
-        return parameters.getValue(key);
-    }
-
     public Parameters getParameters() {
         return parameters;
     }
@@ -111,24 +106,8 @@ public class Request {
         return this;
     }
 
-    public Map<String, Object> getContext() {
+    public UpdateableContext getContext() {
         return context;
-    }
-
-    public void setContext(Map<String, Object> context) {
-        this.context = context;
-    }
-
-    public void addToContext(String key, Object value) {
-        context.put(key, value);
-    }
-
-    public <T> T getFromContext(String key) {
-        return (T) context.get(key);
-    }
-
-    public boolean done() {
-        return getPath().isDone();
     }
 
     public static Request fromQuery(String query, String root, HttpMethod method) {

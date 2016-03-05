@@ -2,9 +2,7 @@ package alainvanhout.context;
 
 public interface Context {
 
-    Object get(String key);
-
-    default <T> T getAs(String key) {
+    default <T> T get(String key) {
         return (T) get(key);
     }
 

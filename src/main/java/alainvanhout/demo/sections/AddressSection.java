@@ -1,15 +1,15 @@
 package alainvanhout.demo.sections;
 
+import alainvanhout.cms.dtos.custom.CustomSection;
+import alainvanhout.cms.services.TemplateService;
+import alainvanhout.context.Context;
 import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.repositories.PersonRepository;
 import alainvanhout.demo.services.RendererService;
-import alainvanhout.context.Context;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
 import alainvanhout.routing.path.Path;
-import alainvanhout.cms.dtos.custom.CustomSection;
-import alainvanhout.cms.services.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +39,7 @@ public class AddressSection implements CustomSection {
     }
 
     private Person retrievePerson(Context context) {
-        String personId = context.getAs("personId");
+        String personId = context.get("personId");
         return personRepository.findOne(BigInteger.valueOf(Long.valueOf(personId)));
     }
 

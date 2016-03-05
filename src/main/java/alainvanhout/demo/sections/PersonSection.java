@@ -42,7 +42,7 @@ public class PersonSection implements CustomSection {
     }
 
     private Person retrievePerson(Context context) {
-        String personId = context.getAs("personId");
+        String personId = context.get("personId");
         return personRepository.findOne(BigInteger.valueOf(Long.valueOf(personId)));
     }
 

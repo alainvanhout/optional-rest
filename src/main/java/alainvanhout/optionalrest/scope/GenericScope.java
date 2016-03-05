@@ -69,8 +69,7 @@ public class GenericScope extends BasicScope {
 
             // first check relative scopes
             if (relativeScopes.containsKey(step)) {
-                Response call = call(relativeScopes.get(step), request);
-                return call;
+                return call(relativeScopes.get(step), request);
             }
 
             // and finally check fallback scope
@@ -81,7 +80,7 @@ public class GenericScope extends BasicScope {
         } catch (Exception e) {
             Mapping errorMapping = errorMappings.getMapping(request);
             if (errorMapping != null) {
-                request.addToContext("exception", e);
+                request.getContext().add("exception", e);
                 return call(errorMapping, request);
             }
             throw e;
@@ -97,7 +96,7 @@ public class GenericScope extends BasicScope {
         if (params.getIncludeScopeId()) {
             conditionalAdd(map, "id", scopeId);
         }
-        ;
+
         conditionalAdd(map, "name", definition.getName());
         conditionalAdd(map, "description", definition.getDescription());
         conditionalAdd(map, "type", definition.getType());

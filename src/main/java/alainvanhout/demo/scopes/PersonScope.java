@@ -69,13 +69,13 @@ public class PersonScope implements ScopeContainer {
             viewCount++;
             String id = request.getPath().getStep();
             Person person = personRepository.findOne(BigInteger.valueOf(Long.valueOf(id)));
-            request.addToContext("person", person);
+            request.getContext().add("person", person);
         }
     }
 
     @RestInstance
     public Renderer idArrive(Request request) {
-        Person person = request.getFromContext("person");
+        Person person = request.getContext().get("person");
         if (request.getHeaders().contains("accept", HTML)) {
             personRenderer.set(person);
             adressRenderer.set(person.getAddress());
