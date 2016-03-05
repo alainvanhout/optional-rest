@@ -17,8 +17,6 @@ import java.util.List;
 @Service
 public class RootScope implements ScopeContainer{
 
-    public static final String OPTIONS = "OPTIONS";
-
     @RestRelative(path = "persons")
     private PersonScope personScope;
 
@@ -39,13 +37,17 @@ public class RootScope implements ScopeContainer{
         return new RendererResponse().renderer(new StringRenderer("Root"));
     }
 
-    @RestScope
+    @RestScope(methods = {HttpMethod.GET, HttpMethod.POST})
     private void pass(Request request,
                       @Param("OPTIONS") List<String> options,
+                      @Param("DELETE") List<String> delete,
                       @Header("accept") List<String> accept
                       ){
         if (options != null){
             request.method(HttpMethod.OPTIONS);
+        }
+        if (delete != null){
+            request.method(HttpMethod.DELETE);
         }
     }
 }
