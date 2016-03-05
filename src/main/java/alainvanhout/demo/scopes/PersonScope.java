@@ -5,6 +5,7 @@ import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.renderers.PersonRenderer;
 import alainvanhout.demo.repositories.PersonRepository;
+import alainvanhout.optionalrest.annotations.Description;
 import alainvanhout.optionalrest.annotations.EntityDefinition;
 import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.annotations.entity.RestEntity;
@@ -35,6 +36,7 @@ import static alainvanhout.optionalrest.request.meta.Header.Accept.Text.HTML;
 @Service
 @ScopeDefinition(name = "person")
 @EntityDefinition(instanceClass = Person.class)
+@Description("People, including address information")
 public class PersonScope implements ScopeContainer {
 
     @RestInstanceRelative(path = "address")

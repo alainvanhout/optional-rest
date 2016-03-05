@@ -1,6 +1,7 @@
 package alainvanhout.optionalrest.services.factories;
 
 import alainvanhout.optionalrest.RestException;
+import alainvanhout.optionalrest.annotations.Description;
 import alainvanhout.optionalrest.annotations.EntityDefinition;
 import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.annotations.instance.RestInstance;
@@ -58,15 +59,25 @@ public class InstanceScopeFactory implements ScopeFactory {
 
         EntityDefinition restEntityDefinition = ReflectionUtils.retrieveAnnotation(container.getClass(), EntityDefinition.class);
         if (restEntityDefinition != null) {
-            String parentName = ScopeFactoryUtils.determineParentName(restEntityDefinition.entityScope(), container);
-            Scope parentScope = produceEntityScope(parentName, container);
-
-            String instanceName = ScopeFactoryUtils.determineInstanceName(restEntityDefinition.instanceScope(), parentName);
-            Scope instanceScope = produceInstanceScope(instanceName);
-            parentScope.setInstanceScope(instanceScope);
-
+            Scope instanceScope = getInstanceScope(container, restEntityDefinition);
             instanceScope.getDefinition().setInternalClass(restEntityDefinition.instanceClass());
         }
+
+        Description annDescription = ReflectionUtils.retrieveAnnotation(container.getClass(), Description.class);
+        if (annDescription != null) {
+            Scope instanceScope = getInstanceScope(container, restEntityDefinition);
+            instanceScope.getDefinition().description(annDescription.value());
+        }
+    }
+
+    public Scope getInstanceScope(ScopeContainer container, EntityDefinition restEntityDefinition) {
+        String parentName = ScopeFactoryUtils.determineParentName(restEntityDefinition.entityScope(), container);
+        Scope parentScope = produceEntityScope(parentName, container);
+
+        String instanceName = ScopeFactoryUtils.determineInstanceName(restEntityDefinition.instanceScope(), parentName);
+        Scope instanceScope = produceInstanceScope(instanceName);
+        parentScope.setInstanceScope(instanceScope);
+        return instanceScope;
     }
 
     private boolean processAccessibleObject(ScopeContainer container, AccessibleObject accessibleObject, Mapping mapping, boolean passing) {
