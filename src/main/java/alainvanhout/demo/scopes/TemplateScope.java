@@ -13,6 +13,7 @@ import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
+import alainvanhout.optionalrest.services.factories.Step;
 import alainvanhout.optionalrest.utils.JsonUtils;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.context.ContextRenderer;
@@ -36,8 +37,7 @@ public class TemplateScope implements ScopeContainer {
     private TemplateRepository templateRepository;
 
     @RestInstance(methods = {HttpMethod.POST})
-    public Response idArrivePost(Request request) {
-        String id = request.getPath().getStep();
+    public Response idArrivePost(Request request, @Step String id) {
         Template template = templateRepository.findByName(id);
 
         Parameters parameters = request.getParameters();
@@ -53,17 +53,14 @@ public class TemplateScope implements ScopeContainer {
     }
 
     @RestInstance(methods = {HttpMethod.DELETE})
-    public Response idArriveDelete(Request request) {
-        String id = request.getPath().getStep();
+    public Response idArriveDelete(Request request, @Step String id) {
         Template template = templateRepository.findByName(id);
         templateRepository.delete(template);
-
         return new RendererResponse().redirectUrl(request.getQuery() + "?edit");
     }
 
     @RestInstance(methods = {HttpMethod.GET})
-    public Renderer idArrive(Request request) {
-        String id = request.getPath().getStep();
+    public Renderer idArrive(Request request, @Step String id) {
         Template template = templateRepository.findByName(id);
 
         String templateBody = template.getBody();

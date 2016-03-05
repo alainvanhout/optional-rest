@@ -8,6 +8,7 @@ import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.services.factories.FromContext;
 import alainvanhout.optionalrest.services.factories.Header;
 import alainvanhout.optionalrest.services.factories.Param;
+import alainvanhout.optionalrest.services.factories.Step;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Parameter;
@@ -52,6 +53,8 @@ public class BasicParameterMapperProvider implements ParameterMapperProvider {
             FromContext fromContext = p.getAnnotation(FromContext.class);
             return r.getContext().get(fromContext.value());
         });
+        // request path step
+        map.put(p -> p.getAnnotation(Step.class) != null, (p, r) -> r.getPath().getStep());
 
         return map;
     }

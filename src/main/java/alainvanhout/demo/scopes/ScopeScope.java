@@ -10,6 +10,7 @@ import alainvanhout.optionalrest.scope.Scope;
 import alainvanhout.optionalrest.scope.ScopeDto;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.ScopeRegistry;
+import alainvanhout.optionalrest.services.factories.Step;
 import alainvanhout.optionalrest.utils.JsonUtils;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.LinkRenderer;
@@ -31,9 +32,8 @@ public class ScopeScope implements ScopeContainer {
     private ScopeRegistry scopeRegistry;
 
     @RestInstance
-    public Renderer instance(Request request) {
-        String step = request.getPath().getStep();
-        Scope scope = scopeRegistry.findByName(step);
+    public Renderer instance(Request request, @Step String id) {
+        Scope scope = scopeRegistry.findByName(id);
         return new PreRenderer(JsonUtils.objectToUnescapedJson(toDto(scope)));
     }
 
@@ -46,12 +46,11 @@ public class ScopeScope implements ScopeContainer {
 
     public ScopeDto toDto(Scope scope) {
         Map<String, String> relativeScopes = scope.getRelativeScopes().entrySet().stream()
-                .collect(Collectors.toMap(e -> e.getKey(), e -> toLink(e.getValue())));
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> toLink(e.getValue())));
 
-        ScopeDto dto = new ScopeDto()
+        return new ScopeDto()
                 .id(toLink(scope))
                 .relative(relativeScopes);
-        return dto;
     }
 
     public String toLink(Scope scope) {
