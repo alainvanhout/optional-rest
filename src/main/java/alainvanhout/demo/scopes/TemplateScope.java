@@ -20,7 +20,6 @@ import alainvanhout.renderering.renderer.context.SimpleContextRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.select.OptionRenderer;
 import alainvanhout.renderering.renderer.list.GenericListRenderer;
-import alainvanhout.renderering.renderer.list.ListRenderer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,13 +42,14 @@ public class TemplateScope implements ScopeContainer {
 
         Parameters parameters = request.getParameters();
         String templateBody = parameters.getValue("templateBody");
-        templateBody = StringUtils.replace(templateBody, "{textarea", "<textarea");
-        templateBody = StringUtils.replace(templateBody, "textarea}", "textarea>");
+        templateBody = decodeElement(templateBody, "textarea");
+        templateBody = decodeElement(templateBody, "pre");
+
         template.setBody(templateBody);
         template.setName(parameters.getValue("templateId"));
         templateRepository.save(template);
 
-        return new RendererResponse().redirectUrl(request.getQuery());
+        return new RendererResponse().redirectUrl(request.getQuery() + "?edit");
     }
 
     @RestInstance(methods = {HttpMethod.GET})
@@ -58,36 +58,57 @@ public class TemplateScope implements ScopeContainer {
         Template template = templateRepository.findByName(id);
 
         String templateBody = template.getBody();
-        templateBody = StringUtils.replace(templateBody, "<textarea", "{textarea");
-        templateBody = StringUtils.replace(templateBody, "textarea>", "textarea}");
+        templateBody = encodeElement(templateBody, "textarea");
+        templateBody = encodeElement(templateBody, "pre");
 
-        ContextRenderer form = new SimpleContextRenderer(templateService.findBodyAsRenderer("edit-templates"));
-        ListRenderer renderer = new GenericListRenderer<Template>()
+        ContextRenderer form;
+        boolean editing = request.getParameters().contains("edit");
+        if (editing){
+            form = new SimpleContextRenderer(templateService.findBodyAsRenderer("template-edit"));
+        } else {
+            form = new SimpleContextRenderer(templateService.findBodyAsRenderer("template"));
+        }
+
+        form.set("templateId", id);
+        form.set("templateBody", templateBody);
+        form.set("template:template-list", templateListRenderer(id, editing ? "edit" : "" ));
+
+        return form;
+    }
+
+    public Renderer templateListRenderer(String id, String parameters) {
+        ContextRenderer templateListRenderer = new SimpleContextRenderer(templateService.findBodyAsRenderer("template-list"));
+        Renderer renderer = new GenericListRenderer<Template>()
                 .preProcess(t -> {
-                            OptionRenderer option = new OptionRenderer();
-                            if (t.getName().equals(id)){
-                                option.attribute("selected", "selected");
-                            }
-                            return option.add(t.getName());
+                    OptionRenderer option = new OptionRenderer();
+                    if (t.getName().equals(id)) {
+                        option.attribute("selected", "selected");
+                    }
+                    return option.add(t.getName());
                         }
                 )
                 .addAll(templateRepository.findAll());
-
-        if (id != null && StringUtils.isNotBlank(templateBody)) {
-            form.set("templateId", id);
-            form.set("templateBody", templateBody);
-            form.set("templateList", renderer);
-        } else {
-            form.set("templateId", "");
-            form.set("templateBody", "");
-            form.set("templateList", renderer);
-        }
-
-        return form;
+        templateListRenderer.set("templateList", renderer);
+        templateListRenderer.set("parameters", parameters);
+        return templateListRenderer;
     }
 
     @RestEntity
     public Renderer arrive(Request request) {
         return new PreRenderer(JsonUtils.objectToJson(templateRepository.findAll()));
+    }
+
+    public String encodeElement(String templateBody, String element) {
+        templateBody = StringUtils.replace(templateBody, "<" + element, "{" + element);
+        templateBody = StringUtils.replace(templateBody, "</" + element, "{/" + element);
+        templateBody = StringUtils.replace(templateBody, element + ">", element + "}");
+        return templateBody;
+    }
+
+    public String decodeElement(String templateBody, String element) {
+        templateBody = StringUtils.replace(templateBody, "{" + element, "<"+ element);
+        templateBody = StringUtils.replace(templateBody, "{/" + element, "</" + element);
+        templateBody = StringUtils.replace(templateBody, element + "}", element + ">");
+        return templateBody;
     }
 }

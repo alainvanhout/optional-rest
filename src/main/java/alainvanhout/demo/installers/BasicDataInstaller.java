@@ -59,15 +59,19 @@ public class BasicDataInstaller {
     }
 
     private void installTemplates() {
-        createTemplate("main", "templates/main.html");
-        createTemplate("person-large", "templates/person-large.html");
-        createTemplate("person-small", "templates/person-small.html");
-        createTemplate("address", "templates/address.html");
-        createTemplate("edit-templates", "templates/edit-templates.html");
+        createTemplate("main", "templates/main.html", false);
+        // templates
+        createTemplate("template", "templates/templates/template.html", true);
+        createTemplate("template-list", "templates/templates/template-list.html", true);
+        createTemplate("template-edit", "templates/templates/template-edit.html", true);
+        // persons
+        createTemplate("person-large", "templates/persons/person-large.html", false);
+        createTemplate("person-small", "templates/persons/person-small.html", false);
+        createTemplate("address", "templates/persons/address.html", false);
     }
 
-    private void createTemplate(String main, String resource) {
-        if (!templateRepository.exists(main)) {
+    private void createTemplate(String main, String resource, boolean always) {
+        if (!templateRepository.exists(main) || always) {
             templateRepository.save(new Template(main, new TextResourceRenderer(resource).render()));
         }
     }

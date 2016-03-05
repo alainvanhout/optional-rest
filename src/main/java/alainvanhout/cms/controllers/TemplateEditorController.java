@@ -66,7 +66,7 @@ public class TemplateEditorController {
     }
 
     public Renderer composeForm(String templateId) {
-        ContextRenderer form = new SimpleContextRenderer(new TextResourceRenderer("templates/edit-templates.html"));
+        ContextRenderer form = new SimpleContextRenderer(new TextResourceRenderer("templates/templates/template.html"));
         String templateBody = templateRepository.findByName(templateId).getBody();
 
         ListRenderer renderer = new GenericListRenderer<Template>()
