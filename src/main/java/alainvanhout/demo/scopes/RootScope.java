@@ -33,14 +33,12 @@ public class RootScope implements ScopeContainer {
     @RestRelative(path = "scopes")
     private ScopeScope scopeScope;
 
-    @RestScope(contentType = Mime.TEXT_HTML)
+    @RestScope(contentType = Mime.TEXT_HTML, accept = {Mime.APPLICATION_JSON, Mime.TEXT_HTML})
     private Response arrive(Request request) {
         return new RendererResponse().renderer(new StringRenderer("Root"));
     }
 
-    @RestScope(methods = {HttpMethod.GET, HttpMethod.POST},
-            accept = Mime.APPLICATION_JSON
-    )
+    @RestScope(methods = {HttpMethod.GET, HttpMethod.POST})
     private void pass(Request request,
                       @Param("OPTIONS") List<String> options,
                       @Param("DELETE") List<String> delete,

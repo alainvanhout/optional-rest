@@ -2,7 +2,6 @@ package alainvanhout.optionalrest.scope;
 
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.Request;
-import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.definition.BuildParameters;
@@ -19,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import static alainvanhout.optionalrest.request.meta.HttpMethod.OPTIONS;
 
@@ -56,7 +54,6 @@ public class GenericScope extends BasicScope {
 
                     if (buildParameters.getAsHtml()) {
                         String json = JsonUtils.definitionToJson(definitionMap);
-
                         return new RendererResponse().renderer(new PreRenderer(json));
                     } else {
                         String json = JsonUtils.definitionToJson(definitionMap);
@@ -103,11 +100,18 @@ public class GenericScope extends BasicScope {
         conditionalAdd(map, "description", definition.getDescription());
         conditionalAdd(map, "type", definition.getType());
 
-        Set<HttpMethod> methods = arriveMappings.supportedMethods();
-        if (methods.size() > 0) {
-            methods.add(OPTIONS);
-            map.put("methods", methods);
+        Supported supported = arriveMappings.supported();
+        if (supported.getMethods().size() > 0) {
+            supported.getMethods().add(OPTIONS);
+            map.put("methods", supported.getMethods());
         }
+        if (supported.getAccept().size() > 0) {
+            map.put("accept", supported.getAccept());
+        }
+        if (supported.getContentType().size() > 0) {
+            map.put("contentType", supported.getContentType());
+        }
+
 
         if (definition.getInternalClass() != null) {
             Map<String, Object> internalMap = new LinkedHashMap<>();

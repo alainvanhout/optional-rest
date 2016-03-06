@@ -1,6 +1,5 @@
 package alainvanhout.optionalrest.annotations.entity;
 
-import alainvanhout.optionalrest.request.meta.Mime;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 
 import java.lang.annotation.ElementType;
@@ -15,7 +14,7 @@ public @interface RestEntity {
 
     HttpMethod[] methods() default {HttpMethod.GET};
 
-    String[] accept() default {Mime.TEXT_HTML, Mime.APPLICATION_JSON};
+    String[] accept() default {};
 
     String[] contentType() default {};
 }

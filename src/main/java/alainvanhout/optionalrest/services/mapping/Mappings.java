@@ -2,6 +2,7 @@ package alainvanhout.optionalrest.services.mapping;
 
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.Request;
+import alainvanhout.optionalrest.scope.Supported;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,10 +41,12 @@ public class Mappings {
                 || !Collections.disjoint(collection1, collection2);
     }
 
-    public <T> Set<T> supportedMethods() {
-        Set supported = new HashSet<>();
-        for (Mapping mapping : list) {
-            supported.addAll(mapping.getSupported().getMethods());
+    public Supported supported() {
+        Supported supported = new Supported();
+        for (Mapping mapping : this.list) {
+            supported.getMethods().addAll(mapping.getSupported().getMethods());
+            supported.getAccept().addAll(mapping.getSupported().getAccept());
+            supported.getContentType().addAll(mapping.getSupported().getContentType());
         }
         return supported;
     }

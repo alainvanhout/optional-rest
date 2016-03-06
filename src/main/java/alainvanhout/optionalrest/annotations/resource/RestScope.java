@@ -1,7 +1,6 @@
 package alainvanhout.optionalrest.annotations.resource;
 
 import alainvanhout.optionalrest.request.meta.HttpMethod;
-import alainvanhout.optionalrest.request.meta.Mime;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,7 +15,7 @@ public @interface RestScope {
 
     HttpMethod[] methods() default {HttpMethod.GET};
 
-    String[] accept() default {Mime.TEXT_HTML, Mime.APPLICATION_JSON};
+    String[] accept() default {};
 
     String[] contentType() default {};
 }
