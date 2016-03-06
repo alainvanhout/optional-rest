@@ -17,8 +17,7 @@ public class Mappings {
 
     public Mapping getMapping(Request request) {
         List<Mapping> matches = list.stream().filter(
-                m -> m.getSupported().getMethods().contains(request.getMethod())
-                && overlap(m.getSupported().getAccepts(), request.getHeaders().get("accept"))
+                m -> supports(request, m)
         ).collect(Collectors.toList());
         if (matches.size() == 0) {
             return null;
@@ -29,8 +28,16 @@ public class Mappings {
         return matches.get(0);
     }
 
-    public boolean overlap(Collection<String> accepts, Collection<String> accept) {
-        return !Collections.disjoint(accepts, accept);
+    public boolean supports(Request request, Mapping m) {
+        return m.getSupported().getMethods().contains(request.getMethod())
+                && overlap(m.getSupported().getAccept(), request.getHeaders().get("accept"))
+                && overlap(m.getSupported().getContentType(), request.getHeaders().get("content-type"));
+    }
+
+    public boolean overlap(Collection<String> collection1, Collection<String> collection2) {
+        return collection1 == null || collection2 == null
+                || collection1.isEmpty() || collection2.isEmpty()
+                || !Collections.disjoint(collection1, collection2);
     }
 
     public <T> Set<T> supportedMethods() {

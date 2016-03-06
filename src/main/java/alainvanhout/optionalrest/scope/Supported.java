@@ -1,38 +1,53 @@
 package alainvanhout.optionalrest.scope;
 
 import alainvanhout.optionalrest.request.meta.HttpMethod;
-import com.sun.xml.internal.fastinfoset.util.StringArray;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Supported {
-    private Set<HttpMethod> methods =  new HashSet<>();
-    private Set<String> accepts = new HashSet<>();
+    private Set<HttpMethod> methods = new HashSet<>();
+    private Set<String> accept = new HashSet<>();
+    private Set<String> contentType = new HashSet<>();
 
     public Set<HttpMethod> getMethods() {
         return methods;
     }
 
-    public Supported methods (Collection<HttpMethod> methods){
+    public Supported methods(Collection<HttpMethod> methods) {
         this.methods.addAll(methods);
-        return  this;
-    }
-
-
-    public Supported methods (HttpMethod[] methods){
-        return methods(Arrays.asList(methods));
-    }
-
-    public Set<String> getAccepts() {
-        return this.accepts;
-    }
-
-    public Supported accepts(Collection<String> accepts) {
-        this.accepts.addAll(accepts);
         return this;
     }
 
-    public Supported accepts(String[] accepts) {
-        return accepts(Arrays.asList(accepts));
+    public Supported methods(HttpMethod[] methods) {
+        return methods(Arrays.asList(methods));
+    }
+
+    public Set<String> getAccept() {
+        return this.accept;
+    }
+
+    public Supported accept(Collection<String> accepts) {
+        this.accept.addAll(accepts);
+        return this;
+    }
+
+    public Supported accept(String[] accepts) {
+        return accept(Arrays.asList(accepts));
+    }
+
+    public Set<String> getContentType() {
+        return this.contentType;
+    }
+
+    public Supported contentType(Collection<String> contentType) {
+        this.contentType.addAll(contentType);
+        return this;
+    }
+
+    public Supported contentType(String[] contentType) {
+        return contentType(Arrays.asList(contentType));
     }
 }

@@ -1,7 +1,6 @@
 package alainvanhout.optionalrest.scope;
 
 import alainvanhout.optionalrest.request.Request;
-import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.definition.BuildParameters;
 import alainvanhout.optionalrest.scope.definition.ScopeDefinition;
@@ -31,17 +30,17 @@ public class BasicScope implements Scope {
     }
 
     @Override
-    public Scope addPassMapping(Mapping mapping, Supported supported) {
+    public Scope addPassMapping(Mapping mapping) {
         return null;
     }
 
     @Override
-    public Scope addArriveMapping(Mapping mapping, Supported supported) {
+    public Scope addArriveMapping(Mapping mapping) {
         return null;
     }
 
     @Override
-    public Scope addErrorMapping(Mapping mapping, Supported supported) {
+    public Scope addErrorMapping(Mapping mapping) {
         return null;
     }
 

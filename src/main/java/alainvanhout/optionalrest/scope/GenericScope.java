@@ -17,7 +17,9 @@ import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static alainvanhout.optionalrest.request.meta.HttpMethod.OPTIONS;
 
@@ -170,22 +172,21 @@ public class GenericScope extends BasicScope {
     }
 
     @Override
-    public GenericScope addPassMapping(Mapping mapping, Supported supported) {
-        return addMapping(passMappings, mapping, supported);
+    public GenericScope addPassMapping(Mapping mapping) {
+        return addMapping(passMappings, mapping);
     }
 
     @Override
-    public GenericScope addArriveMapping(Mapping mapping, Supported supported) {
-        return addMapping(arriveMappings, mapping, supported);
+    public GenericScope addArriveMapping(Mapping mapping) {
+        return addMapping(arriveMappings, mapping);
     }
 
     @Override
-    public GenericScope addErrorMapping(Mapping mapping, Supported supported) {
-        return addMapping(errorMappings, mapping, supported);
+    public GenericScope addErrorMapping(Mapping mapping) {
+        return addMapping(errorMappings, mapping);
     }
 
-    private GenericScope addMapping(Mappings mappings, Mapping mapping, Supported supported) {
-        mapping.supported(supported);
+    private GenericScope addMapping(Mappings mappings, Mapping mapping) {
         mappings.add(mapping);
         return this;
     }

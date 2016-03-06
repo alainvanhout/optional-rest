@@ -1,7 +1,6 @@
 package alainvanhout.optionalrest.scope;
 
 import alainvanhout.optionalrest.request.Request;
-import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.definition.BuildParameters;
 import alainvanhout.optionalrest.scope.definition.ScopeDefinition;
@@ -17,11 +16,11 @@ public interface Scope {
 
     Response follow(Request request);
 
-    Scope addPassMapping(Mapping mapping, Supported supported);
+    Scope addPassMapping(Mapping mapping);
 
-    Scope addArriveMapping(Mapping mapping, Supported supported);
+    Scope addArriveMapping(Mapping mapping);
 
-    Scope addErrorMapping(Mapping mapping, Supported supported);
+    Scope addErrorMapping(Mapping mapping);
 
     void setInstanceScope(Scope scope);
 

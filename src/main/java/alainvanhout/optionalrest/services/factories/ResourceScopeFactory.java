@@ -6,7 +6,6 @@ import alainvanhout.optionalrest.annotations.resource.RestRelative;
 import alainvanhout.optionalrest.annotations.resource.RestScope;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.Scope;
-import alainvanhout.optionalrest.scope.Supported;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.ScopeRegistry;
 import alainvanhout.optionalrest.services.mapping.Mapping;
@@ -56,13 +55,14 @@ public class ResourceScopeFactory implements ScopeFactory {
         if (annRestScope != null) {
             String scopeId = ScopeFactoryUtils.determineParentName(annRestScope.scope(), container);
             Scope scope = scopeRegistry.produceScope(scopeId, container);
-            Supported supported = new Supported()
+            mapping.getSupported()
                     .methods(annRestScope.methods())
-                    .accepts(annRestScope.accepts());
+                    .contentType(annRestScope.contentType())
+                    .accept(annRestScope.accept());
             if (passing) {
-                scope.addPassMapping(mapping, supported);
+                scope.addPassMapping(mapping);
             } else {
-                scope.addArriveMapping(mapping, supported);
+                scope.addArriveMapping(mapping);
             }
             return true;
         }
@@ -71,9 +71,9 @@ public class ResourceScopeFactory implements ScopeFactory {
         if (annRestError != null) {
             String scopeId = ScopeFactoryUtils.determineParentName(annRestError.scope(), container);
             Scope scope = scopeRegistry.produceScope(scopeId, container);
-            Supported supported = new Supported()
+            mapping.getSupported()
                     .methods(annRestError.methods());
-            scope.addErrorMapping(mapping, supported);
+            scope.addErrorMapping(mapping);
             return true;
         }
 
@@ -89,13 +89,14 @@ public class ResourceScopeFactory implements ScopeFactory {
 
             // only necessary for Method
             if (accessibleObject instanceof Method) {
-                Supported supported = new Supported()
+                mapping.getSupported()
                         .methods(annRestRelative.methods())
-                        .accepts(annRestRelative.accepts());
+                        .contentType(annRestRelative.contentType())
+                        .accept(annRestRelative.accept());
                 if (passing) {
-                    relativeScope.addPassMapping(mapping, supported);
+                    relativeScope.addPassMapping(mapping);
                 } else {
-                    relativeScope.addArriveMapping(mapping, supported);
+                    relativeScope.addArriveMapping(mapping);
                 }
             }
 

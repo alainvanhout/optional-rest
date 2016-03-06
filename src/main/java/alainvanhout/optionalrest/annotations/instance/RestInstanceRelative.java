@@ -21,5 +21,7 @@ public @interface RestInstanceRelative {
 
     HttpMethod[] methods() default {HttpMethod.GET};
 
-    String[] accepts() default {Mime.TEXT_HTML, Mime.APPLICATION_JSON};
+    String[] accept() default {Mime.TEXT_HTML, Mime.APPLICATION_JSON};
+
+    String[] contentType() default {};
 }
