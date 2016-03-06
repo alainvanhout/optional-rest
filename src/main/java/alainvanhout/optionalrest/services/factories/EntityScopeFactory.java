@@ -4,6 +4,7 @@ import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.annotations.entity.RestEntity;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.Scope;
+import alainvanhout.optionalrest.scope.Supported;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.ScopeRegistry;
 import alainvanhout.optionalrest.services.mapping.Mapping;
@@ -53,10 +54,13 @@ public class EntityScopeFactory implements ScopeFactory {
         if (annRestEntity != null) {
             String scopeId = ScopeFactoryUtils.determineParentName(annRestEntity.scope(), container);
             Scope scope = produceEntityScope(scopeId, container);
+            Supported supported = new Supported()
+                    .methods(annRestEntity.methods())
+                    .accepts(annRestEntity.accepts());
             if (passing) {
-                scope.addPassMapping(mapping, annRestEntity.methods());
+                scope.addPassMapping(mapping, supported);
             } else {
-                scope.addArriveMapping(mapping, annRestEntity.methods());
+                scope.addArriveMapping(mapping, supported);
             }
             return true;
         }

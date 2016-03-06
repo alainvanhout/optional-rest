@@ -1,6 +1,7 @@
 package alainvanhout.demo.scopes;
 
 import alainvanhout.optionalrest.annotations.resource.RestScope;
+import alainvanhout.optionalrest.request.meta.Mime;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.services.factories.Header;
 import alainvanhout.optionalrest.services.factories.Param;
@@ -37,7 +38,7 @@ public class RootScope implements ScopeContainer{
         return new RendererResponse().renderer(new StringRenderer("Root"));
     }
 
-    @RestScope(methods = {HttpMethod.GET, HttpMethod.POST})
+    @RestScope(methods = {HttpMethod.GET, HttpMethod.POST}, accepts = Mime.APPLICATION_JSON)
     private void pass(Request request,
                       @Param("OPTIONS") List<String> options,
                       @Param("DELETE") List<String> delete,

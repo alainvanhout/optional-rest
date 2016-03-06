@@ -10,6 +10,7 @@ import alainvanhout.optionalrest.annotations.resource.RestError;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.GenericScope;
 import alainvanhout.optionalrest.scope.Scope;
+import alainvanhout.optionalrest.scope.Supported;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.ScopeRegistry;
 import alainvanhout.optionalrest.services.mapping.Mapping;
@@ -94,10 +95,13 @@ public class InstanceScopeFactory implements ScopeFactory {
             parentScope.setInstanceScope(instanceScope);
 
             if (accessibleObject instanceof Method) {
+                Supported supported = new Supported()
+                        .methods(annRestInstance.methods())
+                        .accepts(annRestInstance.accepts());
                 if (passing) {
-                    instanceScope.addPassMapping(mapping, annRestInstance.methods());
+                    instanceScope.addPassMapping(mapping, supported);
                 } else {
-                    instanceScope.addArriveMapping(mapping, annRestInstance.methods());
+                    instanceScope.addArriveMapping(mapping, supported);
                 }
             } else {
                 // TODO?
@@ -121,10 +125,13 @@ public class InstanceScopeFactory implements ScopeFactory {
 
             // only necessary for Method
             if (accessibleObject instanceof Method) {
+                Supported supported = new Supported()
+                        .methods(annRestInstanceRelative.methods())
+                        .accepts(annRestInstanceRelative.accepts());
                 if (passing) {
-                    relativeScope.addPassMapping(mapping, annRestInstanceRelative.methods());
+                    relativeScope.addPassMapping(mapping, supported);
                 } else {
-                    relativeScope.addArriveMapping(mapping, annRestInstanceRelative.methods());
+                    relativeScope.addArriveMapping(mapping, supported);
                 }
             }
             return true;
@@ -134,7 +141,8 @@ public class InstanceScopeFactory implements ScopeFactory {
         if (annRestError != null) {
             String scopeId = ScopeFactoryUtils.determineParentName(annRestError.scope(), container);
             Scope scope = scopeRegistry.produceScope(scopeId, container);
-            scope.addErrorMapping(mapping, annRestError.methods());
+            Supported supported = new Supported().methods(annRestError.methods());
+            scope.addErrorMapping(mapping, supported);
             return true;
         }
 

@@ -1,5 +1,6 @@
 package alainvanhout.optionalrest.annotations.instance;
 
+import alainvanhout.optionalrest.request.meta.Mime;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 
 import java.lang.annotation.ElementType;
@@ -19,4 +20,6 @@ public @interface RestInstanceRelative {
     String relativeScope() default "";
 
     HttpMethod[] methods() default {HttpMethod.GET};
+
+    String[] accepts() default {Mime.TEXT_HTML, Mime.APPLICATION_JSON};
 }

@@ -101,7 +101,7 @@ public class GenericScope extends BasicScope {
         conditionalAdd(map, "description", definition.getDescription());
         conditionalAdd(map, "type", definition.getType());
 
-        Set<HttpMethod> methods = arriveMappings.supported(HttpMethod.class.getName());
+        Set<HttpMethod> methods = arriveMappings.supportedMethods();
         if (methods.size() > 0) {
             methods.add(OPTIONS);
             map.put("methods", methods);
@@ -170,22 +170,22 @@ public class GenericScope extends BasicScope {
     }
 
     @Override
-    public GenericScope addPassMapping(Mapping mapping, HttpMethod... methods) {
-        return addMapping(passMappings, mapping, methods);
+    public GenericScope addPassMapping(Mapping mapping, Supported supported) {
+        return addMapping(passMappings, mapping, supported);
     }
 
     @Override
-    public GenericScope addArriveMapping(Mapping mapping, HttpMethod... methods) {
-        return addMapping(arriveMappings, mapping, methods);
+    public GenericScope addArriveMapping(Mapping mapping, Supported supported) {
+        return addMapping(arriveMappings, mapping, supported);
     }
 
     @Override
-    public GenericScope addErrorMapping(Mapping mapping, HttpMethod... methods) {
-        return addMapping(errorMappings, mapping, methods);
+    public GenericScope addErrorMapping(Mapping mapping, Supported supported) {
+        return addMapping(errorMappings, mapping, supported);
     }
 
-    private GenericScope addMapping(Mappings mappings, Mapping mapping, HttpMethod... methods) {
-        mapping.supportAll(HttpMethod.class.getName(), Arrays.asList(methods));
+    private GenericScope addMapping(Mappings mappings, Mapping mapping, Supported supported) {
+        mapping.supported(supported);
         mappings.add(mapping);
         return this;
     }

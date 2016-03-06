@@ -31,17 +31,17 @@ public class BasicScope implements Scope {
     }
 
     @Override
-    public Scope addPassMapping(Mapping mapping, HttpMethod... methods) {
+    public Scope addPassMapping(Mapping mapping, Supported supported) {
         return null;
     }
 
     @Override
-    public Scope addArriveMapping(Mapping mapping, HttpMethod... methods) {
+    public Scope addArriveMapping(Mapping mapping, Supported supported) {
         return null;
     }
 
     @Override
-    public Scope addErrorMapping(Mapping mapping, HttpMethod... methods) {
+    public Scope addErrorMapping(Mapping mapping, Supported supported) {
         return null;
     }
 

@@ -2,12 +2,8 @@ package alainvanhout.optionalrest.services.mapping;
 
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.Request;
-import alainvanhout.optionalrest.request.meta.HttpMethod;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Mappings {
@@ -21,7 +17,8 @@ public class Mappings {
 
     public Mapping getMapping(Request request) {
         List<Mapping> matches = list.stream().filter(
-                m -> m.supports(HttpMethod.class.getName(), request.getMethod())
+                m -> m.getSupported().getMethods().contains(request.getMethod())
+                && overlap(m.getSupported().getAccepts(), request.getHeaders().get("accept"))
         ).collect(Collectors.toList());
         if (matches.size() == 0) {
             return null;
@@ -32,10 +29,14 @@ public class Mappings {
         return matches.get(0);
     }
 
-    public <T> Set<T> supported(String key) {
+    public boolean overlap(Collection<String> accepts, Collection<String> accept) {
+        return !Collections.disjoint(accepts, accept);
+    }
+
+    public <T> Set<T> supportedMethods() {
         Set supported = new HashSet<>();
         for (Mapping mapping : list) {
-            supported.addAll(mapping.supported(key));
+            supported.addAll(mapping.getSupported().getMethods());
         }
         return supported;
     }

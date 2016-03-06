@@ -6,6 +6,7 @@ import alainvanhout.optionalrest.annotations.resource.RestRelative;
 import alainvanhout.optionalrest.annotations.resource.RestScope;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.Scope;
+import alainvanhout.optionalrest.scope.Supported;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.ScopeRegistry;
 import alainvanhout.optionalrest.services.mapping.Mapping;
@@ -55,10 +56,13 @@ public class ResourceScopeFactory implements ScopeFactory {
         if (annRestScope != null) {
             String scopeId = ScopeFactoryUtils.determineParentName(annRestScope.scope(), container);
             Scope scope = scopeRegistry.produceScope(scopeId, container);
+            Supported supported = new Supported()
+                    .methods(annRestScope.methods())
+                    .accepts(annRestScope.accepts());
             if (passing) {
-                scope.addPassMapping(mapping, annRestScope.methods());
+                scope.addPassMapping(mapping, supported);
             } else {
-                scope.addArriveMapping(mapping, annRestScope.methods());
+                scope.addArriveMapping(mapping, supported);
             }
             return true;
         }
@@ -67,7 +71,9 @@ public class ResourceScopeFactory implements ScopeFactory {
         if (annRestError != null) {
             String scopeId = ScopeFactoryUtils.determineParentName(annRestError.scope(), container);
             Scope scope = scopeRegistry.produceScope(scopeId, container);
-            scope.addErrorMapping(mapping, annRestError.methods());
+            Supported supported = new Supported()
+                    .methods(annRestError.methods());
+            scope.addErrorMapping(mapping, supported);
             return true;
         }
 
@@ -83,10 +89,13 @@ public class ResourceScopeFactory implements ScopeFactory {
 
             // only necessary for Method
             if (accessibleObject instanceof Method) {
+                Supported supported = new Supported()
+                        .methods(annRestRelative.methods())
+                        .accepts(annRestRelative.accepts());
                 if (passing) {
-                    relativeScope.addPassMapping(mapping, annRestRelative.methods());
+                    relativeScope.addPassMapping(mapping, supported);
                 } else {
-                    relativeScope.addArriveMapping(mapping, annRestRelative.methods());
+                    relativeScope.addArriveMapping(mapping, supported);
                 }
             }
 

@@ -16,6 +16,7 @@ import alainvanhout.optionalrest.request.Headers;
 import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
+import alainvanhout.optionalrest.request.meta.Mime;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.factories.FromContext;
 import alainvanhout.optionalrest.utils.JsonUtils;
@@ -30,8 +31,6 @@ import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static alainvanhout.optionalrest.request.meta.Header.Accept.Text.HTML;
 
 @Service
 @ScopeDefinition(name = "person")
@@ -78,7 +77,7 @@ public class PersonScope implements ScopeContainer {
     @RestInstance
     public Renderer idArrive(Request request) {
         Person person = request.getContext().get("person");
-        if (request.getHeaders().contains("accept", HTML)) {
+        if (request.getHeaders().contains("accept", Mime.TEXT_HTML)) {
             personRenderer.set(person);
             adressRenderer.set(person.getAddress());
             return personRenderer;

@@ -1,17 +1,16 @@
 package alainvanhout.demo.controllers;
 
-import alainvanhout.demo.scopes.RootScope;
 import alainvanhout.cms.dtos.stored.StoredRoute;
 import alainvanhout.cms.repositories.SwitchRouteRepository;
 import alainvanhout.cms.services.RouteService;
+import alainvanhout.demo.scopes.RootScope;
+import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.response.Response;
-import alainvanhout.optionalrest.response.ResponseCode;
+import alainvanhout.optionalrest.services.ScopeManager;
 import alainvanhout.optionalrest.utils.RequestUtils;
 import alainvanhout.optionalrest.utils.ResponseUtils;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.webpage.WebpageRenderer;
-import alainvanhout.optionalrest.request.Request;
-import alainvanhout.optionalrest.services.ScopeManager;
 import alainvanhout.routing.path.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -54,7 +53,10 @@ public class RootController {
     }
 
     @RequestMapping(value = "/root/**",
-            method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
+            method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS},
+            produces = {"*/*"}
+    )
+
     public ResponseEntity root(HttpServletRequest httpRequest) {
         Request request = RequestUtils.toRequest(httpRequest);
         Response response = scopeManager.follow(rootScope, request);

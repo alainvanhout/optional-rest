@@ -17,11 +17,11 @@ public interface Scope {
 
     Response follow(Request request);
 
-    Scope addPassMapping(Mapping mapping, HttpMethod... methods);
+    Scope addPassMapping(Mapping mapping, Supported supported);
 
-    Scope addArriveMapping(Mapping mapping, HttpMethod... methods);
+    Scope addArriveMapping(Mapping mapping, Supported supported);
 
-    Scope addErrorMapping(Mapping mapping, HttpMethod... methods);
+    Scope addErrorMapping(Mapping mapping, Supported supported);
 
     void setInstanceScope(Scope scope);
 

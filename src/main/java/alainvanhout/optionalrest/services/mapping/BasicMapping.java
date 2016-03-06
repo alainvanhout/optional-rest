@@ -1,30 +1,22 @@
 package alainvanhout.optionalrest.services.mapping;
 
+import alainvanhout.optionalrest.scope.Supported;
+
 import java.util.*;
 
 public abstract class BasicMapping implements Mapping {
 
     private Map<String, Set<Object>> map = new HashMap<>();
+    private Supported supported;
 
     @Override
-    public boolean supports(String key, Object value) {
-        return map.containsKey(key) && map.get(key).contains(value);
+    public Supported getSupported() {
+        return this.supported;
     }
 
     @Override
-    public Set<Object> supported(String key) {
-        if (map.containsKey(key)){
-            return new HashSet<>(map.get(key));
-        }
-        return new HashSet<>();
-    }
-
-    @Override
-    public Mapping supportAll(String key, Collection<Object> value) {
-        if (!map.containsKey(key)) {
-            map.put(key, new HashSet<>());
-        }
-        map.get(key).addAll(value);
+    public Mapping supported(Supported supported) {
+        this.supported = supported;
         return this;
     }
 }
