@@ -1,5 +1,6 @@
 package alainvanhout.optionalrest.services.mapping.providers;
 
+import alainvanhout.optionalrest.response.FileResponse;
 import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.renderering.renderer.Renderer;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
@@ -21,4 +22,6 @@ public class BasicResponseConverterProvider implements ResponseConverterProvider
 
         return map;
     }
+
+
 }

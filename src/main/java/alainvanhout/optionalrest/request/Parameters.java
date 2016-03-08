@@ -3,10 +3,7 @@ package alainvanhout.optionalrest.request;
 import alainvanhout.optionalrest.RestException;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Parameters {
     protected Map<String, List<String>> map = new HashMap<>();
@@ -79,6 +76,10 @@ public class Parameters {
             throw new RestException("More tha one value found for key " + key);
         }
         return values.get(0);
+    }
+
+    public Collection<String> getKeys(){
+        return map.keySet();
     }
 
     protected void addValue(String key, String value) {

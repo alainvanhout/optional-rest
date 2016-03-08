@@ -1,13 +1,13 @@
 package alainvanhout.optionalrest.response;
 
-import alainvanhout.optionalrest.RestException;
+import alainvanhout.optionalrest.request.Headers;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 public class BasicResponse implements Response {
     private int responseCode = ResponseCode.FOUND;
     private String redirectUrl;
+    private Headers headers = new Headers();
 
     @Override
     public int getResponseCode() {
@@ -29,6 +29,11 @@ public class BasicResponse implements Response {
     public Response redirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
         return this;
+    }
+
+    @Override
+    public Headers getHeaders() {
+        return headers;
     }
 
     @Override

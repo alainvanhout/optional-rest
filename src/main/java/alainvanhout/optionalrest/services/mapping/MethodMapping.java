@@ -48,8 +48,8 @@ public class MethodMapping extends BasicMapping {
     }
 
     private Response processResponse(Object response) {
-        if (response instanceof RendererResponse) {
-            return (RendererResponse) response;
+        if (response instanceof Response) {
+            return (Response) response;
         } else {
             for (Map.Entry<Class, Function<Object, Object>> entry : responseTypeMappers.entrySet()) {
                 if (entry.getKey().isAssignableFrom(response.getClass())) {

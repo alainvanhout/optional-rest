@@ -1,5 +1,7 @@
 package alainvanhout.optionalrest.response;
 
+import alainvanhout.optionalrest.request.Headers;
+
 import java.io.InputStream;
 
 public interface Response {
@@ -10,6 +12,8 @@ public interface Response {
     String getRedirectUrl();
 
     Response redirectUrl(String redirectUrl);
+
+    Headers getHeaders();
 
     InputStream toStream();
 }

@@ -17,6 +17,8 @@ import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.request.meta.Mime;
+import alainvanhout.optionalrest.response.FileResponse;
+import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.factories.FromContext;
 import alainvanhout.optionalrest.utils.JsonUtils;
@@ -101,5 +103,10 @@ public class PersonScope implements ScopeContainer {
                 .filter(p -> StringUtils.equals(p.getFirstName(), "Jane"))
                 .collect(Collectors.toList());
         return new PreRenderer(JsonUtils.objectToJson(women));
+    }
+
+    @RestInstanceRelative(path = "image")
+    public Response image() {
+        return new FileResponse().resource("/images/image.jpg");
     }
 }
