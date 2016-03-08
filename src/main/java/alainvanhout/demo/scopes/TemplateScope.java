@@ -10,7 +10,7 @@ import alainvanhout.optionalrest.annotations.instance.RestInstance;
 import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
-import alainvanhout.optionalrest.response.RendererResponse;
+import alainvanhout.optionalrest.response.RedirectResponse;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.factories.Step;
@@ -49,14 +49,14 @@ public class TemplateScope implements ScopeContainer {
         template.setName(parameters.getValue("templateId"));
         templateRepository.save(template);
 
-        return new RendererResponse().redirectUrl(request.getQuery() + "?edit");
+        return new RedirectResponse().url(request.getQuery() + "?edit");
     }
 
     @RestInstance(methods = {HttpMethod.DELETE})
     public Response idArriveDelete(Request request, @Step String id) {
         Template template = templateRepository.findByName(id);
         templateRepository.delete(template);
-        return new RendererResponse().redirectUrl(request.getQuery() + "?edit");
+        return new RedirectResponse().url(request.getQuery() + "?edit");
     }
 
     @RestInstance(methods = {HttpMethod.GET})
@@ -69,7 +69,7 @@ public class TemplateScope implements ScopeContainer {
 
         ContextRenderer form;
         boolean editing = request.getParameters().contains("edit");
-        if (editing){
+        if (editing) {
             form = new SimpleContextRenderer(templateService.findBodyAsRenderer("template-edit"));
         } else {
             form = new SimpleContextRenderer(templateService.findBodyAsRenderer("template"));
@@ -77,7 +77,7 @@ public class TemplateScope implements ScopeContainer {
 
         form.set("templateId", id);
         form.set("templateBody", templateBody);
-        form.set("template:template-list", templateListRenderer(id, editing ? "edit" : "" ));
+        form.set("template:template-list", templateListRenderer(id, editing ? "edit" : ""));
 
         return form;
     }
@@ -86,11 +86,11 @@ public class TemplateScope implements ScopeContainer {
         ContextRenderer templateListRenderer = new SimpleContextRenderer(templateService.findBodyAsRenderer("template-list"));
         Renderer renderer = new GenericListRenderer<Template>()
                 .preProcess(t -> {
-                    OptionRenderer option = new OptionRenderer();
-                    if (t.getName().equals(id)) {
-                        option.attribute("selected", "selected");
-                    }
-                    return option.add(t.getName());
+                            OptionRenderer option = new OptionRenderer();
+                            if (t.getName().equals(id)) {
+                                option.attribute("selected", "selected");
+                            }
+                            return option.add(t.getName());
                         }
                 )
                 .addAll(templateRepository.findAll());
@@ -112,7 +112,7 @@ public class TemplateScope implements ScopeContainer {
     }
 
     public String decodeElement(String templateBody, String element) {
-        templateBody = StringUtils.replace(templateBody, "{" + element, "<"+ element);
+        templateBody = StringUtils.replace(templateBody, "{" + element, "<" + element);
         templateBody = StringUtils.replace(templateBody, "{/" + element, "</" + element);
         templateBody = StringUtils.replace(templateBody, element + "}", element + ">");
         return templateBody;

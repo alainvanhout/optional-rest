@@ -8,25 +8,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ResponseUtils {
 
     public static ResponseEntity toResponseEntity(Response response) {
-        if (response.getRedirectUrl() != null) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", response.getRedirectUrl());
-            return new ResponseEntity(null, headers, HttpStatus.FOUND);
-        }
         try {
-
-            byte[] bytes = IOUtils.toByteArray(response.toStream());
+            byte[] bytes = toBytes(response.toStream());
             HttpHeaders responseHeaders = toHttpHeaders(response.getHeaders());
-
-            ResponseEntity responseEntity = new ResponseEntity(bytes, responseHeaders, HttpStatus.valueOf(response.getResponseCode()));
-            return responseEntity;
+            return new ResponseEntity(bytes, responseHeaders, HttpStatus.valueOf(response.getResponseCode()));
         } catch (IOException e) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public static byte[] toBytes(InputStream inputStream) throws IOException {
+        byte[] bytes = null;
+        if (inputStream != null) {
+            bytes = IOUtils.toByteArray(inputStream);
+        }
+        return bytes;
     }
 
     private static HttpHeaders toHttpHeaders(Headers headers) {

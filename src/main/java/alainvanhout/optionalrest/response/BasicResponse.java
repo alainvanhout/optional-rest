@@ -5,8 +5,7 @@ import alainvanhout.optionalrest.request.Headers;
 import java.io.InputStream;
 
 public class BasicResponse implements Response {
-    private int responseCode = ResponseCode.FOUND;
-    private String redirectUrl;
+    private int responseCode = ResponseCode.OK;
     private Headers headers = new Headers();
 
     @Override
@@ -21,13 +20,9 @@ public class BasicResponse implements Response {
     }
 
     @Override
-    public String getRedirectUrl() {
-        return redirectUrl;
-    }
-
-    @Override
     public Response redirectUrl(String redirectUrl) {
-        this.redirectUrl = redirectUrl;
+        getHeaders().add("Location", redirectUrl);
+        responseCode(ResponseCode.FOUND);
         return this;
     }
 
