@@ -11,14 +11,17 @@ import java.nio.file.Files;
 public class FileResponse extends BasicResponse {
 
     private File file;
+    private boolean senseType = true;
 
     public FileResponse file(File file) {
         this.file = file;
-        try {
-            String fileType = Files.probeContentType(file.toPath());
-            fileType(fileType);
-        } catch (IOException e) {
-            throw new RestException("Encountered error while reading file type of " + file);
+        if (senseType) {
+            try {
+                String fileType = Files.probeContentType(file.toPath());
+                fileType(fileType);
+            } catch (IOException e) {
+                throw new RestException("Encountered error while reading file type of " + file);
+            }
         }
         return this;
     }
@@ -30,7 +33,7 @@ public class FileResponse extends BasicResponse {
     public FileResponse resource(String filename, Class from) {
         try {
             URL resource = from.getResource(filename);
-            if (resource == null){
+            if (resource == null) {
                 throw new RestException("Could not find resource " + filename + " from " + from);
             }
             URI uri = resource.toURI();
@@ -45,8 +48,14 @@ public class FileResponse extends BasicResponse {
         return resource(filename, FileResponse.class);
     }
 
-    public FileResponse fileType(String fileType){
+    public FileResponse fileType(String fileType) {
         getHeaders().add("Content-type", fileType);
+        senseType(false);
+        return this;
+    }
+
+    public FileResponse senseType(boolean senseType) {
+        this.senseType = senseType;
         return this;
     }
 
