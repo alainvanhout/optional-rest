@@ -9,8 +9,6 @@ public interface Response {
 
     Response responseCode(int responseCode);
 
-    Response redirectUrl(String redirectUrl);
-
     Headers getHeaders();
 
     InputStream toStream();

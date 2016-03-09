@@ -13,6 +13,18 @@ public class FileResponse extends BasicResponse {
     private File file;
     private boolean senseType = true;
 
+    public FileResponse() {
+    }
+
+    public FileResponse(File file) {
+        this.file = file;
+    }
+
+    public FileResponse(File file, boolean senseType) {
+        this.file = file;
+        this.senseType = senseType;
+    }
+
     public FileResponse file(File file) {
         this.file = file;
         if (senseType) {
@@ -26,7 +38,7 @@ public class FileResponse extends BasicResponse {
         return this;
     }
 
-    public FileResponse filename(String filename) {
+    public FileResponse file(String filename) {
         return file(new File(filename));
     }
 

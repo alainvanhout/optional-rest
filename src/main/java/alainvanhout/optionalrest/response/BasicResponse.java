@@ -20,13 +20,6 @@ public class BasicResponse implements Response {
     }
 
     @Override
-    public Response redirectUrl(String redirectUrl) {
-        getHeaders().add("Location", redirectUrl);
-        responseCode(ResponseCode.FOUND);
-        return this;
-    }
-
-    @Override
     public Headers getHeaders() {
         return headers;
     }

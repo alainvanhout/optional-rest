@@ -49,14 +49,14 @@ public class TemplateScope implements ScopeContainer {
         template.setName(parameters.getValue("templateId"));
         templateRepository.save(template);
 
-        return new RedirectResponse().url(request.getQuery() + "?edit");
+        return new RedirectResponse(request.getQuery() + "?edit");
     }
 
     @RestInstance(methods = {HttpMethod.DELETE})
     public Response idArriveDelete(Request request, @Step String id) {
         Template template = templateRepository.findByName(id);
         templateRepository.delete(template);
-        return new RedirectResponse().url(request.getQuery() + "?edit");
+        return new RedirectResponse(request.getQuery() + "?edit");
     }
 
     @RestInstance(methods = {HttpMethod.GET})

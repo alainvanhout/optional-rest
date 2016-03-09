@@ -9,6 +9,13 @@ public class RedirectResponse extends BasicResponse {
         return null;
     }
 
+    public RedirectResponse() {
+    }
+
+    public RedirectResponse(String redirectUrl) {
+        url(redirectUrl);
+    }
+
     public RedirectResponse url(String redirectUrl) {
         getHeaders().add("Location", redirectUrl);
         responseCode(ResponseCode.FOUND);
