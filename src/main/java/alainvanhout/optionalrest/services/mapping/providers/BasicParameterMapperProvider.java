@@ -9,8 +9,10 @@ import alainvanhout.optionalrest.services.factories.FromContext;
 import alainvanhout.optionalrest.services.factories.Header;
 import alainvanhout.optionalrest.services.factories.Param;
 import alainvanhout.optionalrest.services.factories.Step;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +57,8 @@ public class BasicParameterMapperProvider implements ParameterMapperProvider {
         });
         // request path step
         map.put(p -> p.getAnnotation(Step.class) != null, (p, r) -> r.getPath().getStep());
+        // body as inputstream
+        map.put(p -> p.getType().isAssignableFrom(InputStream.class), (p, r) -> new ReaderInputStream(r.getReader()));
 
         return map;
     }
