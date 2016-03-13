@@ -45,6 +45,6 @@ public class ScopeDefinition {
 
     @Override
     public String toString() {
-        return ObjectUtils.firstNonNull(name, internalClass).toString();
+        return ObjectUtils.firstNonNull(name, internalClass, "").toString();
     }
 }

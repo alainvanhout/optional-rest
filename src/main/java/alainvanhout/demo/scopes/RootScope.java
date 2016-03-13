@@ -1,7 +1,8 @@
 package alainvanhout.demo.scopes;
 
-import alainvanhout.optionalrest.annotations.resource.RestRelative;
-import alainvanhout.optionalrest.annotations.resource.RestScope;
+import alainvanhout.optionalrest.annotations.Handle;
+import alainvanhout.optionalrest.annotations.Relative;
+import alainvanhout.optionalrest.annotations.Scope;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.request.meta.Mime;
@@ -18,27 +19,28 @@ import java.util.List;
 @Service
 public class RootScope implements ScopeContainer {
 
-    @RestRelative(path = "persons")
+    @Relative(path = "persons")
     private PersonScope personScope;
 
-    @RestRelative(path = "person")
+    @Relative(path = "person")
     private PersonScope personScopeAlternate;
 
-    @RestRelative(path = "addresses")
+    @Relative(path = "addresses")
     private AddressScope addressScope;
 
-    @RestRelative(path = "templates")
+    @Relative(path = "templates")
     private TemplateScope templateScope;
 
-    @RestRelative(path = "scopes")
+    @Relative(path = "scopes")
+    @Handle(contentType = Mime.TEXT_HTML, accept = {Mime.APPLICATION_JSON, Mime.TEXT_HTML})
     private ScopeScope scopeScope;
 
-    @RestScope(contentType = Mime.TEXT_HTML, accept = {Mime.APPLICATION_JSON, Mime.TEXT_HTML})
+    @Handle(contentType = Mime.TEXT_HTML, accept = {Mime.APPLICATION_JSON, Mime.TEXT_ALL})
     private Response arrive(Request request) {
         return new RendererResponse().renderer(new StringRenderer("Root"));
     }
 
-    @RestScope(methods = {HttpMethod.GET, HttpMethod.POST})
+    @Handle
     private void pass(Request request,
                       @Param("OPTIONS") List<String> options,
                       @Param("DELETE") List<String> delete,
@@ -50,5 +52,11 @@ public class RootScope implements ScopeContainer {
         if (delete != null) {
             request.method(HttpMethod.DELETE);
         }
+    }
+
+    @Relative(path = "foo")
+    @Scope("foobar")
+    private String foo(){
+        return "Hello foo";
     }
 }

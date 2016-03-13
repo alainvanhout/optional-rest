@@ -21,11 +21,11 @@ public class ScopeRegistry {
     }
 
     public void add(ScopeContainer container, Scope scope) {
-        add(container.getClass(), scope);
+        scopeContainerMap.put(container.getClass(), scope);
     }
 
     public void add(Class containerClass, Scope scope) {
-        scopeContainerMap.put(containerClass, scope);
+        add(containerClass.getCanonicalName(), scope);
     }
 
     public Scope findByName(String scopeId) {

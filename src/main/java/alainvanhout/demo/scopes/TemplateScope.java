@@ -4,9 +4,9 @@ import alainvanhout.cms.repositories.TemplateRepository;
 import alainvanhout.cms.services.TemplateService;
 import alainvanhout.demo.Template;
 import alainvanhout.optionalrest.annotations.EntityDefinition;
+import alainvanhout.optionalrest.annotations.Handle;
+import alainvanhout.optionalrest.annotations.Instance;
 import alainvanhout.optionalrest.annotations.ScopeDefinition;
-import alainvanhout.optionalrest.annotations.entity.RestEntity;
-import alainvanhout.optionalrest.annotations.instance.RestInstance;
 import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
@@ -36,7 +36,8 @@ public class TemplateScope implements ScopeContainer {
     @Autowired
     private TemplateRepository templateRepository;
 
-    @RestInstance(methods = {HttpMethod.POST})
+    @Instance
+    @Handle(methods = {HttpMethod.POST})
     public Response idArrivePost(Request request, @Step String id) {
         Template template = templateRepository.findByName(id);
 
@@ -52,14 +53,16 @@ public class TemplateScope implements ScopeContainer {
         return new RedirectResponse(request.getQuery() + "?edit");
     }
 
-    @RestInstance(methods = {HttpMethod.DELETE})
+    @Instance
+    @Handle(methods = {HttpMethod.DELETE})
     public Response idArriveDelete(Request request, @Step String id) {
         Template template = templateRepository.findByName(id);
         templateRepository.delete(template);
         return new RedirectResponse(request.getQuery() + "?edit");
     }
 
-    @RestInstance(methods = {HttpMethod.GET})
+    @Instance
+    @Handle(methods = {HttpMethod.GET})
     public Renderer idArrive(Request request, @Step String id) {
         Template template = templateRepository.findByName(id);
 
@@ -99,7 +102,7 @@ public class TemplateScope implements ScopeContainer {
         return templateListRenderer;
     }
 
-    @RestEntity
+    @Handle
     public Renderer arrive(Request request) {
         return new PreRenderer(JsonUtils.objectToJson(templateRepository.findAll()));
     }

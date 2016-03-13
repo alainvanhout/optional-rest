@@ -1,6 +1,8 @@
 package alainvanhout.optionalrest.scope;
 
 import alainvanhout.optionalrest.request.meta.HttpMethod;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,5 +51,10 @@ public class Supported {
 
     public Supported contentType(String[] contentType) {
         return contentType(Arrays.asList(contentType));
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.NO_CLASS_NAME_STYLE);
     }
 }

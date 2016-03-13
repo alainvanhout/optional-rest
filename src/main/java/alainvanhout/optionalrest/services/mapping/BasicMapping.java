@@ -10,4 +10,9 @@ public abstract class BasicMapping implements Mapping {
     public Supported getSupported() {
         return this.supported;
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + getSupported().toString();
+    }
 }

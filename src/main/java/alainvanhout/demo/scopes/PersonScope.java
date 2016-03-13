@@ -5,13 +5,7 @@ import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.renderers.PersonRenderer;
 import alainvanhout.demo.repositories.PersonRepository;
-import alainvanhout.optionalrest.annotations.Description;
-import alainvanhout.optionalrest.annotations.EntityDefinition;
-import alainvanhout.optionalrest.annotations.ScopeDefinition;
-import alainvanhout.optionalrest.annotations.entity.RestEntity;
-import alainvanhout.optionalrest.annotations.instance.RestInstance;
-import alainvanhout.optionalrest.annotations.instance.RestInstanceRelative;
-import alainvanhout.optionalrest.annotations.resource.RestRelative;
+import alainvanhout.optionalrest.annotations.*;
 import alainvanhout.optionalrest.request.Headers;
 import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.Request;
@@ -40,7 +34,8 @@ import java.util.stream.Collectors;
 @Description("People, including address information")
 public class PersonScope implements ScopeContainer {
 
-    @RestInstanceRelative(path = "address")
+    @Instance
+    @Relative(path = "address")
     private AddressScope addressScope;
 
     @Autowired
@@ -61,12 +56,14 @@ public class PersonScope implements ScopeContainer {
         personRenderer.set(adressRenderer);
     }
 
-    @RestInstanceRelative(path = "pets")
+    @Instance
+    @Relative(path = "pets")
     public Renderer foo(Request request, @FromContext("person") Person person) {
         return new PreRenderer(JsonUtils.objectToJson(person.getPets()));
     }
 
-    @RestInstance(methods = {HttpMethod.GET, HttpMethod.OPTIONS})
+    @Instance
+    @Handle(methods = {HttpMethod.GET, HttpMethod.OPTIONS})
     public void id(Request request, HttpMethod method, Headers headers, Parameters parameters) {
         if (!HttpMethod.OPTIONS.equals(method)) {
             viewCount++;
@@ -76,7 +73,7 @@ public class PersonScope implements ScopeContainer {
         }
     }
 
-    @RestInstance
+    @Instance
     public Renderer idArrive(Request request) {
         Person person = request.getContext().get("person");
         if (request.getHeaders().contains("accept", Mime.TEXT_HTML)) {
@@ -87,17 +84,17 @@ public class PersonScope implements ScopeContainer {
         return new PreRenderer(JsonUtils.objectToJson(person));
     }
 
-    @RestRelative(path = "views")
+    @Relative(path = "views")
     private String viewCount(Request request) {
         return "View count:" + viewCount;
     }
 
-    @RestEntity
+    @Handle
     public Renderer arrive(Request request) {
         return new PreRenderer(JsonUtils.objectToJson(personRepository.findAll()));
     }
 
-    @RestRelative(path = "women")
+    @Relative(path = "women")
     public Renderer women(Request request) {
         List<Person> women = personRepository.findAll().stream()
                 .filter(p -> StringUtils.equals(p.getFirstName(), "Jane"))
@@ -105,7 +102,8 @@ public class PersonScope implements ScopeContainer {
         return new PreRenderer(JsonUtils.objectToJson(women));
     }
 
-    @RestInstanceRelative(path = "image")
+    @Instance
+    @Relative(path = "image")
     public Response image() {
         return new FileResponse().resource("/images/image.jpg");
     }

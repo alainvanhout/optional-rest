@@ -202,7 +202,7 @@ public class GenericScope extends BasicScope {
 
     @Override
     public String toString() {
-        return definition.toString();
+        return scopeId;
     }
 
     @Override
