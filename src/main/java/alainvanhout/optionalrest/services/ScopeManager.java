@@ -1,10 +1,8 @@
 package alainvanhout.optionalrest.services;
 
 import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.annotations.Handle;
-import alainvanhout.optionalrest.annotations.Instance;
-import alainvanhout.optionalrest.annotations.Relative;
-import alainvanhout.optionalrest.annotations.RequestHandler;
+import alainvanhout.optionalrest.annotations.*;
+import alainvanhout.optionalrest.annotations.Error;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.Scope;
@@ -67,21 +65,32 @@ public class ScopeManager {
     }
 
     public void processContainer(ScopeContainer container) {
+
+        Entity entity = ReflectionUtils.retrieveAnnotation(container.getClass(), Entity.class);
+        if (entity != null){
+            String scopeId = scopeHelper.retrieveScopeId(container.getClass());
+            if (StringUtils.isBlank(scopeId)) {
+                throw new RestException("Cannot assign entity because no scopeId was found for " + container.getClass());
+            }
+            Scope scope = scopeRegistry.produceScope(scopeId, container);
+            scope.getDefinition().setInternalClass(entity.value());
+        }
+
         try {
             for (Method method : container.getClass().getDeclaredMethods()) {
-                check(method, container);
+                process(method, container);
             }
 
             for (Field field : container.getClass().getDeclaredFields()) {
-                check(field, container);
+                process(field, container);
             }
         } catch (SecurityException e) {
             throw new RestException("Could not process class: " + container.getClass(), e);
         }
     }
 
-    private void check(AccessibleObject accessibleObject, ScopeContainer container) {
-        if (isMarked(accessibleObject)) {
+    private void process(AccessibleObject accessibleObject, ScopeContainer container) {
+        if (isRequestHandler(accessibleObject)) {
             if (checkInstanceRelative(container, accessibleObject)) {
                 return;
             }
@@ -93,6 +102,20 @@ public class ScopeManager {
                 return;
             }
             checkForHandle(accessibleObject, container);
+        }
+        Error error = ReflectionUtils.retrieveAnnotation(accessibleObject, Error.class);
+        if (error != null){
+            String scopeId = scopeHelper.retrieveScopeId(accessibleObject, container.getClass());
+            Scope scope = scopeRegistry.produceScope(scopeId, container);
+            if (accessibleObject instanceof Method) {
+                Method method = (Method) accessibleObject;
+                MethodMapping mapping = new MethodMapping(container, method);
+                scope.addErrorMapping(mapping);
+                // scope helper provides defaults if necessary
+                Handle handle = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Handle.class);
+                scopeHelper.updateSupported(mapping, handle);
+                mapping.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);
+            }
         }
     }
 
@@ -172,7 +195,7 @@ public class ScopeManager {
         return true;
     }
 
-    private boolean isMarked(AccessibleObject accessibleObject) {
+    private boolean isRequestHandler(AccessibleObject accessibleObject) {
         if (ReflectionUtils.retrieveAnnotation(accessibleObject, RequestHandler.class) != null) {
             return true;
         }

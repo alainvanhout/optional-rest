@@ -6,7 +6,7 @@ import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.annotations.EntityDefinition;
 import alainvanhout.optionalrest.annotations.Handle;
 import alainvanhout.optionalrest.annotations.ScopeDefinition;
-import alainvanhout.optionalrest.annotations.RestError;
+import alainvanhout.optionalrest.annotations.Error;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.utils.JsonUtils;
@@ -25,7 +25,7 @@ public class AddressScope implements ScopeContainer {
         return new PreRenderer(JsonUtils.objectToJson(person.getAddress()));
     }
 
-    @RestError
+    @Error
     public String error(RestException exception) {
         return "An address error has occurred > " + exception.getMessage();
     }

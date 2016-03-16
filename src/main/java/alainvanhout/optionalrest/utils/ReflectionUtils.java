@@ -1,8 +1,6 @@
 package alainvanhout.optionalrest.utils;
 
-import alainvanhout.optionalrest.RestException;
-
-import java.lang.reflect.*;
+import java.lang.reflect.AccessibleObject;
 
 public class ReflectionUtils {
     public static <T> T retrieveAnnotation(AccessibleObject parent, Class annotationClass) {
@@ -19,15 +17,5 @@ public class ReflectionUtils {
             return (T) pathAnnotations[0];
         }
         return null;
-    }
-
-    public static String retrieveName(AccessibleObject mappingParent) {
-        if (mappingParent instanceof Member) {
-            return ((Member) mappingParent).getName();
-        } else if (mappingParent instanceof Executable) {
-            return ((Executable) mappingParent).getName();
-        } else {
-            throw new RestException("Cannot retrieve name from mappingParent");
-        }
     }
 }

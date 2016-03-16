@@ -122,7 +122,7 @@ public class GenericScope extends BasicScope {
                     internalMap.put(field.getName(), type);
                 }
             }
-            map.put("internal", internalMap);
+            map.put("fields", internalMap);
         }
 
         if (deep > 0) {
@@ -135,7 +135,7 @@ public class GenericScope extends BasicScope {
                     String key = entry.getKey();
                     Map<String, Object> value = entry.getValue().buildDefinitionMap(deep - 1, params);
                     if (params.getAsHtml()) {
-                        relativeMap.put(new LinkRenderer().href(key + "/?OPTIONS").add(key).render(), value);
+                        relativeMap.put(new LinkRenderer().href(key + "/?" + OPTIONS).add(key).render(), value);
                     } else {
                         relativeMap.put(key, value);
                     }

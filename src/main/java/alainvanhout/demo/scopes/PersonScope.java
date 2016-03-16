@@ -5,7 +5,9 @@ import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.renderers.PersonRenderer;
 import alainvanhout.demo.repositories.PersonRepository;
+import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.annotations.*;
+import alainvanhout.optionalrest.annotations.Error;
 import alainvanhout.optionalrest.request.Headers;
 import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.Request;
@@ -30,7 +32,7 @@ import java.util.stream.Collectors;
 
 @Service
 @ScopeDefinition(name = "person")
-@EntityDefinition(instanceClass = Person.class)
+@Entity(Person.class)
 @Description("People, including address information")
 public class PersonScope implements ScopeContainer {
 
@@ -106,5 +108,10 @@ public class PersonScope implements ScopeContainer {
     @Relative(path = "image")
     public Response image() {
         return new FileResponse().resource("/images/image.jpg");
+    }
+
+    @Error
+    public String error(RestException exception) {
+        return "An Person error has occurred > " + exception.getMessage();
     }
 }
