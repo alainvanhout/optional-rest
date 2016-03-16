@@ -1,6 +1,4 @@
-package alainvanhout.optionalrest.annotations.resource;
-
-import alainvanhout.optionalrest.request.meta.HttpMethod;
+package alainvanhout.optionalrest.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,6 +9,4 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface RestError {
     String scope() default "";
-
-    HttpMethod[] methods() default {HttpMethod.GET};
 }

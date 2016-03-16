@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Marked
+@RequestHandler
 public @interface Handle {
 
     HttpMethod[] methods() default {};

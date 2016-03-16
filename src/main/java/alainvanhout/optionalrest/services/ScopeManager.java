@@ -3,14 +3,12 @@ package alainvanhout.optionalrest.services;
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.annotations.Handle;
 import alainvanhout.optionalrest.annotations.Instance;
-import alainvanhout.optionalrest.annotations.Marked;
 import alainvanhout.optionalrest.annotations.Relative;
+import alainvanhout.optionalrest.annotations.RequestHandler;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.Scope;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
-import alainvanhout.optionalrest.services.factories.ResourceScopeFactory;
-import alainvanhout.optionalrest.services.factories.ScopeFactory;
 import alainvanhout.optionalrest.services.mapping.MethodMapping;
 import alainvanhout.optionalrest.services.mapping.providers.ParameterMapperProvider;
 import alainvanhout.optionalrest.services.mapping.providers.ResponseConverterProvider;
@@ -41,13 +39,7 @@ public class ScopeManager {
     private ScopeRegistry scopeRegistry;
 
     @Autowired
-    private ResourceScopeFactory scopeFactory;
-
-    @Autowired
     private Collection<ScopeContainer> containers;
-
-    @Autowired
-    private Collection<ScopeFactory> factories;
 
     @Autowired
     private Collection<ParameterMapperProvider> parameterMapperProviders;
@@ -181,11 +173,11 @@ public class ScopeManager {
     }
 
     private boolean isMarked(AccessibleObject accessibleObject) {
-        if (ReflectionUtils.retrieveAnnotation(accessibleObject, Marked.class) != null) {
+        if (ReflectionUtils.retrieveAnnotation(accessibleObject, RequestHandler.class) != null) {
             return true;
         }
         for (Annotation annotation : accessibleObject.getAnnotations()) {
-            if (annotation.annotationType().getDeclaredAnnotation(Marked.class) != null) {
+            if (annotation.annotationType().getDeclaredAnnotation(RequestHandler.class) != null) {
                 return true;
             }
         }

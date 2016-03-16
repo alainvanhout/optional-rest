@@ -6,7 +6,7 @@ import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.annotations.EntityDefinition;
 import alainvanhout.optionalrest.annotations.Handle;
 import alainvanhout.optionalrest.annotations.ScopeDefinition;
-import alainvanhout.optionalrest.annotations.resource.RestError;
+import alainvanhout.optionalrest.annotations.RestError;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.utils.JsonUtils;
