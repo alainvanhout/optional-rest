@@ -1,21 +1,23 @@
 package alainvanhout.renderering.renderer.context;
 
-import alainvanhout.context.RendererContext;
+import alainvanhout.context.Context;
+import alainvanhout.context.UpdateableContext;
 import alainvanhout.context.impl.SimpleRendererContext;
 import alainvanhout.renderering.renderer.Renderer;
+import alainvanhout.renderering.renderer.basic.StringRenderer;
 
 
 public class SimpleContextRenderer implements ContextRenderer {
 
     private Renderer body;
-    private RendererContext context;
+    private Context context;
 
     public SimpleContextRenderer(Renderer body) {
         this.body = body;
         this.context = new SimpleRendererContext();
     }
 
-    public SimpleContextRenderer(Renderer body, RendererContext context) {
+    public SimpleContextRenderer(Renderer body, Context context) {
         this.body = body;
         this.context = context;
     }
@@ -31,7 +33,14 @@ public class SimpleContextRenderer implements ContextRenderer {
                 result.append(key);
             } else {
                 if (context.contains(key)) {
-                    result.append(context.getRenderer(key).render());
+                    Object content = context.get(key);
+                    if (content instanceof Renderer){
+                        result.append(((Renderer)content).render());
+                    } else if (content instanceof String){
+                        result.append((String)content);
+                    } else {
+                        throw new RuntimeException("Value is neither a string nor a renderer" + key);
+                    }
                 } else {
                     throw new RuntimeException("Key not set for renderer: " + key);
                 }
@@ -46,12 +55,12 @@ public class SimpleContextRenderer implements ContextRenderer {
 
     @Override
     public Renderer get(String key) {
-        return context.getRenderer(key);
+        return new StringRenderer(context.get(key));
     }
 
     @Override
     public ContextRenderer set(String key, Renderer renderer) {
-        context.add(key, renderer);
+        ((UpdateableContext) context).add(key, renderer);
         return this;
     }
 

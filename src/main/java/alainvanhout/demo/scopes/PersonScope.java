@@ -1,13 +1,14 @@
 package alainvanhout.demo.scopes;
 
 import alainvanhout.cms.services.TemplateService;
+import alainvanhout.context.Context;
+import alainvanhout.context.impl.CompositeContext;
+import alainvanhout.context.services.ContextService;
 import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.renderers.PersonRenderer;
 import alainvanhout.demo.repositories.PersonRepository;
-import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.annotations.*;
-import alainvanhout.optionalrest.annotations.Error;
 import alainvanhout.optionalrest.request.Headers;
 import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.Request;
@@ -46,6 +47,9 @@ public class PersonScope implements ScopeContainer {
     @Autowired
     private TemplateService templateService;
 
+    @Autowired
+    private ContextService contextService;
+
     private PersonRenderer personRenderer;
     private SimpleModelRenderer<Address> adressRenderer;
 
@@ -79,9 +83,11 @@ public class PersonScope implements ScopeContainer {
     public Renderer idArrive(Request request) {
         Person person = request.getContext().get("person");
         if (request.getHeaders().contains("accept", Mime.TEXT_HTML)) {
+            setup();
+            Context context = new CompositeContext().addNamedContexts("label", contextService.get("label"));
             personRenderer.set(person);
             adressRenderer.set(person.getAddress());
-            return personRenderer;
+            return this.personRenderer.set(context);
         }
         return new PreRenderer(JsonUtils.objectToJson(person));
     }
@@ -110,8 +116,8 @@ public class PersonScope implements ScopeContainer {
         return new FileResponse().resource("/images/image.jpg");
     }
 
-    @Error
-    public String error(RestException exception) {
-        return "An Person error has occurred > " + exception.getMessage();
-    }
+//    @Error
+//    public String error(RestException exception) {
+//        return "An Person error has occurred > " + exception.getMessage();
+//    }
 }

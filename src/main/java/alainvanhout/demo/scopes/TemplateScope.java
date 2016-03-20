@@ -36,29 +36,9 @@ public class TemplateScope implements ScopeContainer {
     @Autowired
     private TemplateRepository templateRepository;
 
-    @Instance
-    @Handle(methods = {HttpMethod.POST})
-    public Response idArrivePost(Request request, @Step String id) {
-        Template template = templateRepository.findByName(id);
-
-        Parameters parameters = request.getParameters();
-        String templateBody = parameters.getValue("templateBody");
-        templateBody = decodeElement(templateBody, "textarea");
-        templateBody = decodeElement(templateBody, "pre");
-
-        template.setBody(templateBody);
-        template.setName(parameters.getValue("templateId"));
-        templateRepository.save(template);
-
-        return new RedirectResponse(request.getQuery() + "?edit");
-    }
-
-    @Instance
-    @Handle(methods = {HttpMethod.DELETE})
-    public Response idArriveDelete(Request request, @Step String id) {
-        Template template = templateRepository.findByName(id);
-        templateRepository.delete(template);
-        return new RedirectResponse(request.getQuery() + "?edit");
+    @Handle
+    public Renderer arrive(Request request) {
+        return new PreRenderer(JsonUtils.objectToJson(templateRepository.findAll()));
     }
 
     @Instance
@@ -85,6 +65,31 @@ public class TemplateScope implements ScopeContainer {
         return form;
     }
 
+    @Instance
+    @Handle(methods = {HttpMethod.POST})
+    public Response idArrivePost(Request request, @Step String id) {
+        Template template = templateRepository.findByName(id);
+
+        Parameters parameters = request.getParameters();
+        String templateBody = parameters.getValue("templateBody");
+        templateBody = decodeElement(templateBody, "textarea");
+        templateBody = decodeElement(templateBody, "pre");
+
+        template.setBody(templateBody);
+        template.setName(parameters.getValue("templateId"));
+        templateRepository.save(template);
+
+        return new RedirectResponse(request.getQuery() + "?edit");
+    }
+
+    @Instance
+    @Handle(methods = {HttpMethod.DELETE})
+    public Response idArriveDelete(Request request, @Step String id) {
+        Template template = templateRepository.findByName(id);
+        templateRepository.delete(template);
+        return new RedirectResponse(request.getQuery() + "?edit");
+    }
+
     public Renderer templateListRenderer(String id, String parameters) {
         ContextRenderer templateListRenderer = new SimpleContextRenderer(templateService.findBodyAsRenderer("template-list"));
         Renderer renderer = new GenericListRenderer<Template>()
@@ -100,11 +105,6 @@ public class TemplateScope implements ScopeContainer {
         templateListRenderer.set("templateList", renderer);
         templateListRenderer.set("parameters", parameters);
         return templateListRenderer;
-    }
-
-    @Handle
-    public Renderer arrive(Request request) {
-        return new PreRenderer(JsonUtils.objectToJson(templateRepository.findAll()));
     }
 
     public String encodeElement(String templateBody, String element) {

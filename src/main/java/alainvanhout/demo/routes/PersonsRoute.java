@@ -1,7 +1,7 @@
 package alainvanhout.demo.routes;
 
 import alainvanhout.demo.services.RendererService;
-import alainvanhout.cms.services.ContextService;
+import alainvanhout.cms.services.CmsContextService;
 import alainvanhout.cms.services.SectionService;
 import alainvanhout.cms.services.TemplateService;
 import alainvanhout.renderering.renderer.Renderer;
@@ -25,7 +25,7 @@ public class PersonsRoute implements CustomRoute {
     private TemplateService templateService;
 
     @Autowired
-    private ContextService contextService;
+    private CmsContextService contextService;
 
     @Override
     public String getId() {

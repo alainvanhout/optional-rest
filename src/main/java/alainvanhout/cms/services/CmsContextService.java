@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class ContextService {
+public class CmsContextService {
 
     private Map<String, CustomContext> contextMap;
     private Map<String, ContextProvider> providerMap;

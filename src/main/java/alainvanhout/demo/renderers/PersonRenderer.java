@@ -1,19 +1,22 @@
 package alainvanhout.demo.renderers;
 
+import alainvanhout.context.Context;
+import alainvanhout.context.impl.ListContext;
+import alainvanhout.context.impl.SimpleRendererContext;
 import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
-import alainvanhout.context.impl.SimpleRendererContext;
-import alainvanhout.renderering.renderer.context.SimpleContextRenderer;
-import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
-import alainvanhout.renderering.renderer.manage.CachingRenderer;
 import alainvanhout.renderering.renderer.Renderer;
+import alainvanhout.renderering.renderer.context.SimpleContextRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.list.UnorderedListRenderer;
+import alainvanhout.renderering.renderer.manage.CachingRenderer;
+import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
 
 public class PersonRenderer implements Renderer {
 
     private Renderer body;
     private Person person;
     private Renderer addressRenderer;
+    private Context context;
 
     public PersonRenderer(Renderer body) {
         this.body = body;
@@ -24,6 +27,11 @@ public class PersonRenderer implements Renderer {
         return this;
     }
 
+    public PersonRenderer set(Context context) {
+        this.context = context;
+        return this;
+    }
+
     public PersonRenderer set(SimpleModelRenderer<Address> addressRenderer) {
         this.addressRenderer = new CachingRenderer(addressRenderer);
         return this;
@@ -31,13 +39,13 @@ public class PersonRenderer implements Renderer {
 
     @Override
     public String render() {
-        SimpleRendererContext context = new SimpleRendererContext();
-        context.add("id", String.valueOf(person.getId()));
-        context.add("firstName", person.getFirstName());
-        context.add("lastName", person.getLastName());
-        context.add("address", addressRenderer);
-//        context.add("address", new SimpleModelRenderer<Address>(new TextResourceRenderer("templates/address.html")).set(person.getAddress()));
-        context.add("pets", new UnorderedListRenderer().ignoreBlank(true).addItems(person.getPets()));
-        return  new SimpleContextRenderer(body, context).render();
+        SimpleRendererContext personContext = new SimpleRendererContext();
+        personContext.add("id", String.valueOf(person.getId()));
+        personContext.add("firstName", person.getFirstName());
+        personContext.add("lastName", person.getLastName());
+        personContext.add("address", addressRenderer);
+        personContext.add("pets", new UnorderedListRenderer().ignoreBlank(true).addItems(person.getPets()));
+
+        return new SimpleContextRenderer(body, new ListContext(personContext, this.context)).render();
     }
 }

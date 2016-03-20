@@ -36,7 +36,7 @@ public class RouteService {
     private TemplateService templateService;
 
     @Autowired
-    private ContextService contextService;
+    private CmsContextService contextService;
 
     @PostConstruct
     private void setup() {
