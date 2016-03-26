@@ -45,6 +45,10 @@ public class Request {
         return response;
     }
 
+    public boolean hasResponse(){
+        return response != null;
+    }
+
     public Request done(){
         return done(true);
     }

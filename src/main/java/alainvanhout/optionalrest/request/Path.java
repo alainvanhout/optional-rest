@@ -11,32 +11,19 @@ public class Path {
     private Queue<String> steps = new LinkedList<>();
     private List<String> passedSteps = new ArrayList<>();
 
-    public boolean hasNextStep() {
-        return !steps.isEmpty();
-    }
-
-    public boolean isDone() {
+    /**
+     * Whether the path has arrived at its final step.
+     *
+     * @return Arrived
+     */
+    public boolean isArrived() {
         return steps.isEmpty();
-    }
-
-    public void forceDone() {
-        passedSteps.addAll(steps);
-        steps = new LinkedList<>();
     }
 
     public String nextStep() {
         step = steps.poll();
         passedSteps.add(step);
         return step;
-    }
-
-    public String peekStep() {
-        step = steps.peek();
-        return step;
-    }
-
-    public Queue<String> getSteps() {
-        return steps;
     }
 
     public String getStep() {

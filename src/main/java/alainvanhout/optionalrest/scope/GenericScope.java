@@ -39,50 +39,18 @@ public class GenericScope extends BasicScope {
             List<Mapping> passing = passMappings.getMappings(request, true);
             apply(passing, request);
 
-
-            // arriving at scope or request is done
-            if (request.getPath().isDone() || request.getResponse() != null) {
-
-                // arriving at scope: also run mappings that necessarily set the response
-                if (request.getPath().isDone() && !request.isDone()) {
-                    List<Mapping> arriving = passMappings.getMappings(request, false);
-                    apply(arriving, request);
-                }
-
-                // whether the path is done or not, if the response it set, the request has run its course
-                if (request.getResponse() != null) {
-                    return request.getResponse();
-                } else if (OPTIONS.equals(request.getMethod())) {
-                    int deep = request.getParameters().getIntValue("deep", 1);
-                    BuildParameters buildParameters = new BuildParameters()
-                            .includeScopeId(request.getParameters().contains("SCOPE_ID"))
-                            .asHtml(request.getHeaders().contains("accept", "text/html"));
-                    Map<String, Object> definitionMap = buildDefinitionMap(deep, buildParameters);
-
-                    if (buildParameters.getAsHtml()) {
-                        String json = JsonUtils.definitionToJson(definitionMap);
-                        return new RendererResponse().renderer(new PreRenderer(json));
-                    } else {
-                        String json = JsonUtils.definitionToJson(definitionMap);
-                        return new RendererResponse().renderer(new StringRenderer(json));
-                    }
-                } else {
-                    throw new RestException("No arrival mapping available");
-                }
+            // whether arrived or not, if request is done, return response
+            if (request.isDone()){
+                return request.getResponse();
             }
 
-            // not yet arrived
-            String step = request.getPath().nextStep();
-
-            // first check relative scopes
-            if (relativeScopes.containsKey(step)) {
-                return apply(relativeScopes.get(step), request);
+            // arriving at scope
+            if (request.getPath().isArrived()) {
+                return arrive(request);
             }
 
-            // and finally check fallback scope
-            if (instanceScope != null) {
-                return instanceScope.follow(request);
-            }
+            // continue with request
+            return proceed(request);
 
         } catch (Exception e) {
             List<Mapping> errorMapping = errorMappings.getMappings(request);
@@ -93,7 +61,56 @@ public class GenericScope extends BasicScope {
             throw e;
         }
 
+    }
+
+    public Response arrive(Request request) {
+        // run arrive mappings
+        List<Mapping> arriving = passMappings.getMappings(request, false);
+        apply(arriving, request);
+
+        // arrived with response
+        if (request.hasResponse()) {
+            return request.getResponse();
+        }
+
+        // default OPTIONS response
+        if (OPTIONS.equals(request.getMethod())) {
+            return createDefaultOptionsResponse(request);
+        }
+
+        throw new RestException("No response was set");
+    }
+
+    public Response proceed(Request request) {
+        String step = request.getPath().nextStep();
+
+        // first check relative scopes
+        if (relativeScopes.containsKey(step)) {
+            return apply(relativeScopes.get(step), request);
+        }
+
+        // then check fallback scope
+        if (instanceScope != null) {
+            return instanceScope.follow(request);
+        }
+
         throw new RestException("No appropriate mapping found for scope " + this.getClass().getSimpleName());
+    }
+
+    public Response createDefaultOptionsResponse(Request request) {
+        int deep = request.getParameters().getIntValue("deep", 1);
+        BuildParameters buildParameters = new BuildParameters()
+                .includeScopeId(request.getParameters().contains("SCOPE_ID"))
+                .asHtml(request.getHeaders().contains("accept", "text/html"));
+        Map<String, Object> definitionMap = buildDefinitionMap(deep, buildParameters);
+
+        if (buildParameters.getAsHtml()) {
+            String json = JsonUtils.definitionToJson(definitionMap);
+            return new RendererResponse().renderer(new PreRenderer(json));
+        } else {
+            String json = JsonUtils.definitionToJson(definitionMap);
+            return new RendererResponse().renderer(new StringRenderer(json));
+        }
     }
 
     @Override
