@@ -2,9 +2,7 @@ package alainvanhout.optionalrest.services.mapping;
 
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.Request;
-import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.response.Response;
-import alainvanhout.optionalrest.scope.Supported;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 
 import java.lang.reflect.InvocationTargetException;
@@ -31,20 +29,27 @@ public class MethodMapping extends BasicMapping {
     }
 
     @Override
-    public Response call(Request request) {
+    public Class getReturnType() {
+        return method.getReturnType();
+    }
+
+    @Override
+    public void apply(Request request) {
         try {
             method.setAccessible(true);
-            Object[] params = requestMappers.stream().map(m -> m.apply(request)).toArray();
-            Object invoke = method.invoke(container, params);
-            if (Void.TYPE.equals(method.getReturnType())) {
-                return (RendererResponse) invoke;
-            } else {
-                return processResponse(invoke);
+            Object result = method.invoke(container, assembleParameters(request));
+            if (!Void.TYPE.equals(getReturnType())) {
+                Response response = processResponse(result);
+                request.response(response);
             }
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new RestException("Encountered error while calling mapping method: "
                     + method.getName() + " for container " + container.getClass().getCanonicalName(), e);
         }
+    }
+
+    public Object[] assembleParameters(Request request) {
+        return requestMappers.stream().map(m -> m.apply(request)).toArray();
     }
 
     private Response processResponse(Object response) {

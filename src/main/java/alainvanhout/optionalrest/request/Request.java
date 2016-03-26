@@ -4,6 +4,7 @@ import alainvanhout.context.UpdateableContext;
 import alainvanhout.context.impl.MapContext;
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
+import alainvanhout.optionalrest.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,6 +32,38 @@ public class Request {
     private String query = "";
     private String queryPath = "";
     private String queryParameters = "";
+
+    private Response response = null;
+    private boolean done = false;
+
+    public Request response(Response response){
+        this.response = response;
+        return this;
+    }
+
+    public Response getResponse(){
+        return response;
+    }
+
+    public Request done(){
+        return done(true);
+    }
+
+    public Request done(boolean done){
+        this.done = done;
+        return this;
+    }
+
+
+    public Request done(Response response){
+        response(response);
+        return done();
+    }
+
+    public boolean isDone(){
+        return done;
+    }
+
 
     public Reader getReader() {
         return reader;

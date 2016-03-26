@@ -111,6 +111,7 @@ public class ScopeManager {
                 Method method = (Method) accessibleObject;
                 MethodMapping mapping = new MethodMapping(container, method);
                 scope.addErrorMapping(mapping);
+
                 // scope helper provides defaults if necessary
                 Handle handle = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Handle.class);
                 scopeHelper.updateSupported(mapping, handle);
@@ -210,12 +211,13 @@ public class ScopeManager {
     public void addMappingForMethod(AccessibleObject accessibleObject, ScopeContainer container, Scope scope, Handle handle) {
         if (accessibleObject instanceof Method) {
             Method method = (Method) accessibleObject;
+
             MethodMapping mapping = new MethodMapping(container, method);
-            if (method.getReturnType().equals(Void.TYPE)) {
-                scope.addPassMapping(mapping);
-            } else {
-                scope.addArriveMapping(mapping);
-            }
+            scope.addPassMapping(mapping);
+
+            mapping.passing(Void.TYPE.equals(method.getReturnType()));
+            mapping.order(Void.TYPE.equals(method.getReturnType()) ? 0 : 1);
+
             // scope helper provides defaults if necessary
             scopeHelper.updateSupported(mapping, handle);
             mapping.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);

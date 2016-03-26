@@ -5,7 +5,9 @@ import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.Supported;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Mappings {
@@ -17,17 +19,18 @@ public class Mappings {
         return this;
     }
 
-    public Mapping getMapping(Request request) {
-        List<Mapping> matches = list.stream().filter(
-                m -> supports(request, m)
-        ).collect(Collectors.toList());
-        if (matches.size() == 0) {
-            return null;
-        }
-        if (matches.size() > 1) {
-            throw new RestException("Multiple matching mappings found");
-        }
-        return matches.get(0);
+    public List<Mapping> getMappings(Request request) {
+        return list.stream()
+                .filter(m -> supports(request, m))
+                .sorted((m1, m2) -> m1.getOrder() - m2.getOrder())
+                .collect(Collectors.toList());
+    }
+
+    public List<Mapping> getMappings(Request request, boolean passing) {
+        return list.stream()
+                .filter(m -> supports(request, m) && m.isPassing() == passing)
+                .sorted((m1, m2) -> m1.getOrder() - m2.getOrder())
+                .collect(Collectors.toList());
     }
 
     public boolean supports(Request request, Mapping m) {
@@ -36,33 +39,33 @@ public class Mappings {
                 && typeSupported(m.getSupported().getContentType(), request.getHeaders().get("content-type"));
     }
 
-    private boolean typeSupported(Collection<String> supportedTypes, Collection<String> neededTypes){
-        if (neededTypes == null){
-           return true;
+    private boolean typeSupported(Collection<String> supportedTypes, Collection<String> neededTypes) {
+        if (neededTypes == null) {
+            return true;
         }
         for (String neededType : neededTypes) {
             if (supportedTypes.stream().anyMatch(s -> {
                 String[] supportedSplit = StringUtils.split(s, "/");
                 String[] neededSplit = StringUtils.split(neededType, "/");
-                if (supportedSplit.length != 2){
-                    throw new RestException("Mime type of incorrect form:" + s );
+                if (supportedSplit.length != 2) {
+                    throw new RestException("Mime type of incorrect form:" + s);
                 }
-                if (neededSplit.length != 2){
-                    throw new RestException("Mime type of incorrect form:" + neededType );
+                if (neededSplit.length != 2) {
+                    throw new RestException("Mime type of incorrect form:" + neededType);
                 }
-                if (StringUtils.equals(supportedSplit[0], "*")){
+                if (StringUtils.equals(supportedSplit[0], "*")) {
                     return true;
                 }
-                if (StringUtils.equals(supportedSplit[0], neededSplit[0])){
-                    if (StringUtils.equals(supportedSplit[1], "*")){
+                if (StringUtils.equals(supportedSplit[0], neededSplit[0])) {
+                    if (StringUtils.equals(supportedSplit[1], "*")) {
                         return true;
                     }
-                    if (StringUtils.equals(supportedSplit[0], neededSplit[0])){
+                    if (StringUtils.equals(supportedSplit[0], neededSplit[0])) {
                         return true;
                     }
                 }
                 return false;
-            })){
+            })) {
                 return true;
             }
         }

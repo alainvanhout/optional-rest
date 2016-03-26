@@ -15,11 +15,14 @@ import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.request.meta.Mime;
 import alainvanhout.optionalrest.response.FileResponse;
+import alainvanhout.optionalrest.response.RendererResponse;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.services.factories.FromContext;
+import alainvanhout.optionalrest.services.factories.Step;
 import alainvanhout.optionalrest.utils.JsonUtils;
 import alainvanhout.renderering.renderer.Renderer;
+import alainvanhout.renderering.renderer.basic.StringRenderer;
 import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
 import org.apache.commons.lang3.StringUtils;
@@ -70,10 +73,14 @@ public class PersonScope implements ScopeContainer {
 
     @Instance
     @Handle(methods = {HttpMethod.GET, HttpMethod.OPTIONS})
-    public void id(Request request, HttpMethod method, Headers headers, Parameters parameters) {
+    public void id(Request request, HttpMethod method, Headers headers, Parameters parameters, @Step String id) {
+        if (StringUtils.equals(id, "3")) {
+            request.done(new RendererResponse()
+                    .renderer(new StringRenderer("Access to person with id=3 not allowed"))
+                    .responseCode(403));
+        }
         if (!HttpMethod.OPTIONS.equals(method)) {
             viewCount++;
-            String id = request.getPath().getStep();
             Person person = personRepository.findOne(BigInteger.valueOf(Long.valueOf(id)));
             request.getContext().add("person", person);
         }

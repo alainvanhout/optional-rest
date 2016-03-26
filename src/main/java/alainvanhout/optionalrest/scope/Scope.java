@@ -18,8 +18,6 @@ public interface Scope {
 
     Scope addPassMapping(Mapping mapping);
 
-    Scope addArriveMapping(Mapping mapping);
-
     Scope addErrorMapping(Mapping mapping);
 
     void setInstanceScope(Scope scope);

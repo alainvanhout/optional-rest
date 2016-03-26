@@ -5,7 +5,13 @@ import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.Supported;
 
 public interface Mapping {
-    Response call(Request request);
+    void apply(Request request);
+
+    Class getReturnType();
+
+    boolean isPassing();
+
+    int getOrder();
 
     Supported getSupported();
 }

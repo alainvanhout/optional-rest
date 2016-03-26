@@ -35,11 +35,6 @@ public class BasicScope implements Scope {
     }
 
     @Override
-    public Scope addArriveMapping(Mapping mapping) {
-        return null;
-    }
-
-    @Override
     public Scope addErrorMapping(Mapping mapping) {
         return null;
     }

@@ -16,7 +16,9 @@ import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static alainvanhout.optionalrest.request.meta.HttpMethod.OPTIONS;
@@ -26,7 +28,6 @@ public class GenericScope extends BasicScope {
     private transient ScopeDefinition definition = new ScopeDefinition();
 
     private transient Mappings passMappings = new Mappings();
-    private transient Mappings arriveMappings = new Mappings();
     private transient Mappings errorMappings = new Mappings();
 
     private transient Scope instanceScope;
@@ -34,17 +35,23 @@ public class GenericScope extends BasicScope {
     @Override
     public Response follow(Request request) {
         try {
-            // always call passing scope
-            Mapping passMapping = passMappings.getMapping(request);
-            if (passMapping != null) {
-                call(passMapping, request);
-            }
+            // always run passing mappings (some may involve setting the response)
+            List<Mapping> passing = passMappings.getMappings(request, true);
+            apply(passing, request);
 
-            // arriving at scope
-            if (request.getPath().isDone()) {
-                Mapping arriveMapping = arriveMappings.getMapping(request);
-                if (arriveMapping != null) {
-                    return call(arriveMapping, request);
+
+            // arriving at scope or request is done
+            if (request.getPath().isDone() || request.getResponse() != null) {
+
+                // arriving at scope: also run mappings that necessarily set the response
+                if (request.getPath().isDone() && !request.isDone()) {
+                    List<Mapping> arriving = passMappings.getMappings(request, false);
+                    apply(arriving, request);
+                }
+
+                // whether the path is done or not, if the response it set, the request has run its course
+                if (request.getResponse() != null) {
+                    return request.getResponse();
                 } else if (OPTIONS.equals(request.getMethod())) {
                     int deep = request.getParameters().getIntValue("deep", 1);
                     BuildParameters buildParameters = new BuildParameters()
@@ -59,8 +66,9 @@ public class GenericScope extends BasicScope {
                         String json = JsonUtils.definitionToJson(definitionMap);
                         return new RendererResponse().renderer(new StringRenderer(json));
                     }
+                } else {
+                    throw new RestException("No arrival mapping available");
                 }
-                throw new RestException("No arrival mapping available");
             }
 
             // not yet arrived
@@ -68,7 +76,7 @@ public class GenericScope extends BasicScope {
 
             // first check relative scopes
             if (relativeScopes.containsKey(step)) {
-                return call(relativeScopes.get(step), request);
+                return apply(relativeScopes.get(step), request);
             }
 
             // and finally check fallback scope
@@ -77,10 +85,10 @@ public class GenericScope extends BasicScope {
             }
 
         } catch (Exception e) {
-            Mapping errorMapping = errorMappings.getMapping(request);
+            List<Mapping> errorMapping = errorMappings.getMappings(request);
             if (errorMapping != null) {
                 request.getContext().add("exception", e);
-                return call(errorMapping, request);
+                return apply(errorMapping, request);
             }
             throw e;
         }
@@ -100,7 +108,7 @@ public class GenericScope extends BasicScope {
         conditionalAdd(map, "description", definition.getDescription());
         conditionalAdd(map, "type", definition.getType());
 
-        Supported supported = arriveMappings.supported();
+        Supported supported = passMappings.supported();
         if (supported.getMethods().size() > 0) {
             supported.getMethods().add(OPTIONS);
             map.put("methods", supported.getMethods());
@@ -152,13 +160,23 @@ public class GenericScope extends BasicScope {
         }
     }
 
-    private Response call(Scope scope, Request request) {
+    private Response apply(Scope scope, Request request) {
         return scope.follow(request);
     }
 
-    private Response call(Mapping mapping, Request request) {
+    private Response apply(Collection<Mapping> mappings, Request request) {
+        for (Mapping mapping : mappings) {
+            apply(mapping, request);
+            if (request.isDone()) {
+                break;
+            }
+        }
+        return request.getResponse();
+    }
+
+    private void apply(Mapping mapping, Request request) {
         try {
-            return mapping.call(request);
+            mapping.apply(request);
         } catch (RestException e) {
             e.add("mapping", mapping);
             throw e;
@@ -178,11 +196,6 @@ public class GenericScope extends BasicScope {
     @Override
     public GenericScope addPassMapping(Mapping mapping) {
         return addMapping(passMappings, mapping);
-    }
-
-    @Override
-    public GenericScope addArriveMapping(Mapping mapping) {
-        return addMapping(arriveMappings, mapping);
     }
 
     @Override
