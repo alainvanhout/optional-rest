@@ -2,12 +2,12 @@ package alainvanhout.optionalrest.services.mapping;
 
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.request.Request;
+import alainvanhout.optionalrest.request.meta.HttpMethod;
+import alainvanhout.optionalrest.request.meta.Mime;
 import alainvanhout.optionalrest.scope.Supported;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Mappings {
@@ -21,22 +21,38 @@ public class Mappings {
 
     public List<Mapping> getMappings(Request request) {
         return list.stream()
-                .filter(m -> supports(request, m))
+                .filter(m -> supports(request, m.getSupported()))
                 .sorted((m1, m2) -> m1.getOrder() - m2.getOrder())
                 .collect(Collectors.toList());
     }
 
     public List<Mapping> getMappings(Request request, boolean passing) {
         return list.stream()
-                .filter(m -> supports(request, m) && m.isPassing() == passing)
+                .filter(m -> supports(request, m.getSupported()) && m.isPassing() == passing)
                 .sorted((m1, m2) -> m1.getOrder() - m2.getOrder())
                 .collect(Collectors.toList());
     }
 
-    public boolean supports(Request request, Mapping m) {
-        return m.getSupported().getMethods().contains(request.getMethod())
-                && typeSupported(m.getSupported().getAccept(), request.getHeaders().get("accept"))
-                && typeSupported(m.getSupported().getContentType(), request.getHeaders().get("content-type"));
+    public boolean supports(Request request, Supported supported) {
+        // methods or defaults
+        Collection<HttpMethod> methods = supported.getMethods();
+        if (methods.isEmpty()){
+            methods = Arrays.asList(HttpMethod.values());
+        }
+        // accept or defaults
+        Collection<String> accept = supported.getAccept();
+        if (accept.isEmpty()){
+            accept = Collections.singletonList(Mime.ALL);
+        }
+        // accept or defaults
+        Collection<String> contentType = supported.getContentType();
+        if (contentType.isEmpty()){
+            contentType = Collections.singletonList(Mime.ALL);
+        }
+
+        return methods.contains(request.getMethod())
+                && typeSupported(accept, request.getHeaders().get("accept"))
+                && typeSupported(contentType, request.getHeaders().get("content-type"));
     }
 
     private boolean typeSupported(Collection<String> supportedTypes, Collection<String> neededTypes) {

@@ -4,7 +4,6 @@ import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.annotations.requests.Handle;
 import alainvanhout.optionalrest.annotations.scopes.Scope;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
-import alainvanhout.optionalrest.request.meta.Mime;
 import alainvanhout.optionalrest.services.mapping.MethodMapping;
 import alainvanhout.optionalrest.utils.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -82,7 +81,7 @@ public class ScopeHelper {
                 return accept;
             }
         }
-        return new String[]{Mime.ALL};
+        return new String[]{};
     }
 
     private String[] getContentType(Handle handle) {
@@ -92,7 +91,7 @@ public class ScopeHelper {
                 return contentType;
             }
         }
-        return new String[]{Mime.ALL};
+        return new String[]{};
     }
 
     private HttpMethod[] getMethods(Handle handle) {
@@ -102,6 +101,6 @@ public class ScopeHelper {
                 return methods;
             }
         }
-        return new HttpMethod[]{HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH};
+        return new HttpMethod[]{};
     }
 }

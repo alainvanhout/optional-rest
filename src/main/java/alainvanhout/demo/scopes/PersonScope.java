@@ -10,7 +10,8 @@ import alainvanhout.demo.renderers.PersonRenderer;
 import alainvanhout.demo.repositories.PersonRepository;
 import alainvanhout.optionalrest.annotations.Description;
 import alainvanhout.optionalrest.annotations.ScopeDefinition;
-import alainvanhout.optionalrest.annotations.requests.Handle;
+import alainvanhout.optionalrest.annotations.requests.methods.Get;
+import alainvanhout.optionalrest.annotations.requests.methods.Options;
 import alainvanhout.optionalrest.annotations.scopes.Entity;
 import alainvanhout.optionalrest.annotations.scopes.Instance;
 import alainvanhout.optionalrest.annotations.scopes.Relative;
@@ -76,8 +77,7 @@ public class PersonScope implements ScopeContainer {
         return new PreRenderer(JsonUtils.objectToJson(person.getPets()));
     }
 
-    @Instance
-    @Handle(methods = {HttpMethod.GET, HttpMethod.OPTIONS})
+    @Instance @Get @Options
     public void id(Request request, HttpMethod method, Headers headers, Parameters parameters, @Step String id) {
         if (StringUtils.equals(id, "3")) {
             request.done(new RendererResponse()
@@ -109,7 +109,7 @@ public class PersonScope implements ScopeContainer {
         return "View count:" + viewCount;
     }
 
-    @Handle
+    @Get
     public Renderer arrive(Request request) {
         return new PreRenderer(JsonUtils.objectToJson(personRepository.findAll()));
     }

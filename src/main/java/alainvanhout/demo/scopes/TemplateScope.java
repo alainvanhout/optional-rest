@@ -4,12 +4,13 @@ import alainvanhout.cms.repositories.TemplateRepository;
 import alainvanhout.cms.services.TemplateService;
 import alainvanhout.demo.Template;
 import alainvanhout.optionalrest.annotations.EntityDefinition;
-import alainvanhout.optionalrest.annotations.requests.Handle;
-import alainvanhout.optionalrest.annotations.scopes.Instance;
 import alainvanhout.optionalrest.annotations.ScopeDefinition;
+import alainvanhout.optionalrest.annotations.requests.methods.Delete;
+import alainvanhout.optionalrest.annotations.requests.methods.Get;
+import alainvanhout.optionalrest.annotations.requests.methods.Post;
+import alainvanhout.optionalrest.annotations.scopes.Instance;
 import alainvanhout.optionalrest.request.Parameters;
 import alainvanhout.optionalrest.request.Request;
-import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.response.RedirectResponse;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
@@ -36,13 +37,12 @@ public class TemplateScope implements ScopeContainer {
     @Autowired
     private TemplateRepository templateRepository;
 
-    @Handle
+    @Get
     public Renderer arrive(Request request) {
         return new PreRenderer(JsonUtils.objectToJson(templateRepository.findAll()));
     }
 
-    @Instance
-    @Handle(methods = {HttpMethod.GET})
+    @Instance @Get
     public Renderer idArrive(Request request, @Step String id) {
         Template template = templateRepository.findByName(id);
 
@@ -65,8 +65,7 @@ public class TemplateScope implements ScopeContainer {
         return form;
     }
 
-    @Instance
-    @Handle(methods = {HttpMethod.POST})
+    @Instance @Post
     public Response idArrivePost(Request request, @Step String id) {
         Template template = templateRepository.findByName(id);
 
@@ -82,8 +81,7 @@ public class TemplateScope implements ScopeContainer {
         return new RedirectResponse(request.getQuery() + "?edit");
     }
 
-    @Instance
-    @Handle(methods = {HttpMethod.DELETE})
+    @Instance @Delete
     public Response idArriveDelete(Request request, @Step String id) {
         Template template = templateRepository.findByName(id);
         templateRepository.delete(template);
