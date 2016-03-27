@@ -7,6 +7,7 @@ import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.Scope;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
+import alainvanhout.optionalrest.services.mapping.AnnotationBundle;
 import alainvanhout.optionalrest.services.mapping.MethodMapping;
 import alainvanhout.optionalrest.services.mapping.providers.ParameterMapperProvider;
 import alainvanhout.optionalrest.services.mapping.providers.ResponseConverterProvider;
@@ -23,6 +24,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -90,21 +92,23 @@ public class ScopeManager {
     }
 
     private void process(AccessibleObject accessibleObject, ScopeContainer container) {
-        if (isRequestHandler(accessibleObject)) {
-            if (checkInstanceRelative(container, accessibleObject)) {
+        AnnotationBundle bundle = retrieveAnnotationBundle(accessibleObject);
+
+        if (isRequestHandler(bundle)) {
+            bundle.add(container.getClass().getAnnotations());
+            if (checkInstanceRelative(container, accessibleObject, bundle)) {
                 return;
             }
-            if (checkInstance(container, accessibleObject)) {
+            if (checkInstance(container, accessibleObject, bundle)) {
                 return;
             }
 
-            if (checkRelative(container, accessibleObject)) {
+            if (checkRelative(container, accessibleObject, bundle)) {
                 return;
             }
-            checkForHandle(accessibleObject, container);
+            checkForScope(accessibleObject, container, bundle);
         }
-        Error error = ReflectionUtils.retrieveAnnotation(accessibleObject, Error.class);
-        if (error != null){
+        if (bundle.contains(Error.class)){
             String scopeId = scopeHelper.retrieveScopeId(accessibleObject, container.getClass());
             Scope scope = scopeRegistry.produceScope(scopeId, container);
             if (accessibleObject instanceof Method) {
@@ -120,7 +124,7 @@ public class ScopeManager {
         }
     }
 
-    public boolean checkInstanceRelative(ScopeContainer container, AccessibleObject accessibleObject) {
+    public boolean checkInstanceRelative(ScopeContainer container, AccessibleObject accessibleObject, AnnotationBundle bundle) {
         Relative relative = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Relative.class);
         Instance instance = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Instance.class);
         if (relative == null || instance == null) {
@@ -142,14 +146,13 @@ public class ScopeManager {
 
         // only necessary for Method
         if (accessibleObject instanceof Method) {
-            Handle handle = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Handle.class);
-            addMappingForMethod(accessibleObject, container, relativeScope, handle);
+            addMappingForMethod(accessibleObject, container, relativeScope, bundle);
         }
 
         return true;
     }
 
-    public boolean checkInstance(ScopeContainer container, AccessibleObject accessibleObject) {
+    public boolean checkInstance(ScopeContainer container, AccessibleObject accessibleObject, AnnotationBundle bundle) {
         Instance instance = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Instance.class);
         if (instance == null) {
             return false;
@@ -164,14 +167,13 @@ public class ScopeManager {
 
         // only necessary for Method
         if (accessibleObject instanceof Method) {
-            Handle handle = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Handle.class);
-            addMappingForMethod(accessibleObject, container, instanceScope, handle);
+            addMappingForMethod(accessibleObject, container, instanceScope, bundle);
         }
 
         return true;
     }
 
-    public boolean checkRelative(ScopeContainer container, AccessibleObject accessibleObject) {
+    public boolean checkRelative(ScopeContainer container, AccessibleObject accessibleObject, AnnotationBundle bundle) {
         Relative relative = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Relative.class);
         if (relative == null) {
             return false;
@@ -188,27 +190,25 @@ public class ScopeManager {
 
         // only necessary for Method
         if (accessibleObject instanceof Method) {
-            Handle handle = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Handle.class);
-            addMappingForMethod(accessibleObject, container, relativeScope, handle);
-
+            addMappingForMethod(accessibleObject, container, relativeScope, bundle);
         }
 
         return true;
     }
 
-    private boolean isRequestHandler(AccessibleObject accessibleObject) {
-        if (ReflectionUtils.retrieveAnnotation(accessibleObject, RequestHandler.class) != null) {
-            return true;
-        }
-        for (Annotation annotation : accessibleObject.getAnnotations()) {
-            if (annotation.annotationType().getDeclaredAnnotation(RequestHandler.class) != null) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isRequestHandler(AnnotationBundle bundle) {
+        return bundle.contains(RequestHandler.class);
     }
 
-    public void addMappingForMethod(AccessibleObject accessibleObject, ScopeContainer container, Scope scope, Handle handle) {
+    private AnnotationBundle retrieveAnnotationBundle(AccessibleObject accessibleObject) {
+        AnnotationBundle bundle = new AnnotationBundle();
+        bundle.add(accessibleObject.getAnnotations());
+        return bundle;
+    }
+
+    public void addMappingForMethod(AccessibleObject accessibleObject, ScopeContainer container, Scope scope, AnnotationBundle bundle) {
+        List<Annotation> handles = bundle.subList(Handle.class);
+
         if (accessibleObject instanceof Method) {
             Method method = (Method) accessibleObject;
 
@@ -219,17 +219,18 @@ public class ScopeManager {
             mapping.order(Void.TYPE.equals(method.getReturnType()) ? 0 : 1);
 
             // scope helper provides defaults if necessary
-            scopeHelper.updateSupported(mapping, handle);
+
+            for (Annotation handle : handles) {
+                scopeHelper.updateSupported(mapping, (Handle)handle);
+            }
             mapping.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);
         }
     }
 
-    public void checkForHandle(AccessibleObject accessibleObject, ScopeContainer container) {
+    public void checkForScope(AccessibleObject accessibleObject, ScopeContainer container, AnnotationBundle bundle) {
         String scopeId = getScopeId(accessibleObject, container);
         Scope scope = scopeRegistry.produceScope(scopeId, container);
-
-        Handle handle = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Handle.class);
-        addMappingForMethod(accessibleObject, container, scope, handle);
+        addMappingForMethod(accessibleObject, container, scope, bundle);
     }
 
     public String getScopeId(AccessibleObject accessibleObject, ScopeContainer container) {
