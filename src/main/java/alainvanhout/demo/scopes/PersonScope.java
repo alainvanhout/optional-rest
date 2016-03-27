@@ -12,6 +12,8 @@ import alainvanhout.optionalrest.annotations.Description;
 import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.annotations.requests.methods.Get;
 import alainvanhout.optionalrest.annotations.requests.methods.Options;
+import alainvanhout.optionalrest.annotations.requests.mime.ToHtml;
+import alainvanhout.optionalrest.annotations.requests.mime.ToJson;
 import alainvanhout.optionalrest.annotations.scopes.Entity;
 import alainvanhout.optionalrest.annotations.scopes.Instance;
 import alainvanhout.optionalrest.annotations.scopes.Relative;
@@ -91,7 +93,7 @@ public class PersonScope implements ScopeContainer {
         }
     }
 
-    @Instance
+    @Instance @Get @ToJson @ToHtml
     public Renderer idArrive(Request request) {
         Person person = request.getContext().get("person");
         if (request.getHeaders().contains("accept", Mime.TEXT_HTML)) {

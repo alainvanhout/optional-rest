@@ -76,7 +76,7 @@ public class Mappings {
                     if (StringUtils.equals(supportedSplit[1], "*")) {
                         return true;
                     }
-                    if (StringUtils.equals(supportedSplit[0], neededSplit[0])) {
+                    if (StringUtils.equals(supportedSplit[1], neededSplit[1])) {
                         return true;
                     }
                 }
