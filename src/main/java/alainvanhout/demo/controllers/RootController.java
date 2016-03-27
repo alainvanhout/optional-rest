@@ -56,7 +56,6 @@ public class RootController {
             method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS},
             produces = {"*/*"}
     )
-
     public ResponseEntity root(HttpServletRequest httpRequest) {
         Request request = RequestUtils.toRequest(httpRequest);
         Response response = scopeManager.follow(rootScope, request);
