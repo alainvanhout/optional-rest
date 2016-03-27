@@ -4,9 +4,9 @@ import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.optionalrest.RestException;
 import alainvanhout.optionalrest.annotations.EntityDefinition;
-import alainvanhout.optionalrest.annotations.Handle;
-import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.annotations.Error;
+import alainvanhout.optionalrest.annotations.ScopeDefinition;
+import alainvanhout.optionalrest.annotations.requests.methods.Get;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.definition.ScopeContainer;
 import alainvanhout.optionalrest.utils.JsonUtils;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @EntityDefinition(instanceClass = Address.class)
 public class AddressScope implements ScopeContainer {
 
-    @Handle
+    @Get
     public Renderer arrive(Request request) {
         Person person = request.getContext().get("person");
         return new PreRenderer(JsonUtils.objectToJson(person.getAddress()));

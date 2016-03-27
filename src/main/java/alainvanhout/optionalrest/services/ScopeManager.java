@@ -1,8 +1,12 @@
 package alainvanhout.optionalrest.services;
 
 import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.annotations.*;
 import alainvanhout.optionalrest.annotations.Error;
+import alainvanhout.optionalrest.annotations.requests.Handle;
+import alainvanhout.optionalrest.annotations.requests.RequestHandler;
+import alainvanhout.optionalrest.annotations.scopes.Entity;
+import alainvanhout.optionalrest.annotations.scopes.Instance;
+import alainvanhout.optionalrest.annotations.scopes.Relative;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.response.Response;
 import alainvanhout.optionalrest.scope.Scope;
@@ -140,7 +144,7 @@ public class ScopeManager {
         Scope instanceScope = scopeRegistry.produceScope(instanceId, container);
         parentScope.setInstanceScope(instanceScope);
 
-        String relativeId = scopeHelper.retrieveRelativeScopeId(accessibleObject, container.getClass());
+        String relativeId = scopeHelper.retrieveRelativeScopeId(accessibleObject);
         Scope relativeScope = scopeRegistry.produceScope(relativeId, null);
         instanceScope.addRelativeScope(relativePath, relativeScope);
 
@@ -184,7 +188,7 @@ public class ScopeManager {
         String parentId = scopeHelper.retrieveScopeId(container.getClass());
         Scope parentScope = scopeRegistry.produceScope(parentId, container);
 
-        String relativeId = scopeHelper.retrieveRelativeScopeId(accessibleObject, container.getClass());
+        String relativeId = scopeHelper.retrieveRelativeScopeId(accessibleObject);
         Scope relativeScope = scopeRegistry.produceScope(relativeId, null);
         parentScope.addRelativeScope(relativePath, relativeScope);
 

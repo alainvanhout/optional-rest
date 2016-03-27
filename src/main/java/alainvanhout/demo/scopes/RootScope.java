@@ -1,8 +1,8 @@
 package alainvanhout.demo.scopes;
 
-import alainvanhout.optionalrest.annotations.Handle;
-import alainvanhout.optionalrest.annotations.Relative;
-import alainvanhout.optionalrest.annotations.Scope;
+import alainvanhout.optionalrest.annotations.requests.Handle;
+import alainvanhout.optionalrest.annotations.scopes.Relative;
+import alainvanhout.optionalrest.annotations.scopes.Scope;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.request.meta.Mime;

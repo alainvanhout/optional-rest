@@ -1,8 +1,8 @@
 package alainvanhout.optionalrest.services;
 
 import alainvanhout.optionalrest.RestException;
-import alainvanhout.optionalrest.annotations.Handle;
-import alainvanhout.optionalrest.annotations.Scope;
+import alainvanhout.optionalrest.annotations.requests.Handle;
+import alainvanhout.optionalrest.annotations.scopes.Scope;
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 import alainvanhout.optionalrest.request.meta.Mime;
 import alainvanhout.optionalrest.services.mapping.MethodMapping;
@@ -33,7 +33,7 @@ public class ScopeHelper {
         return parentClass.getName();
     }
 
-    public String retrieveRelativeScopeId(AccessibleObject accessibleObject, Class container){
+    public String retrieveRelativeScopeId(AccessibleObject accessibleObject){
         Scope annotation = ReflectionUtils.retrieveAnnotation(accessibleObject, Scope.class);
         if (annotation != null && StringUtils.isNotBlank(annotation.value())){
             return annotation.value();
@@ -44,22 +44,6 @@ public class ScopeHelper {
         if (accessibleObject instanceof Method){
             Class declaringClass = ((Method) accessibleObject).getDeclaringClass();
             return declaringClass.getCanonicalName() + "-" + ((Method) accessibleObject).getName();
-        }
-        throw new RestException("Type not supported: " + accessibleObject.getClass());
-    }
-
-    public String retrieveInstanceRelativeScopeId(AccessibleObject accessibleObject, Class container){
-        Scope annotation = ReflectionUtils.retrieveAnnotation(accessibleObject, Scope.class);
-        if (annotation != null && StringUtils.isNotBlank(annotation.value())){
-            return annotation.value();
-        }
-
-        if (accessibleObject instanceof Field){
-            return ((Field)accessibleObject).getType().getCanonicalName();
-        }
-        if (accessibleObject instanceof Method){
-            String instanceId = retrieveInstanceScopeId(accessibleObject, container);
-            return instanceId + "-" + ((Method) accessibleObject).getName();
         }
         throw new RestException("Type not supported: " + accessibleObject.getClass());
     }

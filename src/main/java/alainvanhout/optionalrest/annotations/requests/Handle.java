@@ -1,4 +1,4 @@
-package alainvanhout.optionalrest.annotations;
+package alainvanhout.optionalrest.annotations.requests;
 
 import alainvanhout.optionalrest.request.meta.HttpMethod;
 

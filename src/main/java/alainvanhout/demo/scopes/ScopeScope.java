@@ -1,7 +1,7 @@
 package alainvanhout.demo.scopes;
 
 import alainvanhout.optionalrest.annotations.EntityDefinition;
-import alainvanhout.optionalrest.annotations.Instance;
+import alainvanhout.optionalrest.annotations.scopes.Instance;
 import alainvanhout.optionalrest.annotations.ScopeDefinition;
 import alainvanhout.optionalrest.request.Request;
 import alainvanhout.optionalrest.scope.GenericScope;
@@ -36,7 +36,7 @@ public class ScopeScope implements ScopeContainer {
         return new PreRenderer(JsonUtils.objectToUnescapedJson(toDto(scope)));
     }
 
-    @alainvanhout.optionalrest.annotations.Scope
+    @alainvanhout.optionalrest.annotations.scopes.Scope
     public Renderer arrive(Request request) {
         Collection<Scope> scopes = scopeRegistry.findAll();
         List<ScopeDto> dtos = scopes.stream().map(this::toDto).collect(Collectors.toList());
