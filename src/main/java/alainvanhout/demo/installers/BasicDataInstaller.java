@@ -5,9 +5,7 @@ import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.Template;
 import alainvanhout.demo.repositories.PersonRepository;
 import alainvanhout.renderering.renderer.retrieve.TextResourceRenderer;
-import alainvanhout.cms.repositories.SwitchRouteRepository;
 import alainvanhout.cms.repositories.TemplateRepository;
-import alainvanhout.cms.dtos.stored.StoredRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,9 +20,6 @@ public class BasicDataInstaller {
     private TemplateRepository templateRepository;
 
     @Autowired
-    private SwitchRouteRepository switchRouteRepository;
-
-    @Autowired
     private PersonRepository personRepository;
 
     @PostConstruct
@@ -34,7 +29,6 @@ public class BasicDataInstaller {
 
     private void install() {
         installTemplates();
-        installRoutes();
         installPersons();
     }
 
@@ -74,21 +68,5 @@ public class BasicDataInstaller {
         if (!templateRepository.exists(main) || always) {
             templateRepository.save(new Template(main, new TextResourceRenderer(resource).render()));
         }
-    }
-
-    private void installRoutes() {
-
-        if (!switchRouteRepository.exists("root")) {
-            StoredRoute personsRoute = new StoredRoute()
-                    .templateId("persons");
-            switchRouteRepository.save(personsRoute);
-
-            StoredRoute root = new StoredRoute()
-                    .id("root")
-                    .templateId("main")
-                    .addRoute("persons", personsRoute.getId());
-            switchRouteRepository.save(root);
-        }
-
     }
 }
