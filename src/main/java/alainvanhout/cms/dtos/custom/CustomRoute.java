@@ -1,6 +1,6 @@
 package alainvanhout.cms.dtos.custom;
 
-import alainvanhout.renderering.renderer.Renderer;
+import renderering.core.Renderer;
 import alainvanhout.routing.Route;
 import alainvanhout.routing.path.Path;
 

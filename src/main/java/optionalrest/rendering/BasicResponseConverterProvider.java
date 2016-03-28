@@ -1,7 +1,7 @@
 package optionalrest.rendering;
 
-import alainvanhout.renderering.renderer.Renderer;
-import alainvanhout.renderering.renderer.basic.StringRenderer;
+import renderering.core.Renderer;
+import renderering.core.basic.StringRenderer;
 import optionalrest.core.services.mapping.providers.ResponseConverterProvider;
 import org.springframework.stereotype.Service;
 

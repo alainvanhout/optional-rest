@@ -1,6 +1,6 @@
 package alainvanhout.demo.scopes;
 
-import alainvanhout.renderering.renderer.basic.StringRenderer;
+import renderering.core.basic.StringRenderer;
 import optionalrest.core.annotations.requests.Handle;
 import optionalrest.core.annotations.requests.methods.Get;
 import optionalrest.core.annotations.scopes.Relative;

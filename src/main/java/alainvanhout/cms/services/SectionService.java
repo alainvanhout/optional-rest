@@ -1,7 +1,7 @@
 package alainvanhout.cms.services;
 
 import alainvanhout.demo.services.RendererService;
-import alainvanhout.renderering.renderer.Renderer;
+import renderering.core.Renderer;
 import alainvanhout.cms.repositories.SectionRepository;
 import alainvanhout.routing.path.Path;
 import alainvanhout.cms.dtos.custom.CustomSection;

@@ -1,4 +1,4 @@
-package alainvanhout.renderering;
+package renderering;
 
 public class RenderingException extends RuntimeException {
     public RenderingException(String message) {

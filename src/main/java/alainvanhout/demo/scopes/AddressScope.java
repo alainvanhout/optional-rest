@@ -10,8 +10,8 @@ import optionalrest.core.annotations.requests.methods.Get;
 import optionalrest.core.request.Request;
 import optionalrest.core.scope.definition.ScopeContainer;
 import optionalrest.core.utils.JsonUtils;
-import alainvanhout.renderering.renderer.Renderer;
-import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
+import renderering.core.Renderer;
+import renderering.web.html.basic.documentbody.PreRenderer;
 import org.springframework.stereotype.Service;
 
 @Service

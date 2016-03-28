@@ -1,7 +1,7 @@
 package alainvanhout.demo.controllers;
 
-import alainvanhout.renderering.renderer.basic.StringRenderer;
-import alainvanhout.renderering.renderer.webpage.WebpageRenderer;
+import renderering.core.basic.StringRenderer;
+import renderering.web.webpage.WebpageRenderer;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;

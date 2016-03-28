@@ -4,7 +4,7 @@ import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.Template;
 import alainvanhout.demo.repositories.PersonRepository;
-import alainvanhout.renderering.renderer.retrieve.TextResourceRenderer;
+import renderering.core.retrieve.TextResourceRenderer;
 import alainvanhout.cms.repositories.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -5,11 +5,11 @@ import alainvanhout.context.impl.ListContext;
 import alainvanhout.context.impl.SimpleRendererContext;
 import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
-import alainvanhout.renderering.renderer.Renderer;
-import alainvanhout.renderering.renderer.context.SimpleContextRenderer;
-import alainvanhout.renderering.renderer.html.basic.documentbody.list.UnorderedListRenderer;
-import alainvanhout.renderering.renderer.manage.CachingRenderer;
-import alainvanhout.renderering.renderer.model.SimpleModelRenderer;
+import renderering.core.Renderer;
+import renderering.core.context.SimpleContextRenderer;
+import renderering.web.html.basic.documentbody.list.UnorderedListRenderer;
+import renderering.core.manage.CachingRenderer;
+import renderering.core.model.SimpleModelRenderer;
 
 public class PersonRenderer implements Renderer {
 

@@ -1,6 +1,6 @@
 package alainvanhout.sections;
 
-import alainvanhout.renderering.renderer.Renderer;
+import renderering.core.Renderer;
 import alainvanhout.routing.path.Path;
 
 public interface Section {

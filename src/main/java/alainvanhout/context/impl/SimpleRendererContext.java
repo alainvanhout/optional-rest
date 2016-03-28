@@ -3,8 +3,8 @@ package alainvanhout.context.impl;
 import alainvanhout.context.RendererContext;
 import alainvanhout.context.UpdateableContext;
 import alainvanhout.context.ContextException;
-import alainvanhout.renderering.renderer.Renderer;
-import alainvanhout.renderering.renderer.basic.StringRenderer;
+import renderering.core.Renderer;
+import renderering.core.basic.StringRenderer;
 
 public class SimpleRendererContext implements RendererContext, UpdateableContext {
     private UpdateableContext context;

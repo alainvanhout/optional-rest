@@ -10,9 +10,9 @@ import optionalrest.core.services.mapping.Mapping;
 import optionalrest.core.services.mapping.Mappings;
 import optionalrest.core.utils.JsonUtils;
 import optionalrest.core.utils.RestUtils;
-import alainvanhout.renderering.renderer.basic.StringRenderer;
-import alainvanhout.renderering.renderer.html.basic.documentbody.LinkRenderer;
-import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
+import renderering.core.basic.StringRenderer;
+import renderering.web.html.basic.documentbody.LinkRenderer;
+import renderering.web.html.basic.documentbody.PreRenderer;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;

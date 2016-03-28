@@ -1,7 +1,7 @@
 package alainvanhout.context;
 
-import alainvanhout.renderering.renderer.Renderer;
-import alainvanhout.renderering.renderer.basic.StringRenderer;
+import renderering.core.Renderer;
+import renderering.core.basic.StringRenderer;
 
 // TODO move this outside context package or remove
 public interface RendererContext extends UpdateableContext, TypedContext {

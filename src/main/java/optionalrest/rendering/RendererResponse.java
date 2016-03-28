@@ -1,6 +1,6 @@
 package optionalrest.rendering;
 
-import alainvanhout.renderering.renderer.Renderer;
+import renderering.core.Renderer;
 import optionalrest.core.response.BasicResponse;
 
 import java.io.ByteArrayInputStream;

@@ -12,9 +12,9 @@ import optionalrest.core.scope.definition.ScopeContainer;
 import optionalrest.core.services.ScopeRegistry;
 import optionalrest.core.services.factories.Step;
 import optionalrest.core.utils.JsonUtils;
-import alainvanhout.renderering.renderer.Renderer;
-import alainvanhout.renderering.renderer.html.basic.documentbody.LinkRenderer;
-import alainvanhout.renderering.renderer.html.basic.documentbody.PreRenderer;
+import renderering.core.Renderer;
+import renderering.web.html.basic.documentbody.LinkRenderer;
+import renderering.web.html.basic.documentbody.PreRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

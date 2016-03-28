@@ -1,6 +1,6 @@
 package alainvanhout.cms.dtos.stored;
 
-import alainvanhout.renderering.renderer.Renderer;
+import renderering.core.Renderer;
 import alainvanhout.routing.path.Path;
 import alainvanhout.sections.Section;
 import org.springframework.data.annotation.Id;

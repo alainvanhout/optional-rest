@@ -1,7 +1,7 @@
 package alainvanhout.context.impl;
 
 import alainvanhout.context.UpdateableContext;
-import alainvanhout.renderering.RenderingException;
+import renderering.RenderingException;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
