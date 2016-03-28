@@ -36,8 +36,7 @@ public class GenericScope extends BasicScope {
     public Response follow(Request request) {
         try {
             // always run passing mappings (some may involve setting the response)
-            List<Mapping> passing = passMappings.getMappings(request, true);
-            apply(passing, request);
+            pass(request);
 
             // whether arrived or not, if request is done, return response
             if (request.isDone()){
@@ -63,6 +62,13 @@ public class GenericScope extends BasicScope {
 
     }
 
+    @Override
+    public void pass(Request request) {
+        List<Mapping> passing = passMappings.getMappings(request, true);
+        apply(passing, request);
+    }
+
+    @Override
     public Response arrive(Request request) {
         // run arrive mappings
         List<Mapping> arriving = passMappings.getMappings(request, false);
@@ -193,7 +199,15 @@ public class GenericScope extends BasicScope {
 
     private void apply(Mapping mapping, Request request) {
         try {
+            for (Scope scope : mapping.getBefore()) {
+                scope.pass(request);
+            }
+
             mapping.apply(request);
+
+            for (Scope scope : mapping.getAfter()) {
+                scope.pass(request);
+            }
         } catch (RestException e) {
             e.add("mapping", mapping);
             throw e;

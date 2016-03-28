@@ -9,7 +9,7 @@ import optionalrest.core.services.mapping.Mapping;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BasicScope implements Scope {
+public abstract class BasicScope implements Scope {
 
     protected String scopeId;
     protected Map<String, Scope> relativeScopes = new HashMap<>();

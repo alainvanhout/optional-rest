@@ -3,6 +3,8 @@ package optionalrest.core.services;
 import optionalrest.core.RestException;
 import optionalrest.core.annotations.Error;
 import optionalrest.core.annotations.Order;
+import optionalrest.core.annotations.aop.After;
+import optionalrest.core.annotations.aop.Before;
 import optionalrest.core.annotations.requests.Handle;
 import optionalrest.core.annotations.requests.RequestHandler;
 import optionalrest.core.annotations.scopes.Entity;
@@ -214,6 +216,8 @@ public class ScopeManager {
     public void addMappingForMethod(AccessibleObject accessibleObject, ScopeContainer container, Scope scope, AnnotationBundle bundle) {
         List<Annotation> handles = bundle.subList(Handle.class);
         List<Annotation> orders = bundle.subList(Order.class);
+        List<Annotation> befores = bundle.subList(Before.class);
+        List<Annotation> afters = bundle.subList(After.class);
 
         if (accessibleObject instanceof Method) {
             Method method = (Method) accessibleObject;
@@ -227,10 +231,22 @@ public class ScopeManager {
                 mapping.incrementOrder(((Order) order).value());
             }
 
-            // scope helper provides defaults if necessary
-
             for (Annotation handle : handles) {
                 scopeHelper.updateSupported(mapping, (Handle) handle);
+            }
+
+            for (Annotation before : befores) {
+                for (Class<? extends ScopeContainer> beforeClass : ((Before)before).value()) {
+                    String scopeId = scopeHelper.retrieveScopeId(beforeClass);
+                    mapping.addBefore(scopeRegistry.produceScope(scopeId, container));
+                }
+            }
+
+            for (Annotation after : afters) {
+                for (Class<? extends ScopeContainer> afterClass : ((After)after).value()) {
+                    String scopeId = scopeHelper.retrieveScopeId(afterClass);
+                    mapping.addBefore(scopeRegistry.produceScope(scopeId, container));
+                }
             }
 
             mapping.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);

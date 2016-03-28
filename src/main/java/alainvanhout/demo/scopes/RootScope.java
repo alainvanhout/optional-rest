@@ -1,7 +1,6 @@
 package alainvanhout.demo.scopes;
 
 import optionalrest.core.annotations.Order;
-import renderering.core.basic.StringRenderer;
 import optionalrest.core.annotations.requests.Handle;
 import optionalrest.core.annotations.requests.methods.Get;
 import optionalrest.core.annotations.scopes.Relative;
@@ -9,12 +8,12 @@ import optionalrest.core.annotations.scopes.Scope;
 import optionalrest.core.request.Request;
 import optionalrest.core.request.meta.HttpMethod;
 import optionalrest.core.request.meta.Mime;
-import optionalrest.rendering.RendererResponse;
 import optionalrest.core.response.Response;
 import optionalrest.core.scope.definition.RootScopeContainer;
-import optionalrest.core.services.factories.Header;
 import optionalrest.core.services.factories.Param;
+import optionalrest.rendering.RendererResponse;
 import org.springframework.stereotype.Service;
+import renderering.core.basic.StringRenderer;
 
 import java.util.List;
 
@@ -36,6 +35,12 @@ public class RootScope implements RootScopeContainer {
     @Relative(path = "scopes")
     @Handle(contentType = Mime.TEXT_HTML, accept = {Mime.APPLICATION_JSON, Mime.TEXT_HTML})
     private ScopeScope scopeScope;
+
+    @Relative(path = "secure")
+    private SecurityScope securityScope;
+
+    @Relative(path = "stats")
+    private StatisticsScope statisticsScope;
 
     @Get @Handle(contentType = Mime.TEXT_HTML, accept = {Mime.APPLICATION_JSON, Mime.TEXT_ALL})
     private Response arrive(Request request) {

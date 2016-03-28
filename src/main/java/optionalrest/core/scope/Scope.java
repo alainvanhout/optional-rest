@@ -10,6 +10,10 @@ import java.util.Map;
 
 public interface Scope {
 
+    void pass(Request request);
+
+    Response arrive(Request request);
+
     Map<String, Object> buildDefinitionMap(int deep, BuildParameters params);
 
     ScopeDefinition getDefinition();

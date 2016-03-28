@@ -10,6 +10,8 @@ import alainvanhout.demo.renderers.PersonRenderer;
 import alainvanhout.demo.repositories.PersonRepository;
 import optionalrest.core.annotations.Description;
 import optionalrest.core.annotations.ScopeDefinition;
+import optionalrest.core.annotations.aop.After;
+import optionalrest.core.annotations.aop.Before;
 import optionalrest.core.annotations.requests.methods.Get;
 import optionalrest.core.annotations.requests.methods.Options;
 import optionalrest.core.annotations.requests.mime.ToHtml;
@@ -46,6 +48,8 @@ import java.util.stream.Collectors;
 @ScopeDefinition(name = "person")
 @Entity(Person.class)
 @Description("People, including address information")
+@Before(SecurityScope.class)
+@After(StatisticsScope.class)
 public class PersonScope implements ScopeContainer {
 
     @Instance
