@@ -1,15 +1,7 @@
 package renderering.core.model;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.thoughtworks.xstream.XStream;
 import renderering.core.Renderer;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.namespace.QName;
 
 public class XmlRenderer implements Renderer {
 
@@ -22,6 +14,7 @@ public class XmlRenderer implements Renderer {
     @Override
     public String render() {
         XStream xstream = new XStream();
+        xstream.alias(model.getClass().getSimpleName(), model.getClass());
         return xstream.toXML(model);
     }
 }
