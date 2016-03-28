@@ -2,7 +2,7 @@ package alainvanhout.context.impl;
 
 import alainvanhout.context.Context;
 import alainvanhout.context.UpdateableContext;
-import alainvanhout.optionalrest.RestException;
+import optionalrest.core.RestException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;

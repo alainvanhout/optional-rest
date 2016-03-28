@@ -1,23 +1,24 @@
 package alainvanhout.demo.scopes;
 
-import alainvanhout.optionalrest.annotations.requests.Handle;
-import alainvanhout.optionalrest.annotations.scopes.Relative;
-import alainvanhout.optionalrest.annotations.scopes.Scope;
-import alainvanhout.optionalrest.request.Request;
-import alainvanhout.optionalrest.request.meta.HttpMethod;
-import alainvanhout.optionalrest.request.meta.Mime;
-import alainvanhout.optionalrest.response.RendererResponse;
-import alainvanhout.optionalrest.response.Response;
-import alainvanhout.optionalrest.scope.definition.ScopeContainer;
-import alainvanhout.optionalrest.services.factories.Header;
-import alainvanhout.optionalrest.services.factories.Param;
 import alainvanhout.renderering.renderer.basic.StringRenderer;
+import optionalrest.core.annotations.requests.Handle;
+import optionalrest.core.annotations.requests.methods.Get;
+import optionalrest.core.annotations.scopes.Relative;
+import optionalrest.core.annotations.scopes.Scope;
+import optionalrest.core.request.Request;
+import optionalrest.core.request.meta.HttpMethod;
+import optionalrest.core.request.meta.Mime;
+import optionalrest.rendering.RendererResponse;
+import optionalrest.core.response.Response;
+import optionalrest.core.scope.definition.RootScopeContainer;
+import optionalrest.core.services.factories.Header;
+import optionalrest.core.services.factories.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class RootScope implements ScopeContainer {
+public class RootScope implements RootScopeContainer {
 
     @Relative(path = "persons")
     private PersonScope personScope;
@@ -35,7 +36,7 @@ public class RootScope implements ScopeContainer {
     @Handle(contentType = Mime.TEXT_HTML, accept = {Mime.APPLICATION_JSON, Mime.TEXT_HTML})
     private ScopeScope scopeScope;
 
-    @Handle(contentType = Mime.TEXT_HTML, accept = {Mime.APPLICATION_JSON, Mime.TEXT_ALL})
+    @Get @Handle(contentType = Mime.TEXT_HTML, accept = {Mime.APPLICATION_JSON, Mime.TEXT_ALL})
     private Response arrive(Request request) {
         return new RendererResponse().renderer(new StringRenderer("Root"));
     }
