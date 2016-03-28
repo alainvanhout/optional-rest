@@ -2,6 +2,7 @@ package optionalrest.core.services;
 
 import optionalrest.core.RestException;
 import optionalrest.core.annotations.Error;
+import optionalrest.core.annotations.Order;
 import optionalrest.core.annotations.requests.Handle;
 import optionalrest.core.annotations.requests.RequestHandler;
 import optionalrest.core.annotations.scopes.Entity;
@@ -73,7 +74,7 @@ public class ScopeManager {
     public void processContainer(ScopeContainer container) {
 
         Entity entity = ReflectionUtils.retrieveAnnotation(container.getClass(), Entity.class);
-        if (entity != null){
+        if (entity != null) {
             String scopeId = scopeHelper.retrieveScopeId(container.getClass());
             if (StringUtils.isBlank(scopeId)) {
                 throw new RestException("Cannot assign entity because no scopeId was found for " + container.getClass());
@@ -112,7 +113,7 @@ public class ScopeManager {
             }
             checkForScope(accessibleObject, container, bundle);
         }
-        if (bundle.contains(Error.class)){
+        if (bundle.contains(Error.class)) {
             String scopeId = scopeHelper.retrieveScopeId(accessibleObject, container.getClass());
             Scope scope = scopeRegistry.produceScope(scopeId, container);
             if (accessibleObject instanceof Method) {
@@ -212,6 +213,7 @@ public class ScopeManager {
 
     public void addMappingForMethod(AccessibleObject accessibleObject, ScopeContainer container, Scope scope, AnnotationBundle bundle) {
         List<Annotation> handles = bundle.subList(Handle.class);
+        List<Annotation> orders = bundle.subList(Order.class);
 
         if (accessibleObject instanceof Method) {
             Method method = (Method) accessibleObject;
@@ -220,13 +222,17 @@ public class ScopeManager {
             scope.addPassMapping(mapping);
 
             mapping.passing(Void.TYPE.equals(method.getReturnType()));
-            mapping.order(Void.TYPE.equals(method.getReturnType()) ? 0 : 1);
+            mapping.incrementOrder(Void.TYPE.equals(method.getReturnType()) ? 0 : 1);
+            for (Annotation order : orders) {
+                mapping.incrementOrder(((Order) order).value());
+            }
 
             // scope helper provides defaults if necessary
 
             for (Annotation handle : handles) {
-                scopeHelper.updateSupported(mapping, (Handle)handle);
+                scopeHelper.updateSupported(mapping, (Handle) handle);
             }
+
             mapping.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);
         }
     }

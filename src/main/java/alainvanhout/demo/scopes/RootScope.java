@@ -1,5 +1,6 @@
 package alainvanhout.demo.scopes;
 
+import optionalrest.core.annotations.Order;
 import renderering.core.basic.StringRenderer;
 import optionalrest.core.annotations.requests.Handle;
 import optionalrest.core.annotations.requests.methods.Get;
@@ -41,6 +42,11 @@ public class RootScope implements RootScopeContainer {
         return new RendererResponse().renderer(new StringRenderer("Root"));
     }
 
+    @Handle @Order(-1)
+    private void before(Request request){
+        System.out.println("incoming: " + request.getMethod().name() + " " + request.getQuery());
+    }
+
     @Handle
     private void pass(Request request,
                       @Param("-method") List<String> method,
@@ -52,6 +58,11 @@ public class RootScope implements RootScopeContainer {
         if (accept != null) {
             request.getHeaders().clear("accept").add( "accept", accept);
         }
+    }
+
+    @Handle @Order(1)
+    private void after(Request request){
+        System.out.println("adjusted to: " + request.getMethod().name() + " " + request.getQuery());
     }
 
     @Relative(path = "foo")

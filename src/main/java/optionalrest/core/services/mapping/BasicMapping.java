@@ -28,6 +28,11 @@ public abstract class BasicMapping implements Mapping {
         return this;
     }
 
+    public BasicMapping incrementOrder(int order) {
+        this.order += order;
+        return this;
+    }
+
     @Override
     public Supported getSupported() {
         return this.supported;
