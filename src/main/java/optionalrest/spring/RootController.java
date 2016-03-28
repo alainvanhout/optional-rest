@@ -25,8 +25,9 @@ public class RootController {
     @Autowired
     private ScopeManager scopeManager;
 
-    @RequestMapping(value = "/root/**",
-            method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS},
+    @RequestMapping(value = "/**",
+            method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE,
+                    RequestMethod.OPTIONS, RequestMethod.PATCH, RequestMethod.HEAD, RequestMethod.TRACE},
             produces = {"*/*"}
     )
     public ResponseEntity root(HttpServletRequest httpRequest) {

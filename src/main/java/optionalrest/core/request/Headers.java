@@ -1,6 +1,7 @@
 package optionalrest.core.request;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class Headers  extends Parameters{
     private static final List<String> COMMA_SEPARATED = Arrays.asList("accept", "accept-encoding", "accept-language");

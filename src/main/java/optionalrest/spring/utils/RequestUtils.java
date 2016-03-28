@@ -13,7 +13,7 @@ public class RequestUtils {
 
     public static Request toRequest(HttpServletRequest httpRequest) {
         HttpMethod method = HttpMethod.valueOf(httpRequest.getMethod());
-        Request request = Request.fromQuery(httpRequest.getRequestURI(), "/root/", method);
+        Request request = Request.fromQuery(httpRequest.getRequestURI(), "/", method);
         request.getParameters().addAll(httpRequest.getParameterMap());
 
         List<String> headerNames = Collections.list(httpRequest.getHeaderNames());

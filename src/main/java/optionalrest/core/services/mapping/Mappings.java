@@ -19,9 +19,8 @@ public class Mappings {
         return this;
     }
 
-    public List<Mapping> getMappings(Request request) {
+    public List<Mapping> getMappings() {
         return list.stream()
-                .filter(m -> supports(request, m.getSupported()))
                 .sorted((m1, m2) -> m1.getOrder() - m2.getOrder())
                 .collect(Collectors.toList());
     }

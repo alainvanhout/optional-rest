@@ -8,12 +8,10 @@ import optionalrest.core.scope.definition.ScopeContainer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class MethodMapping extends BasicMapping {
 
@@ -35,13 +33,21 @@ public class MethodMapping extends BasicMapping {
 
     @Override
     public void apply(Request request) {
+        Object[] parameters = assembleParameters(request);
         try {
             method.setAccessible(true);
-            Object result = method.invoke(container, assembleParameters(request));
+            Object result = method.invoke(container, parameters);
             if (!Void.TYPE.equals(getReturnType())) {
                 Response response = processResponse(result);
                 request.response(response);
             }
+        } catch (IllegalArgumentException e) {
+            String parameterTypes = "{" + Arrays.asList(parameters).stream()
+                    .map(p -> p.getClass().getCanonicalName()).collect(Collectors.joining(", ")) + "}";
+
+            throw new RestException("Could not call method '" + method.getName()
+                    + "' for container '" + container.getClass().getCanonicalName()
+                    + "' because parameter types did not match: " + parameterTypes, e);
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new RestException("Encountered error while calling mapping method: "
                     + method.getName() + " for container " + container.getClass().getCanonicalName(), e);

@@ -53,8 +53,8 @@ public class GenericScope extends BasicScope {
             return proceed(request);
 
         } catch (Exception e) {
-            List<Mapping> errorMapping = errorMappings.getMappings(request);
-            if (errorMapping != null) {
+            List<Mapping> errorMapping = errorMappings.getMappings();
+            if (!errorMapping.isEmpty()) {
                 request.getContext().add("exception", e);
                 return apply(errorMapping, request);
             }

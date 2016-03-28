@@ -16,6 +16,14 @@ public class Parameters {
         return this;
     }
 
+    public Parameters add(String key, Collection<String> values) {
+        for (String value : values) {
+            add(key, value);
+        }
+        return this;
+    }
+
+
     public Parameters add(Map<String, String> parameters){
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             add(entry.getKey(), entry.getValue());
@@ -84,5 +92,10 @@ public class Parameters {
 
     protected void addValue(String key, String value) {
         map.get(key).add(StringUtils.trim(value));
+    }
+
+    public Parameters clear(String key){
+        map.put(key, new ArrayList<>());
+        return this;
     }
 }

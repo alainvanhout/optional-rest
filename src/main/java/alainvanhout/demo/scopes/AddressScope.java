@@ -7,25 +7,45 @@ import optionalrest.core.annotations.EntityDefinition;
 import optionalrest.core.annotations.Error;
 import optionalrest.core.annotations.ScopeDefinition;
 import optionalrest.core.annotations.requests.methods.Get;
+import optionalrest.core.annotations.requests.mime.ToHtml;
+import optionalrest.core.annotations.requests.mime.ToJson;
+import optionalrest.core.annotations.requests.mime.ToXml;
 import optionalrest.core.request.Request;
+import optionalrest.core.request.meta.Mime;
 import optionalrest.core.scope.definition.ScopeContainer;
-import optionalrest.core.utils.JsonUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.springframework.stereotype.Service;
 import renderering.core.Renderer;
 import renderering.core.model.JsonRenderer;
 import renderering.core.model.XmlRenderer;
 import renderering.web.html.basic.documentbody.PreRenderer;
-import org.springframework.stereotype.Service;
 
 @Service
 @ScopeDefinition(name = "address")
 @EntityDefinition(instanceClass = Address.class)
 public class AddressScope implements ScopeContainer {
 
-    @Get
-    public Renderer arrive(Request request) {
+
+    @Get @ToXml @ToHtml
+    public Renderer arriveHtml(Request request) {
+        Address address = getAddress(request);
+        XmlRenderer xmlRenderer = new XmlRenderer(address);
+        if (request.getHeaders().contains("accept", Mime.TEXT_HTML)){
+            return new PreRenderer(StringEscapeUtils.escapeHtml4(xmlRenderer.render()));
+        } else {
+            return xmlRenderer;
+        }
+    }
+
+    public Address getAddress(Request request) {
         Person person = request.getContext().get("person");
-        return new PreRenderer(StringEscapeUtils.escapeHtml4(new XmlRenderer(person.getAddress()).render()));
+        return person.getAddress();
+    }
+
+    @Get @ToJson
+    public Renderer arriveJson(Request request) {
+        Person person = request.getContext().get("person");
+        return new PreRenderer(new JsonRenderer(person.getAddress()).render());
     }
 
     @Error

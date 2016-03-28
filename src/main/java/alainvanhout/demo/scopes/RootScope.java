@@ -43,15 +43,14 @@ public class RootScope implements RootScopeContainer {
 
     @Handle
     private void pass(Request request,
-                      @Param("OPTIONS") List<String> options,
-                      @Param("DELETE") List<String> delete,
-                      @Header("accept") List<String> accept
+                      @Param("-method") List<String> method,
+                      @Param("-accept") List<String> accept
     ) {
-        if (options != null) {
-            request.method(HttpMethod.OPTIONS);
+        if (method != null && method.size() == 1) {
+            request.method(HttpMethod.valueOf(method.get(0)));
         }
-        if (delete != null) {
-            request.method(HttpMethod.DELETE);
+        if (accept != null) {
+            request.getHeaders().clear("accept").add( "accept", accept);
         }
     }
 
