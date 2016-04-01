@@ -1,8 +1,8 @@
-package alainvanhout.context.impl;
+package context.impl;
 
-import alainvanhout.context.RendererContext;
-import alainvanhout.context.UpdateableContext;
-import alainvanhout.context.ContextException;
+import context.RendererContext;
+import context.UpdateableContext;
+import context.ContextException;
 import renderering.core.Renderer;
 import renderering.core.basic.StringRenderer;
 

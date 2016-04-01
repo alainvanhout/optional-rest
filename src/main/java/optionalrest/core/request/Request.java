@@ -1,7 +1,7 @@
 package optionalrest.core.request;
 
-import alainvanhout.context.UpdateableContext;
-import alainvanhout.context.impl.MapContext;
+import context.UpdateableContext;
+import context.impl.MapContext;
 import optionalrest.core.RestException;
 import optionalrest.core.request.meta.HttpMethod;
 import optionalrest.core.response.Response;

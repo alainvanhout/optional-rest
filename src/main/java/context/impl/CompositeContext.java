@@ -1,7 +1,7 @@
-package alainvanhout.context.impl;
+package context.impl;
 
-import alainvanhout.context.Context;
-import alainvanhout.context.UpdateableContext;
+import context.Context;
+import context.UpdateableContext;
 import optionalrest.core.RestException;
 import org.apache.commons.lang3.StringUtils;
 

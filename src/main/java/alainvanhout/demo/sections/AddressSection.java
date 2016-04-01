@@ -2,7 +2,7 @@ package alainvanhout.demo.sections;
 
 import alainvanhout.cms.dtos.custom.CustomSection;
 import alainvanhout.cms.services.TemplateService;
-import alainvanhout.context.Context;
+import context.Context;
 import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.repositories.PersonRepository;

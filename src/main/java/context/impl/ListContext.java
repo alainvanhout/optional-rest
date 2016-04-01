@@ -1,6 +1,6 @@
-package alainvanhout.context.impl;
+package context.impl;
 
-import alainvanhout.context.Context;
+import context.Context;
 
 import java.util.ArrayList;
 import java.util.Arrays;

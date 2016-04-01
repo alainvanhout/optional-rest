@@ -1,6 +1,6 @@
 package alainvanhout.routing.path;
 
-import alainvanhout.context.Context;
+import context.Context;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;

@@ -1,4 +1,4 @@
-package alainvanhout.context;
+package context;
 
 public interface TypedContext extends Context {
 

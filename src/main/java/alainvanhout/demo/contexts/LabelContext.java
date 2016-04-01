@@ -1,7 +1,7 @@
 package alainvanhout.demo.contexts;
 
 import alainvanhout.cms.dtos.custom.CustomContext;
-import alainvanhout.context.UpdateableContext;
+import context.UpdateableContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

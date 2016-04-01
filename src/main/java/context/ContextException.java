@@ -1,4 +1,4 @@
-package alainvanhout.context;
+package context;
 
 public class ContextException extends RuntimeException {
     public ContextException(String message) {

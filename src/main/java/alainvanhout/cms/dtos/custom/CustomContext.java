@@ -1,6 +1,6 @@
 package alainvanhout.cms.dtos.custom;
 
-import alainvanhout.context.Context;
+import context.Context;
 
 public interface CustomContext extends Context {
     String getId();

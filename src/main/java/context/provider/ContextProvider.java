@@ -1,4 +1,4 @@
-package alainvanhout.context.provider;
+package context.provider;
 
 import alainvanhout.routing.path.Path;
 

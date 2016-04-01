@@ -1,4 +1,4 @@
-package alainvanhout.context;
+package context;
 
 import renderering.core.Renderer;
 import renderering.core.basic.StringRenderer;

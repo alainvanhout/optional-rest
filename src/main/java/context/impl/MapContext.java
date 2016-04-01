@@ -1,6 +1,6 @@
-package alainvanhout.context.impl;
+package context.impl;
 
-import alainvanhout.context.UpdateableContext;
+import context.UpdateableContext;
 
 import java.util.HashMap;
 import java.util.Map;

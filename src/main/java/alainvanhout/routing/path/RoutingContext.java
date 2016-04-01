@@ -1,9 +1,9 @@
 package alainvanhout.routing.path;
 
-import alainvanhout.context.Context;
-import alainvanhout.context.UpdateableContext;
+import context.Context;
+import context.UpdateableContext;
 import alainvanhout.cms.dtos.stored.StoredContext;
-import alainvanhout.context.ContextException;
+import context.ContextException;
 
 import java.util.ArrayList;
 import java.util.List;

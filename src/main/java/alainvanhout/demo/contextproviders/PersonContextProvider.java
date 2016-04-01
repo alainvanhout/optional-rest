@@ -2,7 +2,7 @@ package alainvanhout.demo.contextproviders;
 
 import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.repositories.PersonRepository;
-import alainvanhout.context.provider.ContextProvider;
+import context.provider.ContextProvider;
 import alainvanhout.routing.path.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

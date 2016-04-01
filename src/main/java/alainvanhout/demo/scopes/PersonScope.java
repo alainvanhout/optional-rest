@@ -1,9 +1,9 @@
 package alainvanhout.demo.scopes;
 
 import alainvanhout.cms.services.TemplateService;
-import alainvanhout.context.Context;
-import alainvanhout.context.impl.CompositeContext;
-import alainvanhout.context.services.ContextService;
+import context.Context;
+import context.impl.CompositeContext;
+import alainvanhout.services.ContextService;
 import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.renderers.PersonRenderer;

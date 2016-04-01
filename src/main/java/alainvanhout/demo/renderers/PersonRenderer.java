@@ -1,8 +1,8 @@
 package alainvanhout.demo.renderers;
 
-import alainvanhout.context.Context;
-import alainvanhout.context.impl.ListContext;
-import alainvanhout.context.impl.SimpleRendererContext;
+import context.Context;
+import context.impl.ListContext;
+import context.impl.SimpleRendererContext;
 import alainvanhout.demo.entities.Address;
 import alainvanhout.demo.entities.Person;
 import renderering.core.Renderer;

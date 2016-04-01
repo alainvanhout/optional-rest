@@ -1,8 +1,8 @@
 package renderering.core.context;
 
-import alainvanhout.context.Context;
-import alainvanhout.context.UpdateableContext;
-import alainvanhout.context.impl.SimpleRendererContext;
+import context.Context;
+import context.UpdateableContext;
+import context.impl.SimpleRendererContext;
 import renderering.core.Renderer;
 import renderering.core.basic.StringRenderer;
 

@@ -1,7 +1,6 @@
 package alainvanhout.cms.dtos.stored;
 
-import alainvanhout.context.Context;
-import alainvanhout.context.UpdateableContext;
+import context.UpdateableContext;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashMap;

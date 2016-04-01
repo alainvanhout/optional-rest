@@ -5,7 +5,7 @@ import alainvanhout.demo.entities.Person;
 import alainvanhout.demo.renderers.PersonRenderer;
 import alainvanhout.demo.repositories.PersonRepository;
 import alainvanhout.demo.services.RendererService;
-import alainvanhout.context.Context;
+import context.Context;
 import renderering.core.Renderer;
 import renderering.core.model.SimpleModelRenderer;
 import alainvanhout.routing.path.Path;

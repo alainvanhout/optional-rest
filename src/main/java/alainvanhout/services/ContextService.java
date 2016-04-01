@@ -1,7 +1,7 @@
-package alainvanhout.context.services;
+package alainvanhout.services;
 
 import alainvanhout.cms.repositories.ContextRepository;
-import alainvanhout.context.Context;
+import context.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
