@@ -1,5 +1,8 @@
-package context;
+package optionalrest.rendering;
 
+import context.ContextException;
+import context.TypedContext;
+import context.UpdateableContext;
 import renderering.core.Renderer;
 import renderering.core.basic.StringRenderer;
 

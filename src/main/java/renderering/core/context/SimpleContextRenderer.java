@@ -2,7 +2,7 @@ package renderering.core.context;
 
 import context.Context;
 import context.UpdateableContext;
-import context.impl.SimpleRendererContext;
+import optionalrest.rendering.SimpleRendererContext;
 import renderering.core.Renderer;
 import renderering.core.basic.StringRenderer;
 

@@ -1,6 +1,7 @@
-package context.impl;
+package optionalrest.rendering;
 
-import context.RendererContext;
+import context.impl.MapContext;
+import optionalrest.rendering.RendererContext;
 import context.UpdateableContext;
 import context.ContextException;
 import renderering.core.Renderer;

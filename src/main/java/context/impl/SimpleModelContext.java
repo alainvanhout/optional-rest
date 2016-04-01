@@ -1,7 +1,7 @@
 package context.impl;
 
 import context.UpdateableContext;
-import renderering.RenderingException;
+import org.omg.SendingContext.RunTime;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -30,9 +30,9 @@ public class SimpleModelContext<T> implements UpdateableContext {
             field.setAccessible(true);
             return (T) field.get(model).toString();
         } catch (IllegalAccessException e) {
-            throw new RenderingException(String.format("An error occurred while accessing field %s of class %s", key, model.getClass().getCanonicalName()), e);
+            throw new RuntimeException(String.format("An error occurred while accessing field %s of class %s", key, model.getClass().getCanonicalName()), e);
         } catch (NoSuchFieldException e) {
-            throw new RenderingException(String.format("An error occurred while accessing field %s of class %s", key, model.getClass().getCanonicalName()), e);
+            throw new RuntimeException(String.format("An error occurred while accessing field %s of class %s", key, model.getClass().getCanonicalName()), e);
         }
     }
 

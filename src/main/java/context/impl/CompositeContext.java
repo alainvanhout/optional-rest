@@ -2,7 +2,6 @@ package context.impl;
 
 import context.Context;
 import context.UpdateableContext;
-import optionalrest.core.RestException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -19,7 +18,7 @@ public class CompositeContext implements UpdateableContext {
         if (StringUtils.contains(key, ":")) {
             String contextKey = StringUtils.substringBefore(key, ":");
             if (!namedContexts.containsKey(contextKey)) {
-                throw new RestException("Context not available: " + contextKey);
+                throw new RuntimeException("Context not available: " + contextKey);
             }
             return namedContexts.get(contextKey).get(StringUtils.substringAfter(key, ":"));
         }
@@ -36,7 +35,7 @@ public class CompositeContext implements UpdateableContext {
         if (StringUtils.contains(key, ":")) {
             String contextKey = StringUtils.substringBefore(key, ":");
             if (!namedContexts.containsKey(contextKey)) {
-                throw new RestException("Context not available: " + contextKey);
+                throw new RuntimeException("Context not available: " + contextKey);
             }
             return namedContexts.get(contextKey).contains(StringUtils.substringAfter(key, ":"));
         }
