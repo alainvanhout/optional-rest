@@ -1,4 +1,4 @@
-package optionalrest.spring;
+package optionalrest.spring.controllers;
 
 import optionalrest.core.request.Request;
 import optionalrest.core.response.Response;

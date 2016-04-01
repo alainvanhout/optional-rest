@@ -10,7 +10,6 @@ import optionalrest.core.services.factories.Header;
 import optionalrest.core.services.factories.Param;
 import optionalrest.core.services.factories.Step;
 import org.apache.commons.io.input.ReaderInputStream;
-import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.lang.reflect.Parameter;
@@ -19,7 +18,6 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@Service
 public class BasicParameterMapperProvider implements ParameterMapperProvider {
 
     @Override

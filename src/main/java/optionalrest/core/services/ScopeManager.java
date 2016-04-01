@@ -20,10 +20,7 @@ import optionalrest.core.services.mapping.providers.ParameterMapperProvider;
 import optionalrest.core.services.mapping.providers.ResponseConverterProvider;
 import optionalrest.core.utils.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -36,30 +33,17 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@Service
 public class ScopeManager {
 
-    @Autowired
     private ScopeHelper scopeHelper;
-
-    @Autowired
     private ScopeRegistry scopeRegistry;
-
-    @Autowired
     private Collection<ScopeContainer> containers;
-
-    @Autowired
     private Collection<ParameterMapperProvider> parameterMapperProviders;
-
-    @Autowired
     private Collection<ResponseConverterProvider> responseConverterProviders;
-
     private Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers = new HashMap<>();
-
     private Map<Class, Function<Object, Object>> responseTypeMappers = new HashMap<>();
 
-    @PostConstruct
-    public void setup() {
+    public void initialize() {
         for (ParameterMapperProvider parameterMapperProvider : parameterMapperProviders) {
             parameterMappers.putAll(parameterMapperProvider.getCombinedParameterMappers());
         }
@@ -131,7 +115,7 @@ public class ScopeManager {
         }
     }
 
-    public boolean checkInstanceRelative(ScopeContainer container, AccessibleObject accessibleObject, AnnotationBundle bundle) {
+    private boolean checkInstanceRelative(ScopeContainer container, AccessibleObject accessibleObject, AnnotationBundle bundle) {
         Relative relative = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Relative.class);
         Instance instance = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Instance.class);
         if (relative == null || instance == null) {
@@ -159,7 +143,7 @@ public class ScopeManager {
         return true;
     }
 
-    public boolean checkInstance(ScopeContainer container, AccessibleObject accessibleObject, AnnotationBundle bundle) {
+    private boolean checkInstance(ScopeContainer container, AccessibleObject accessibleObject, AnnotationBundle bundle) {
         Instance instance = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Instance.class);
         if (instance == null) {
             return false;
@@ -270,5 +254,30 @@ public class ScopeManager {
 
     public Response follow(ScopeContainer container, Request request) {
         return scopeRegistry.findByContainer(container).follow(request);
+    }
+
+    public ScopeManager scopeHelper(ScopeHelper scopeHelper) {
+        this.scopeHelper = scopeHelper;
+        return this;
+    }
+
+    public ScopeManager scopeRegistry(ScopeRegistry scopeRegistry) {
+        this.scopeRegistry = scopeRegistry;
+        return this;
+    }
+
+    public ScopeManager containers(Collection<ScopeContainer> containers) {
+        this.containers = containers;
+        return this;
+    }
+
+    public ScopeManager parameterMapperProviders(Collection<ParameterMapperProvider> parameterMapperProviders) {
+        this.parameterMapperProviders = parameterMapperProviders;
+        return this;
+    }
+
+    public ScopeManager responseConverterProviders(Collection<ResponseConverterProvider> responseConverterProviders) {
+        this.responseConverterProviders = responseConverterProviders;
+        return this;
     }
 }

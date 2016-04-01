@@ -1,15 +1,13 @@
 package optionalrest.rendering;
 
+import optionalrest.core.services.mapping.providers.ResponseConverterProvider;
 import renderering.core.Renderer;
 import renderering.core.basic.StringRenderer;
-import optionalrest.core.services.mapping.providers.ResponseConverterProvider;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Service
 public class BasicResponseConverterProvider implements ResponseConverterProvider {
 
     @Override
@@ -21,6 +19,4 @@ public class BasicResponseConverterProvider implements ResponseConverterProvider
 
         return map;
     }
-
-
 }

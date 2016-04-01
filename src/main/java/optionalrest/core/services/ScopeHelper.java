@@ -7,13 +7,11 @@ import optionalrest.core.request.meta.HttpMethod;
 import optionalrest.core.services.mapping.MethodMapping;
 import optionalrest.core.utils.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-@Service
 public class ScopeHelper {
 
     public String retrieveScopeId(Class parentClass){
@@ -74,7 +72,7 @@ public class ScopeHelper {
                 .accept(getAccept(handle));
     }
 
-    private String[] getAccept(Handle handle) {
+    public String[] getAccept(Handle handle) {
         if (handle != null) {
             String[] accept = handle.accept();
             if (accept != null && accept.length > 0) {
@@ -84,7 +82,7 @@ public class ScopeHelper {
         return new String[]{};
     }
 
-    private String[] getContentType(Handle handle) {
+    public String[] getContentType(Handle handle) {
         if (handle != null) {
             String[] contentType = handle.contentType();
             if (contentType != null && contentType.length > 0) {

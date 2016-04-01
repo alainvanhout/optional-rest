@@ -3,13 +3,11 @@ package optionalrest.core.services;
 import optionalrest.core.scope.GenericScope;
 import optionalrest.core.scope.Scope;
 import optionalrest.core.scope.definition.ScopeContainer;
-import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Service
 public class ScopeRegistry {
 
     public static final String RESOURCE = "resource";
