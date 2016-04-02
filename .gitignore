@@ -1,2 +1,10 @@
 .idea
-/target
+
+*/target*
+*
+.iml
+/context/*.iml
+/optional-rest-core/*.iml
+/optional-rest-rendering/*.iml
+/optional-rest-spring/*.iml
+/*/*.iml
