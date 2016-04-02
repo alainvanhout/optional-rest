@@ -1,10 +1,6 @@
-.idea
-
-*/target*
-*
-.iml
+/.idea
 /context/*.iml
-/optional-rest-core/*.iml
-/optional-rest-rendering/*.iml
-/optional-rest-spring/*.iml
-/*/*.iml
+*/target/*
+*.iml
+/springboot-demo/mvnw
+/springboot-demo/mvnw.cmd
