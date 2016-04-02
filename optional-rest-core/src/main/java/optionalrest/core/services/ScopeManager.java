@@ -36,7 +36,7 @@ import java.util.function.Function;
 
 public class ScopeManager {
 
-    private ScopeHelper scopeHelper;
+    private ScopeHelper scopeHelper = new ScopeHelper();
     private ScopeRegistry scopeRegistry;
     private Collection<ScopeContainer> containers;
     private Collection<ParameterMapperProvider> parameterMapperProviders;

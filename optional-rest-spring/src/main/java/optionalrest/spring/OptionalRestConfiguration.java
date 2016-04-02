@@ -29,12 +29,12 @@ public class OptionalRestConfiguration {
     }
 
     @Bean
-    public ParameterMapperProvider basicMapperProvider(){
+    public ParameterMapperProvider basicMapperProvider() {
         return new BasicParameterMapperProvider();
     }
 
     @Bean
-    public ResponseConverterProvider basicResponseConverterProvider(){
+    public ResponseConverterProvider basicResponseConverterProvider() {
         return new BasicResponseConverterProvider();
     }
 
@@ -52,17 +52,12 @@ public class OptionalRestConfiguration {
         return new ScopeRegistry();
     }
 
-    private ScopeHelper scopeHelper() {
-        return new ScopeHelper();
-    }
-
     @Bean
-    public ScopeManager scopeManager(){
+    public ScopeManager scopeManager() {
 
         ScopeManager scopeManager = new ScopeManager();
 
-        scopeManager.scopeHelper(scopeHelper())
-                .scopeRegistry(scopeRegistry())
+        scopeManager.scopeRegistry(scopeRegistry())
                 .containers(containers)
                 .optionsRequestHandler(new OptionsRequestHandlerImpl())
                 .parameterMapperProviders(parameterMapperProviders)

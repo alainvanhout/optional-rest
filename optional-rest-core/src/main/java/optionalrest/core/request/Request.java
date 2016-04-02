@@ -147,6 +147,10 @@ public class Request {
         return context;
     }
 
+    public static Request fromQuery(String query) {
+        return fromQuery(query, "/", HttpMethod.GET);
+    }
+
     public static Request fromQuery(String query, String root, HttpMethod method) {
         String fullQuery = query;
         query = StringUtils.substringAfter(query, root);

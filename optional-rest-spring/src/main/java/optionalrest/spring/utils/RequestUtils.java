@@ -12,8 +12,8 @@ import java.util.List;
 public class RequestUtils {
 
     public static Request toRequest(HttpServletRequest httpRequest) {
-        HttpMethod method = HttpMethod.valueOf(httpRequest.getMethod());
-        Request request = Request.fromQuery(httpRequest.getRequestURI(), "/", method);
+        Request request = Request.fromQuery(httpRequest.getRequestURI());
+        request.method(HttpMethod.valueOf(httpRequest.getMethod()));
         request.getParameters().addAll(httpRequest.getParameterMap());
 
         List<String> headerNames = Collections.list(httpRequest.getHeaderNames());
