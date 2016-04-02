@@ -1,6 +1,5 @@
 package optionalrest.rendering;
 
-import optionalrest.core.response.RendererResponse;
 import optionalrest.core.services.mapping.providers.ResponseConverterProvider;
 import renderering.core.Renderer;
 import renderering.core.basic.StringRenderer;

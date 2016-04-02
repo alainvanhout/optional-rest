@@ -15,7 +15,7 @@ import optionalrest.core.response.RedirectResponse;
 import optionalrest.core.response.Response;
 import optionalrest.core.scope.definition.ScopeContainer;
 import optionalrest.core.services.factories.Step;
-import optionalrest.core.utils.JsonUtils;
+import optionalrest.rendering.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,7 +88,7 @@ public class TemplateScope implements ScopeContainer {
         return new RedirectResponse(request.getQuery() + "?edit");
     }
 
-    public Renderer templateListRenderer(String id, String parameters) {
+    private Renderer templateListRenderer(String id, String parameters) {
         ContextRenderer templateListRenderer = new SimpleContextRenderer(templateService.findBodyAsRenderer("template-list"));
         Renderer renderer = new GenericListRenderer<Template>()
                 .preProcess(t -> {
@@ -105,14 +105,14 @@ public class TemplateScope implements ScopeContainer {
         return templateListRenderer;
     }
 
-    public String encodeElement(String templateBody, String element) {
+    private String encodeElement(String templateBody, String element) {
         templateBody = StringUtils.replace(templateBody, "<" + element, "{" + element);
         templateBody = StringUtils.replace(templateBody, "</" + element, "{/" + element);
         templateBody = StringUtils.replace(templateBody, element + ">", element + "}");
         return templateBody;
     }
 
-    public String decodeElement(String templateBody, String element) {
+    private String decodeElement(String templateBody, String element) {
         templateBody = StringUtils.replace(templateBody, "{" + element, "<" + element);
         templateBody = StringUtils.replace(templateBody, "{/" + element, "</" + element);
         templateBody = StringUtils.replace(templateBody, element + "}", element + ">");

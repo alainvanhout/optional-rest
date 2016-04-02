@@ -12,6 +12,7 @@ import optionalrest.core.annotations.scopes.Instance;
 import optionalrest.core.annotations.scopes.Relative;
 import optionalrest.core.request.Request;
 import optionalrest.core.response.Response;
+import optionalrest.core.scope.OptionsRequestHandler;
 import optionalrest.core.scope.Scope;
 import optionalrest.core.scope.definition.ScopeContainer;
 import optionalrest.core.services.mapping.AnnotationBundle;
@@ -43,6 +44,8 @@ public class ScopeManager {
     private Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers = new HashMap<>();
     private Map<Class, Function<Object, Object>> responseTypeMappers = new HashMap<>();
 
+    private OptionsRequestHandler optionsRequestHandler;
+
     public void initialize() {
         for (ParameterMapperProvider parameterMapperProvider : parameterMapperProviders) {
             parameterMappers.putAll(parameterMapperProvider.getCombinedParameterMappers());
@@ -57,7 +60,7 @@ public class ScopeManager {
         }
     }
 
-    public void processContainer(ScopeContainer container) {
+    private void processContainer(ScopeContainer container) {
 
         Entity entity = ReflectionUtils.retrieveAnnotation(container.getClass(), Entity.class);
         if (entity != null) {
@@ -65,7 +68,7 @@ public class ScopeManager {
             if (StringUtils.isBlank(scopeId)) {
                 throw new RestException("Cannot assign entity because no scopeId was found for " + container.getClass());
             }
-            Scope scope = scopeRegistry.produceScope(scopeId, container);
+            Scope scope = produceScope(container, scopeId);
             scope.getDefinition().setInternalClass(entity.value());
         }
 
@@ -101,7 +104,7 @@ public class ScopeManager {
         }
         if (bundle.contains(Error.class)) {
             String scopeId = scopeHelper.retrieveScopeId(accessibleObject, container.getClass());
-            Scope scope = scopeRegistry.produceScope(scopeId, container);
+            Scope scope = produceScope(container, scopeId);
             if (accessibleObject instanceof Method) {
                 Method method = (Method) accessibleObject;
                 MethodMapping mapping = new MethodMapping(container, method);
@@ -125,14 +128,14 @@ public class ScopeManager {
         String relativePath = relative.path();
 
         String parentId = scopeHelper.retrieveScopeId(container.getClass());
-        Scope parentScope = scopeRegistry.produceScope(parentId, container);
+        Scope parentScope = produceScope(container, parentId);
 
         String instanceId = scopeHelper.retrieveInstanceScopeId(accessibleObject, container.getClass());
-        Scope instanceScope = scopeRegistry.produceScope(instanceId, container);
+        Scope instanceScope = produceScope(container, instanceId);
         parentScope.setInstanceScope(instanceScope);
 
         String relativeId = scopeHelper.retrieveRelativeScopeId(accessibleObject);
-        Scope relativeScope = scopeRegistry.produceScope(relativeId, null);
+        Scope relativeScope = produceScope(null, relativeId);
         instanceScope.addRelativeScope(relativePath, relativeScope);
 
         // only necessary for Method
@@ -143,6 +146,10 @@ public class ScopeManager {
         return true;
     }
 
+    private Scope produceScope(ScopeContainer container, String parentId) {
+        return scopeRegistry.produceScope(parentId, container).optionsRequestHandler(optionsRequestHandler);
+    }
+
     private boolean checkInstance(ScopeContainer container, AccessibleObject accessibleObject, AnnotationBundle bundle) {
         Instance instance = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Instance.class);
         if (instance == null) {
@@ -150,10 +157,10 @@ public class ScopeManager {
         }
 
         String parentId = scopeHelper.retrieveScopeId(container.getClass());
-        Scope parentScope = scopeRegistry.produceScope(parentId, container);
+        Scope parentScope = produceScope(container, parentId);
 
         String instanceId = scopeHelper.retrieveInstanceScopeId(accessibleObject, container.getClass());
-        Scope instanceScope = scopeRegistry.produceScope(instanceId, container);
+        Scope instanceScope = produceScope(container, instanceId);
         parentScope.setInstanceScope(instanceScope);
 
         // only necessary for Method
@@ -164,7 +171,7 @@ public class ScopeManager {
         return true;
     }
 
-    public boolean checkRelative(ScopeContainer container, AccessibleObject accessibleObject, AnnotationBundle bundle) {
+    private boolean checkRelative(ScopeContainer container, AccessibleObject accessibleObject, AnnotationBundle bundle) {
         Relative relative = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Relative.class);
         if (relative == null) {
             return false;
@@ -173,10 +180,10 @@ public class ScopeManager {
         String relativePath = relative.path();
 
         String parentId = scopeHelper.retrieveScopeId(container.getClass());
-        Scope parentScope = scopeRegistry.produceScope(parentId, container);
+        Scope parentScope = produceScope(container, parentId);
 
         String relativeId = scopeHelper.retrieveRelativeScopeId(accessibleObject);
-        Scope relativeScope = scopeRegistry.produceScope(relativeId, null);
+        Scope relativeScope = produceScope(null, relativeId);
         parentScope.addRelativeScope(relativePath, relativeScope);
 
         // only necessary for Method
@@ -197,7 +204,7 @@ public class ScopeManager {
         return bundle;
     }
 
-    public void addMappingForMethod(AccessibleObject accessibleObject, ScopeContainer container, Scope scope, AnnotationBundle bundle) {
+    private void addMappingForMethod(AccessibleObject accessibleObject, ScopeContainer container, Scope scope, AnnotationBundle bundle) {
         List<Annotation> handles = bundle.subList(Handle.class);
         List<Annotation> orders = bundle.subList(Order.class);
         List<Annotation> befores = bundle.subList(Before.class);
@@ -222,14 +229,14 @@ public class ScopeManager {
             for (Annotation before : befores) {
                 for (Class<? extends ScopeContainer> beforeClass : ((Before)before).value()) {
                     String scopeId = scopeHelper.retrieveScopeId(beforeClass);
-                    mapping.addBefore(scopeRegistry.produceScope(scopeId, container));
+                    mapping.addBefore(produceScope(container, scopeId));
                 }
             }
 
             for (Annotation after : afters) {
                 for (Class<? extends ScopeContainer> afterClass : ((After)after).value()) {
                     String scopeId = scopeHelper.retrieveScopeId(afterClass);
-                    mapping.addBefore(scopeRegistry.produceScope(scopeId, container));
+                    mapping.addBefore(produceScope(container, scopeId));
                 }
             }
 
@@ -237,13 +244,13 @@ public class ScopeManager {
         }
     }
 
-    public void checkForScope(AccessibleObject accessibleObject, ScopeContainer container, AnnotationBundle bundle) {
+    private void checkForScope(AccessibleObject accessibleObject, ScopeContainer container, AnnotationBundle bundle) {
         String scopeId = getScopeId(accessibleObject, container);
-        Scope scope = scopeRegistry.produceScope(scopeId, container);
+        Scope scope = produceScope(container, scopeId);
         addMappingForMethod(accessibleObject, container, scope, bundle);
     }
 
-    public String getScopeId(AccessibleObject accessibleObject, ScopeContainer container) {
+    private String getScopeId(AccessibleObject accessibleObject, ScopeContainer container) {
         String scopeId = scopeHelper.retrieveScopeId(accessibleObject, container.getClass());
         if (StringUtils.isBlank(scopeId)) {
             throw new RestException(String.format("Could not determine scope id for %s in class %s",
@@ -278,6 +285,11 @@ public class ScopeManager {
 
     public ScopeManager responseConverterProviders(Collection<ResponseConverterProvider> responseConverterProviders) {
         this.responseConverterProviders = responseConverterProviders;
+        return this;
+    }
+
+    public ScopeManager optionsRequestHandler(OptionsRequestHandler optionsRequestHandler) {
+        this.optionsRequestHandler = optionsRequestHandler;
         return this;
     }
 }

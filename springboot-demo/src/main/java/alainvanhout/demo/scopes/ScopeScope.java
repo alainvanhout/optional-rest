@@ -11,7 +11,7 @@ import optionalrest.core.scope.ScopeDto;
 import optionalrest.core.scope.definition.ScopeContainer;
 import optionalrest.core.services.ScopeRegistry;
 import optionalrest.core.services.factories.Step;
-import optionalrest.core.utils.JsonUtils;
+import optionalrest.rendering.JsonUtils;
 import renderering.core.Renderer;
 import renderering.web.html.basic.documentbody.LinkRenderer;
 import renderering.web.html.basic.documentbody.PreRenderer;
@@ -44,7 +44,7 @@ public class ScopeScope implements ScopeContainer {
         return new PreRenderer(JsonUtils.objectToUnescapedJson(dtos));
     }
 
-    public ScopeDto toDto(Scope scope) {
+    private ScopeDto toDto(Scope scope) {
         Map<String, String> relativeScopes = scope.getRelativeScopes().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> toLink(e.getValue())));
 
@@ -53,7 +53,7 @@ public class ScopeScope implements ScopeContainer {
                 .relative(relativeScopes);
     }
 
-    public String toLink(Scope scope) {
+    private String toLink(Scope scope) {
         return new LinkRenderer().href(scope.getScopeId()).add(scope.getScopeId()).render();
     }
 }

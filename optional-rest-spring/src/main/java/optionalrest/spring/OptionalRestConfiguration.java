@@ -8,6 +8,7 @@ import optionalrest.core.services.mapping.providers.BasicParameterMapperProvider
 import optionalrest.core.services.mapping.providers.ParameterMapperProvider;
 import optionalrest.core.services.mapping.providers.ResponseConverterProvider;
 import optionalrest.rendering.BasicResponseConverterProvider;
+import optionalrest.rendering.OptionsRequestHandlerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -63,6 +64,7 @@ public class OptionalRestConfiguration {
         scopeManager.scopeHelper(scopeHelper())
                 .scopeRegistry(scopeRegistry())
                 .containers(containers)
+                .optionsRequestHandler(new OptionsRequestHandlerImpl())
                 .parameterMapperProviders(parameterMapperProviders)
                 .responseConverterProviders(responseConverterProviders);
 

@@ -11,7 +11,7 @@ import optionalrest.core.request.meta.Mime;
 import optionalrest.core.response.Response;
 import optionalrest.core.scope.definition.RootScopeContainer;
 import optionalrest.core.services.factories.Param;
-import optionalrest.core.response.RendererResponse;
+import optionalrest.rendering.RendererResponse;
 import org.springframework.stereotype.Service;
 import renderering.core.basic.StringRenderer;
 

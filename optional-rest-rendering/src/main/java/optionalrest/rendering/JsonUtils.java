@@ -1,4 +1,4 @@
-package optionalrest.core.utils;
+package optionalrest.rendering;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

@@ -2,7 +2,6 @@ package optionalrest.core.scope;
 
 import optionalrest.core.request.Request;
 import optionalrest.core.response.Response;
-import optionalrest.core.scope.definition.BuildParameters;
 import optionalrest.core.scope.definition.ScopeDefinition;
 import optionalrest.core.services.mapping.Mapping;
 
@@ -13,11 +12,6 @@ public abstract class BasicScope implements Scope {
 
     protected String scopeId;
     protected Map<String, Scope> relativeScopes = new HashMap<>();
-
-    @Override
-    public Map<String, Object> buildDefinitionMap(int deep, BuildParameters params) {
-        return null;
-    }
 
     @Override
     public ScopeDefinition getDefinition() {

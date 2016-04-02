@@ -2,7 +2,6 @@ package optionalrest.core.scope;
 
 import optionalrest.core.request.Request;
 import optionalrest.core.response.Response;
-import optionalrest.core.scope.definition.BuildParameters;
 import optionalrest.core.scope.definition.ScopeDefinition;
 import optionalrest.core.services.mapping.Mapping;
 
@@ -13,8 +12,6 @@ public interface Scope {
     void pass(Request request);
 
     Response arrive(Request request);
-
-    Map<String, Object> buildDefinitionMap(int deep, BuildParameters params);
 
     ScopeDefinition getDefinition();
 
@@ -33,4 +30,10 @@ public interface Scope {
     Scope scopeId(String scopeId);
 
     String getScopeId();
+
+    GenericScope optionsRequestHandler(OptionsRequestHandler optionsRequestHandler);
+
+    Supported getSupported();
+
+    Scope getInstanceScope();
 }

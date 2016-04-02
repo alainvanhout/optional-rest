@@ -1,5 +1,6 @@
-package optionalrest.core.response;
+package optionalrest.rendering;
 
+import optionalrest.core.response.BasicResponse;
 import renderering.core.Renderer;
 
 import java.io.ByteArrayInputStream;
@@ -9,7 +10,7 @@ public class RendererResponse extends BasicResponse {
 
     private Renderer renderer;
 
-    public String render() {
+    private String render() {
         if (renderer == null){
             return "";
         }

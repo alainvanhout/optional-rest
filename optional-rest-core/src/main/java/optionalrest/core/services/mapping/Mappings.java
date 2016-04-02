@@ -32,7 +32,7 @@ public class Mappings {
                 .collect(Collectors.toList());
     }
 
-    public boolean supports(Request request, Supported supported) {
+    private boolean supports(Request request, Supported supported) {
         // methods or defaults
         Collection<HttpMethod> methods = supported.getMethods();
         if (methods.isEmpty()){
@@ -87,7 +87,7 @@ public class Mappings {
         return false;
     }
 
-    public Supported supported() {
+    public Supported getSupported() {
         Supported supported = new Supported();
         for (Mapping mapping : this.list) {
             supported.getMethods().addAll(mapping.getSupported().getMethods());
