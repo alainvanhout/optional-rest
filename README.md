@@ -20,8 +20,8 @@ Optional REST encapsulates most of the same, but adds a focus on the hierarchica
 * Different endpoints are used for different purposes (cf. REST level 1)
 * Http methods specify intent (cf. REST level 2)
 * Endpoints tend to for hierarchies which make intuitive sense
-* The endpoint information, including child hierarchies, can be collected via the OPTIONS http method
 * The modelling behind endpoints should inherently reflect these hierarchical relationships rather than adding them as an implementation detail
+* To maintain the separation between data and meta-data, and avoid needing to retrieve data to get meta-data, the endpoint information (including child hierarchies) is collected via the OPTIONS http method rather than being part of the (e.g. GET) response itself.
 
 ### Scopes
 
