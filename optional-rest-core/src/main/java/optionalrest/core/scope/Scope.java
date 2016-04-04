@@ -3,7 +3,7 @@ package optionalrest.core.scope;
 import optionalrest.core.request.Request;
 import optionalrest.core.response.Response;
 import optionalrest.core.scope.definition.ScopeDefinition;
-import optionalrest.core.services.mapping.Mapping;
+import optionalrest.core.services.mapping.RequestHandler;
 
 import java.util.Map;
 
@@ -17,9 +17,9 @@ public interface Scope {
 
     Response follow(Request request);
 
-    Scope addPassMapping(Mapping mapping);
+    Scope addRequestHandler(RequestHandler requestHandler);
 
-    Scope addErrorMapping(Mapping mapping);
+    Scope addErrorRequestHandler(RequestHandler requestHandler);
 
     void setInstanceScope(Scope scope);
 

@@ -16,7 +16,7 @@ import optionalrest.core.scope.OptionsRequestHandler;
 import optionalrest.core.scope.Scope;
 import optionalrest.core.scope.definition.ScopeContainer;
 import optionalrest.core.services.mapping.AnnotationBundle;
-import optionalrest.core.services.mapping.MethodMapping;
+import optionalrest.core.services.mapping.MethodRequestHandler;
 import optionalrest.core.services.mapping.providers.ParameterMapperProvider;
 import optionalrest.core.services.mapping.providers.ResponseConverterProvider;
 import optionalrest.core.utils.ReflectionUtils;
@@ -107,13 +107,13 @@ public class ScopeManager {
             Scope scope = produceScope(container, scopeId);
             if (accessibleObject instanceof Method) {
                 Method method = (Method) accessibleObject;
-                MethodMapping mapping = new MethodMapping(container, method);
-                scope.addErrorMapping(mapping);
+                MethodRequestHandler requestHandler = new MethodRequestHandler(container, method);
+                scope.addErrorRequestHandler(requestHandler);
 
                 // scope helper provides defaults if necessary
                 Handle handle = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Handle.class);
-                scopeHelper.updateSupported(mapping, handle);
-                mapping.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);
+                scopeHelper.updateSupported(requestHandler, handle);
+                requestHandler.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);
             }
         }
     }
@@ -140,7 +140,7 @@ public class ScopeManager {
 
         // only necessary for Method
         if (accessibleObject instanceof Method) {
-            addMappingForMethod(accessibleObject, container, relativeScope, bundle);
+            addRequestHandler(accessibleObject, container, relativeScope, bundle);
         }
 
         return true;
@@ -165,7 +165,7 @@ public class ScopeManager {
 
         // only necessary for Method
         if (accessibleObject instanceof Method) {
-            addMappingForMethod(accessibleObject, container, instanceScope, bundle);
+            addRequestHandler(accessibleObject, container, instanceScope, bundle);
         }
 
         return true;
@@ -188,7 +188,7 @@ public class ScopeManager {
 
         // only necessary for Method
         if (accessibleObject instanceof Method) {
-            addMappingForMethod(accessibleObject, container, relativeScope, bundle);
+            addRequestHandler(accessibleObject, container, relativeScope, bundle);
         }
 
         return true;
@@ -204,7 +204,7 @@ public class ScopeManager {
         return bundle;
     }
 
-    private void addMappingForMethod(AccessibleObject accessibleObject, ScopeContainer container, Scope scope, AnnotationBundle bundle) {
+    private void addRequestHandler(AccessibleObject accessibleObject, ScopeContainer container, Scope scope, AnnotationBundle bundle) {
         List<Annotation> handles = bundle.subList(Handle.class);
         List<Annotation> orders = bundle.subList(Order.class);
         List<Annotation> befores = bundle.subList(Before.class);
@@ -213,41 +213,41 @@ public class ScopeManager {
         if (accessibleObject instanceof Method) {
             Method method = (Method) accessibleObject;
 
-            MethodMapping mapping = new MethodMapping(container, method);
-            scope.addPassMapping(mapping);
+            MethodRequestHandler requestHandler = new MethodRequestHandler(container, method);
+            scope.addRequestHandler(requestHandler);
 
-            mapping.passing(Void.TYPE.equals(method.getReturnType()));
-            mapping.incrementOrder(Void.TYPE.equals(method.getReturnType()) ? 0 : 1);
+            requestHandler.passing(Void.TYPE.equals(method.getReturnType()));
+            requestHandler.incrementOrder(Void.TYPE.equals(method.getReturnType()) ? 0 : 1);
             for (Annotation order : orders) {
-                mapping.incrementOrder(((Order) order).value());
+                requestHandler.incrementOrder(((Order) order).value());
             }
 
             for (Annotation handle : handles) {
-                scopeHelper.updateSupported(mapping, (Handle) handle);
+                scopeHelper.updateSupported(requestHandler, (Handle) handle);
             }
 
             for (Annotation before : befores) {
                 for (Class<? extends ScopeContainer> beforeClass : ((Before)before).value()) {
                     String scopeId = scopeHelper.retrieveScopeId(beforeClass);
-                    mapping.addBefore(produceScope(container, scopeId));
+                    requestHandler.addBefore(produceScope(container, scopeId));
                 }
             }
 
             for (Annotation after : afters) {
                 for (Class<? extends ScopeContainer> afterClass : ((After)after).value()) {
                     String scopeId = scopeHelper.retrieveScopeId(afterClass);
-                    mapping.addBefore(produceScope(container, scopeId));
+                    requestHandler.addBefore(produceScope(container, scopeId));
                 }
             }
 
-            mapping.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);
+            requestHandler.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);
         }
     }
 
     private void checkForScope(AccessibleObject accessibleObject, ScopeContainer container, AnnotationBundle bundle) {
         String scopeId = getScopeId(accessibleObject, container);
         Scope scope = produceScope(container, scopeId);
-        addMappingForMethod(accessibleObject, container, scope, bundle);
+        addRequestHandler(accessibleObject, container, scope, bundle);
     }
 
     private String getScopeId(AccessibleObject accessibleObject, ScopeContainer container) {

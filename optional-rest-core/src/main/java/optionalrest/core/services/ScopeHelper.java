@@ -4,7 +4,7 @@ import optionalrest.core.RestException;
 import optionalrest.core.annotations.requests.Handle;
 import optionalrest.core.annotations.scopes.Scope;
 import optionalrest.core.request.meta.HttpMethod;
-import optionalrest.core.services.mapping.MethodMapping;
+import optionalrest.core.services.mapping.MethodRequestHandler;
 import optionalrest.core.utils.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -65,14 +65,14 @@ public class ScopeHelper {
         return (T) ReflectionUtils.retrieveAnnotation(parentClass, annotationClass);
     }
 
-    public void updateSupported(MethodMapping mapping, Handle handle) {
-        mapping.getSupported()
+    public void updateSupported(MethodRequestHandler requestHandler, Handle handle) {
+        requestHandler.getSupported()
                 .methods(getMethods(handle))
                 .contentType(getContentType(handle))
                 .accept(getAccept(handle));
     }
 
-    public String[] getAccept(Handle handle) {
+    private String[] getAccept(Handle handle) {
         if (handle != null) {
             String[] accept = handle.accept();
             if (accept != null && accept.length > 0) {
@@ -82,7 +82,7 @@ public class ScopeHelper {
         return new String[]{};
     }
 
-    public String[] getContentType(Handle handle) {
+    private String[] getContentType(Handle handle) {
         if (handle != null) {
             String[] contentType = handle.contentType();
             if (contentType != null && contentType.length > 0) {

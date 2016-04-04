@@ -4,7 +4,7 @@ import optionalrest.core.RestException;
 import optionalrest.core.request.Request;
 import optionalrest.core.response.Response;
 import optionalrest.core.scope.definition.ScopeDefinition;
-import optionalrest.core.services.mapping.Mapping;
+import optionalrest.core.services.mapping.RequestHandler;
 import optionalrest.core.services.mapping.Mappings;
 
 import java.util.Collection;
@@ -43,10 +43,10 @@ public class GenericScope extends BasicScope {
             return proceed(request);
 
         } catch (Exception e) {
-            List<Mapping> errorMapping = errorMappings.getMappings();
-            if (!errorMapping.isEmpty()) {
+            List<RequestHandler> errorRequestHandler = errorMappings.getMappings();
+            if (!errorRequestHandler.isEmpty()) {
                 request.getContext().add("exception", e);
-                return apply(errorMapping, request);
+                return apply(errorRequestHandler, request);
             }
             throw e;
         }
@@ -55,14 +55,14 @@ public class GenericScope extends BasicScope {
 
     @Override
     public void pass(Request request) {
-        List<Mapping> passing = passMappings.getMappings(request, true);
+        List<RequestHandler> passing = passMappings.getMappings(request, true);
         apply(passing, request);
     }
 
     @Override
     public Response arrive(Request request) {
         // run arrive mappings
-        List<Mapping> arriving = passMappings.getMappings(request, false);
+        List<RequestHandler> arriving = passMappings.getMappings(request, false);
         apply(arriving, request);
 
         // arrived with response
@@ -98,9 +98,9 @@ public class GenericScope extends BasicScope {
         return scope.follow(request);
     }
 
-    private Response apply(Collection<Mapping> mappings, Request request) {
-        for (Mapping mapping : mappings) {
-            apply(mapping, request);
+    private Response apply(Collection<RequestHandler> requestHandlers, Request request) {
+        for (RequestHandler requestHandler : requestHandlers) {
+            apply(requestHandler, request);
             if (request.isDone()) {
                 break;
             }
@@ -108,25 +108,25 @@ public class GenericScope extends BasicScope {
         return request.getResponse();
     }
 
-    private void apply(Mapping mapping, Request request) {
+    private void apply(RequestHandler requestHandler, Request request) {
         try {
-            for (Scope scope : mapping.getBefore()) {
+            for (Scope scope : requestHandler.getBefore()) {
                 scope.pass(request);
             }
 
-            mapping.apply(request);
+            requestHandler.apply(request);
 
-            for (Scope scope : mapping.getAfter()) {
+            for (Scope scope : requestHandler.getAfter()) {
                 scope.pass(request);
             }
         } catch (RestException e) {
-            e.add("mapping", mapping);
+            e.add("requestHandler", requestHandler);
             throw e;
         } catch (Exception e) {
             if (e.getCause() instanceof RestException) {
-                throw ((RestException) e.getCause()).add("mapping", mapping);
+                throw ((RestException) e.getCause()).add("requestHandler", requestHandler);
             }
-            throw new RestException("Unable to call mapping", e).add("mapping", mapping);
+            throw new RestException("Unable to call request handler", e).add("requestHandler", requestHandler);
         }
     }
 
@@ -136,17 +136,17 @@ public class GenericScope extends BasicScope {
     }
 
     @Override
-    public GenericScope addPassMapping(Mapping mapping) {
-        return addMapping(passMappings, mapping);
+    public GenericScope addRequestHandler(RequestHandler requestHandler) {
+        return addRequesthandler(passMappings, requestHandler);
     }
 
     @Override
-    public GenericScope addErrorMapping(Mapping mapping) {
-        return addMapping(errorMappings, mapping);
+    public GenericScope addErrorRequestHandler(RequestHandler requestHandler) {
+        return addRequesthandler(errorMappings, requestHandler);
     }
 
-    private GenericScope addMapping(Mappings mappings, Mapping mapping) {
-        mappings.add(mapping);
+    private GenericScope addRequesthandler(Mappings mappings, RequestHandler requestHandler) {
+        mappings.add(requestHandler);
         return this;
     }
 

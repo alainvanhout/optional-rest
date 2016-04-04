@@ -13,7 +13,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class MethodMapping extends BasicMapping {
+public class MethodRequestHandler extends BasicRequestHandler {
 
     private ScopeContainer container;
     private Method method;
@@ -21,7 +21,7 @@ public class MethodMapping extends BasicMapping {
     private Map<Class, Function<Object, Object>> responseTypeMappers = new HashMap<>();
     private List<Function<Request, Object>> requestMappers;
 
-    public MethodMapping(ScopeContainer container, Method method) {
+    public MethodRequestHandler(ScopeContainer container, Method method) {
         this.container = container;
         this.method = method;
     }
@@ -54,7 +54,7 @@ public class MethodMapping extends BasicMapping {
         }
     }
 
-    public Object[] assembleParameters(Request request) {
+    private Object[] assembleParameters(Request request) {
         return requestMappers.stream().map(m -> m.apply(request)).toArray();
     }
 
@@ -71,7 +71,7 @@ public class MethodMapping extends BasicMapping {
         }
     }
 
-    public MethodMapping parameterMappers(Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers) {
+    public MethodRequestHandler parameterMappers(Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers) {
         this.parameterMappers.putAll(parameterMappers);
         formMappers();
         return this;
@@ -94,7 +94,7 @@ public class MethodMapping extends BasicMapping {
         throw new RestException("No mapper found for parameter " + parameter);
     }
 
-    public MethodMapping responseTypeMappers(Map<Class, Function<Object, Object>> responseTypeMappers) {
+    public MethodRequestHandler responseTypeMappers(Map<Class, Function<Object, Object>> responseTypeMappers) {
         this.responseTypeMappers.putAll(responseTypeMappers);
         return this;
     }

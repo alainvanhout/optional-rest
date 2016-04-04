@@ -6,7 +6,7 @@ import optionalrest.core.scope.Supported;
 
 import java.util.List;
 
-public interface Mapping {
+public interface RequestHandler {
     void apply(Request request);
 
     Class getReturnType();

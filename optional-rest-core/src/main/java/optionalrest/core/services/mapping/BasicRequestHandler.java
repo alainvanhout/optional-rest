@@ -6,7 +6,7 @@ import optionalrest.core.scope.Supported;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BasicMapping implements Mapping {
+public abstract class BasicRequestHandler implements RequestHandler {
 
     private boolean passing;
     private int order;
@@ -20,7 +20,7 @@ public abstract class BasicMapping implements Mapping {
         return passing;
     }
 
-    public BasicMapping passing(boolean passing) {
+    public BasicRequestHandler passing(boolean passing) {
         this.passing = passing;
         return this;
     }
@@ -30,12 +30,12 @@ public abstract class BasicMapping implements Mapping {
         return order;
     }
 
-    public BasicMapping order(int order) {
+    public BasicRequestHandler order(int order) {
         this.order = order;
         return this;
     }
 
-    public BasicMapping incrementOrder(int order) {
+    public BasicRequestHandler incrementOrder(int order) {
         this.order += order;
         return this;
     }
@@ -50,12 +50,12 @@ public abstract class BasicMapping implements Mapping {
         return this.getClass().getSimpleName() + getSupported().toString();
     }
 
-    public BasicMapping addBefore(Scope scope) {
+    public BasicRequestHandler addBefore(Scope scope) {
         before.add(scope);
         return this;
     }
 
-    public BasicMapping addAfter(Scope scope) {
+    public BasicRequestHandler addAfter(Scope scope) {
         after.add(scope);
         return this;
     }

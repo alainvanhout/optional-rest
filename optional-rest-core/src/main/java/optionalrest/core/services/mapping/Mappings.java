@@ -12,20 +12,20 @@ import java.util.stream.Collectors;
 
 public class Mappings {
 
-    private List<Mapping> list = new ArrayList<>();
+    private List<RequestHandler> list = new ArrayList<>();
 
-    public Mappings add(Mapping mapping) {
-        list.add(mapping);
+    public Mappings add(RequestHandler requestHandler) {
+        list.add(requestHandler);
         return this;
     }
 
-    public List<Mapping> getMappings() {
+    public List<RequestHandler> getMappings() {
         return list.stream()
                 .sorted((m1, m2) -> m1.getOrder() - m2.getOrder())
                 .collect(Collectors.toList());
     }
 
-    public List<Mapping> getMappings(Request request, boolean passing) {
+    public List<RequestHandler> getMappings(Request request, boolean passing) {
         return list.stream()
                 .filter(m -> supports(request, m.getSupported()) && m.isPassing() == passing)
                 .sorted((m1, m2) -> m1.getOrder() - m2.getOrder())
@@ -89,10 +89,10 @@ public class Mappings {
 
     public Supported getSupported() {
         Supported supported = new Supported();
-        for (Mapping mapping : this.list) {
-            supported.getMethods().addAll(mapping.getSupported().getMethods());
-            supported.getAccept().addAll(mapping.getSupported().getAccept());
-            supported.getContentType().addAll(mapping.getSupported().getContentType());
+        for (RequestHandler requestHandler : this.list) {
+            supported.getMethods().addAll(requestHandler.getSupported().getMethods());
+            supported.getAccept().addAll(requestHandler.getSupported().getAccept());
+            supported.getContentType().addAll(requestHandler.getSupported().getContentType());
         }
         return supported;
     }

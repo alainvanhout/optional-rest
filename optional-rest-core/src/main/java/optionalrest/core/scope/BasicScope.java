@@ -3,7 +3,7 @@ package optionalrest.core.scope;
 import optionalrest.core.request.Request;
 import optionalrest.core.response.Response;
 import optionalrest.core.scope.definition.ScopeDefinition;
-import optionalrest.core.services.mapping.Mapping;
+import optionalrest.core.services.mapping.RequestHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,12 +24,12 @@ public abstract class BasicScope implements Scope {
     }
 
     @Override
-    public Scope addPassMapping(Mapping mapping) {
+    public Scope addRequestHandler(RequestHandler requestHandler) {
         return null;
     }
 
     @Override
-    public Scope addErrorMapping(Mapping mapping) {
+    public Scope addErrorRequestHandler(RequestHandler requestHandler) {
         return null;
     }
 
