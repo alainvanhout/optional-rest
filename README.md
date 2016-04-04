@@ -2,7 +2,7 @@
 
 While delving into microservices and fullfledged (level 3) REST, I formed some ideas about quick and self-documenting REST via the OPTIONS verb, about an alternative approach to typical MVC controllers, and about truly logicless templates. Trying out those ideas is the only purpose of this repository/library, so view it the sandbox that it is. If I like what I end up with, I might move it beyond that, but we're not there yet.
 
-The following text describes the general usage of the library, regardless of whether a dependency injection system is used. The associated code can be found in the `optional-rest-core` module. The readme for [optional-rest-core](/optional-rest-core/README.md) specifically described the setup to use the library on its own, while the readme for the [optional-rest-spring](/optional-rest-core/README.md) module lists the small number of steps needed to work with the library on top of a Spring (MVC) setting.
+The following text describes the general usage of the library, regardless of whether a dependency injection system is used. The associated code can be found in the `optional-rest-core` module. The readme for [optional-rest-core](/optional-rest-core/README.md) specifically described the setup to use the library on its own, while the readme for the [optional-rest-spring](/optional-rest-core/README.md) module lists the small number of steps needed to work with the library on top of a Spring (MVC) setting. The `springboot-demo` module is the actual sandbox, which build on Spring Data with MongoDB.
 
 ## Concepts
 
@@ -28,7 +28,7 @@ Optional REST encapsulates most of the same, but adds a focus on the hierarchica
 A scope equates to an http endpoint with its associated logic, including
 * the type of requests it accepts (e.g. http methods, body structure, contentType header, ...)
 * the type of responses it returns (body structure and mime types)
-* the scopes that are relative to itself
+* the scopes that are relative to it
 
 ### Resource scopes
 
