@@ -137,21 +137,24 @@ public class GenericScope extends BasicScope {
 
     @Override
     public GenericScope addRequestHandler(RequestHandler requestHandler) {
-        return addRequesthandler(passMappings, requestHandler);
+        return addRequestHandler(passMappings, requestHandler);
     }
 
     @Override
     public GenericScope addErrorRequestHandler(RequestHandler requestHandler) {
-        return addRequesthandler(errorMappings, requestHandler);
+        return addRequestHandler(errorMappings, requestHandler);
     }
 
-    private GenericScope addRequesthandler(Mappings mappings, RequestHandler requestHandler) {
+    private GenericScope addRequestHandler(Mappings mappings, RequestHandler requestHandler) {
         mappings.add(requestHandler);
         return this;
     }
 
     @Override
     public void setInstanceScope(Scope scope) {
+        if (scope.getParent() == null){
+            scope.parent(this);
+        }
         this.instanceScope = scope;
     }
 

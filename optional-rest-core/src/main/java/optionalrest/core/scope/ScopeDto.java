@@ -7,6 +7,7 @@ public class ScopeDto {
     private String parent;
     private String instance;
     private Map<String, String> relative;
+    private String path;
 
     public String getId() {
         return this.id;
@@ -41,6 +42,15 @@ public class ScopeDto {
 
     public ScopeDto parent(String parent) {
         this.parent = parent;
+        return this;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public ScopeDto path(String path) {
+        this.path = path;
         return this;
     }
 }

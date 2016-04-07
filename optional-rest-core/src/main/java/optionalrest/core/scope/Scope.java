@@ -27,6 +27,8 @@ public interface Scope {
 
     Map<String, Scope> getRelativeScopes();
 
+    String getRelativePath(Scope scope, Request request);
+
     Scope scopeId(String scopeId);
 
     String getScopeId();
@@ -40,4 +42,8 @@ public interface Scope {
     Scope getParent();
 
     Scope parent(Scope parent);
+
+    String getFullPath();
+
+    String getFullPath(Request request);
 }
