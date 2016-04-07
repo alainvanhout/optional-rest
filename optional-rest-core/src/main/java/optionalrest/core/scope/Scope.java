@@ -36,4 +36,8 @@ public interface Scope {
     Supported getSupported();
 
     Scope getInstanceScope();
+
+    Scope getParent();
+
+    Scope parent(Scope parent);
 }

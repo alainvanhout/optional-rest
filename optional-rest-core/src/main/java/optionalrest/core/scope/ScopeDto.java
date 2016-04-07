@@ -4,6 +4,7 @@ import java.util.Map;
 
 public class ScopeDto {
     private String id;
+    private String parent;
     private String instance;
     private Map<String, String> relative;
 
@@ -31,6 +32,15 @@ public class ScopeDto {
 
     public ScopeDto relative(Map<String, String> relative) {
         this.relative = relative;
+        return this;
+    }
+
+    public String getParent() {
+        return parent;
+    }
+
+    public ScopeDto parent(String parent) {
+        this.parent = parent;
         return this;
     }
 }

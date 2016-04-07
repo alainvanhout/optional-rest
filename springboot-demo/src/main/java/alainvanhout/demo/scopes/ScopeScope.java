@@ -50,6 +50,7 @@ public class ScopeScope implements ScopeContainer {
 
         return new ScopeDto()
                 .id(toLink(scope))
+                .parent(scope.getParent() != null ? toLink(scope.getParent()): "")
                 .relative(relativeScopes);
     }
 

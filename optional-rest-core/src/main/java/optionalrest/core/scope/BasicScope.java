@@ -11,6 +11,7 @@ import java.util.Map;
 public abstract class BasicScope implements Scope {
 
     protected String scopeId;
+    protected Scope parent = null;
     protected Map<String, Scope> relativeScopes = new HashMap<>();
 
     @Override
@@ -40,6 +41,9 @@ public abstract class BasicScope implements Scope {
 
     @Override
     public void addRelativeScope(String relative, Scope scope) {
+        if (scope.getParent() == null){
+            scope.parent(this);
+        }
         relativeScopes.put(relative, scope);
     }
 
@@ -57,5 +61,16 @@ public abstract class BasicScope implements Scope {
     @Override
     public String getScopeId() {
         return scopeId;
+    }
+
+    @Override
+    public Scope getParent() {
+        return parent;
+    }
+
+    @Override
+    public Scope parent(Scope parent) {
+        this.parent = parent;
+        return this;
     }
 }
