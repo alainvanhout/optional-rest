@@ -5,10 +5,7 @@ import optionalrest.core.request.Headers;
 import optionalrest.core.request.Parameters;
 import optionalrest.core.request.Request;
 import optionalrest.core.request.meta.HttpMethod;
-import optionalrest.core.services.factories.FromContext;
-import optionalrest.core.services.factories.Header;
-import optionalrest.core.services.factories.Param;
-import optionalrest.core.services.factories.Step;
+import optionalrest.core.services.factories.*;
 import org.apache.commons.io.input.ReaderInputStream;
 
 import java.io.InputStream;
@@ -17,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class BasicParameterMapperProvider implements ParameterMapperProvider {
 
@@ -54,7 +52,10 @@ public class BasicParameterMapperProvider implements ParameterMapperProvider {
             return r.getContext().get(fromContext.value());
         });
         // request path step
-        map.put(p -> p.getAnnotation(Step.class) != null, (p, r) -> r.getPath().getStep());
+        map.put(p -> p.getAnnotation(Step.class) != null && p.getType().equals(String.class), (p, r) -> r.getPath().getStep());
+        // full request path so far
+        map.put(p -> p.getAnnotation(Path.class) != null && p.getType().equals(String.class),
+                (p, r) -> r.getPath().getPassedSteps().stream().collect(Collectors.joining("/")));
         // body as inputstream
         map.put(p -> p.getType().isAssignableFrom(InputStream.class), (p, r) -> new ReaderInputStream(r.getReader()));
 
