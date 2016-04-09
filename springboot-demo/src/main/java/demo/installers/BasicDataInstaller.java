@@ -2,10 +2,7 @@ package demo.installers;
 
 import demo.entities.Address;
 import demo.entities.Person;
-import demo.entities.Template;
 import demo.repositories.PersonRepository;
-import renderering.core.retrieve.TextResourceRenderer;
-import demo.repositories.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,9 +14,6 @@ import java.util.Arrays;
 public class BasicDataInstaller {
 
     @Autowired
-    private TemplateRepository templateRepository;
-
-    @Autowired
     private PersonRepository personRepository;
 
     @PostConstruct
@@ -28,7 +22,6 @@ public class BasicDataInstaller {
     }
 
     private void install() {
-        installTemplates();
         installPersons();
     }
 
@@ -50,23 +43,5 @@ public class BasicDataInstaller {
         person.getPets().addAll(Arrays.asList("Dog", "Cat", null));
         person.setAddress(new Address("Highstreet", "5", "54654", "London"));
         return person;
-    }
-
-    private void installTemplates() {
-        createTemplate("main", "templates/main.html", false);
-        // templates
-        createTemplate("template", "templates/templates/template.html", true);
-        createTemplate("template-list", "templates/templates/template-list.html", true);
-        createTemplate("template-edit", "templates/templates/template-edit.html", true);
-        // persons
-        createTemplate("person-large", "templates/persons/person-large.html", false);
-        createTemplate("person-small", "templates/persons/person-small.html", false);
-        createTemplate("address", "templates/persons/address.html", false);
-    }
-
-    private void createTemplate(String main, String resource, boolean always) {
-        if (!templateRepository.exists(main) || always) {
-            templateRepository.save(new Template(main, new TextResourceRenderer(resource).render()));
-        }
     }
 }

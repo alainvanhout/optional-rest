@@ -1,13 +1,11 @@
 package demo.scopes;
 
-import demo.services.TemplateService;
+import context.Context;
+import context.impl.MapContext;
 import demo.entities.Address;
 import demo.entities.Person;
 import demo.renderers.PersonRenderer;
 import demo.repositories.PersonRepository;
-import demo.services.ContextService;
-import context.Context;
-import context.impl.CompositeContext;
 import optionalrest.core.annotations.Description;
 import optionalrest.core.annotations.ScopeDefinition;
 import optionalrest.core.annotations.aop.After;
@@ -37,6 +35,7 @@ import org.springframework.stereotype.Service;
 import renderering.core.Renderer;
 import renderering.core.basic.StringRenderer;
 import renderering.core.model.SimpleModelRenderer;
+import renderering.core.retrieve.TextResourceRenderer;
 import renderering.web.html.basic.documentbody.PreRenderer;
 
 import javax.annotation.PostConstruct;
@@ -59,22 +58,16 @@ public class PersonScope implements ScopeContainer {
     @Autowired
     private PersonRepository personRepository;
 
-    @Autowired
-    private TemplateService templateService;
-
-    @Autowired
-    private ContextService contextService;
-
     private PersonRenderer personRenderer;
-    private SimpleModelRenderer<Address> adressRenderer;
+    private SimpleModelRenderer<Address> addressRenderer;
 
     private int viewCount;
 
     @PostConstruct
     private void setup() {
-        personRenderer = new PersonRenderer(templateService.findBodyAsRenderer("person-large"));
-        adressRenderer = new SimpleModelRenderer<>(templateService.findBodyAsRenderer("address"));
-        personRenderer.set(adressRenderer);
+        personRenderer = new PersonRenderer( new TextResourceRenderer("templates/persons/person-large.html"));
+        addressRenderer = new SimpleModelRenderer<>(new TextResourceRenderer("templates/persons/address.html"));
+        personRenderer.set(addressRenderer);
     }
 
     @Instance
@@ -102,9 +95,9 @@ public class PersonScope implements ScopeContainer {
         Person person = request.getContext().get("person");
         if (request.getHeaders().contains("accept", Mime.TEXT_HTML)) {
             setup();
-            Context context = new CompositeContext().addNamedContexts("label", contextService.get("label"));
+            Context context = new MapContext().add("label:foo", "bar");
             personRenderer.set(person);
-            adressRenderer.set(person.getAddress());
+            addressRenderer.set(person.getAddress());
             return this.personRenderer.set(context);
         }
         return new PreRenderer(JsonUtils.objectToJson(person));

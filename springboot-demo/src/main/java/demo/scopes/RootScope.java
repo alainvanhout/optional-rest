@@ -29,9 +29,6 @@ public class RootScope implements RootScopeContainer {
     @Relative(path = "addresses")
     private AddressScope addressScope;
 
-    @Relative(path = "templates")
-    private TemplateScope templateScope;
-
     @Relative(path = "scopes")
     @Handle(contentType = Mime.TEXT_HTML, accept = {Mime.APPLICATION_JSON, Mime.TEXT_HTML})
     private ScopeScope scopeScope;
