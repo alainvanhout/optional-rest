@@ -1,30 +1,19 @@
 package optionalrest.cms.contexts;
 
 import context.UpdateableContext;
-import org.springframework.stereotype.Component;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
-public class LabelContext implements UpdateableContext, CustomContext {
+@Document(collection = "context")
+public class StoredContext implements UpdateableContext {
 
-    private Map<String, Object> map = new HashMap<>();
-
-    @PostConstruct
-    private void setup() {
-        add("foo", "bar");
-    }
-
-    @Override
-    public String getId() {
-        return "label";
-    }
+    private Map<String, String> map = new HashMap<>();
 
     @Override
     public UpdateableContext add(String key, Object value) {
-        map.put(key, value);
+        map.put(key, (String)value);
         return this;
     }
 

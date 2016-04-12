@@ -1,6 +1,5 @@
 package optionalrest.cms.contexts;
 
-import optionalrest.cms.cms.dtos.custom.CustomContext;
 import context.UpdateableContext;
 import org.springframework.stereotype.Component;
 

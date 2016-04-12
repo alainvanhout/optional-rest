@@ -11,6 +11,7 @@ import org.apache.commons.io.input.ReaderInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -35,11 +36,19 @@ public class BasicParameterMapperProvider implements ParameterMapperProvider {
     public Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> getParameterMappers() {
         Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> map = new HashMap<>();
 
-        // Parameter
-        map.put(p -> p.getAnnotation(Param.class) != null, (p, r) -> {
+        // Parameter to list
+        map.put(p -> p.getAnnotation(Param.class) != null && p.getType().isAssignableFrom(List.class), (p, r) -> {
             Param param = p.getAnnotation(Param.class);
             return r.getParameters().get(param.value());
-
+        });
+        // Parameter to String
+        map.put(p -> p.getAnnotation(Param.class) != null && p.getType().isAssignableFrom(String.class), (p, r) -> {
+            Param param = p.getAnnotation(Param.class);
+            Parameters parameters = r.getParameters();
+            if (parameters.contains(param.value()) && parameters.get(param.value()).size() > 0){
+                return parameters.get(param.value()).get(0);
+            }
+            return null;
         });
         // Header
         map.put(p -> p.getAnnotation(Header.class) != null, (p, r) -> {
