@@ -43,7 +43,6 @@ public class PersonRenderer implements Renderer {
         personContext.add("firstName", person.getFirstName());
         personContext.add("lastName", person.getLastName());
         personContext.add("address", addressRenderer);
-        personContext.add("pets", new UnorderedListRenderer().ignoreBlank(true).addItems(person.getPets()));
 
         return new SimpleContextRenderer(body, new ListContext(personContext, this.context)).render();
     }

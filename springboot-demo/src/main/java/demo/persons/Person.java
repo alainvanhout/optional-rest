@@ -1,20 +1,22 @@
 package demo.persons;
 
 import demo.addresses.Address;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 
-@Document(collection = "persons")
+@Entity
 public class Person {
     @Id
+    @GeneratedValue
     private BigInteger id;
     private String firstName;
     private String lastName;
-    private List<String> pets = new ArrayList<>();
+
+    @ManyToOne
     private Address address;
 
     public BigInteger getId() {
@@ -39,14 +41,6 @@ public class Person {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public List<String> getPets() {
-        return pets;
-    }
-
-    public void setPets(List<String> pets) {
-        this.pets = pets;
     }
 
     public Address getAddress() {

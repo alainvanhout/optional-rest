@@ -40,6 +40,7 @@ import renderering.web.html.basic.documentbody.PreRenderer;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,7 +74,7 @@ public class PersonScope implements ScopeContainer {
     @Instance
     @Relative(path = "pets")
     public Renderer foo(Request request, @FromContext("person") Person person) {
-        return new PreRenderer(JsonUtils.objectToJson(person.getPets()));
+        return new PreRenderer(JsonUtils.objectToJson(new ArrayList<>()));
     }
 
     @Instance @Get @Options

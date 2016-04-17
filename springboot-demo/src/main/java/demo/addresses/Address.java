@@ -1,23 +1,19 @@
 package demo.addresses;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Random;
 
+@Entity
 public class Address {
+    @Id
+    @GeneratedValue
     private int id;
     private String street;
     private String number;
     private String postalCode;
     private String city;
-
-
-    public Address(String street, String number, String postalCode, String city) {
-        this.street = street;
-        this.number = number;
-        this.postalCode = postalCode;
-        this.city = city;
-        Random random = new Random();
-        this.id = random.nextInt();
-    }
 
     public String getStreet() {
         return street;
@@ -55,4 +51,6 @@ public class Address {
     public String toString() {
         return String.valueOf(id);
     }
+
+
 }
