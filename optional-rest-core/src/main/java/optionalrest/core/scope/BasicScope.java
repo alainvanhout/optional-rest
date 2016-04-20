@@ -1,6 +1,7 @@
 package optionalrest.core.scope;
 
 import optionalrest.core.request.Request;
+import optionalrest.core.scope.definition.ScopeDefinition;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ public abstract class BasicScope implements Scope {
 
     protected String scopeId;
     protected Scope parent = null;
+    protected ScopeDefinition definition = new ScopeDefinition();
     protected Map<String, Scope> relativeScopes = new HashMap<>();
     protected Map<Scope, String> relativePaths = new HashMap<>();
 
@@ -62,6 +64,11 @@ public abstract class BasicScope implements Scope {
     @Override
     public String getFullPath() {
         return getFullPath(null);
+    }
+
+    @Override
+    public ScopeDefinition getDefinition() {
+        return definition;
     }
 
     @Override

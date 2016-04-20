@@ -3,9 +3,8 @@ package optionalrest.core.scope;
 import optionalrest.core.RestException;
 import optionalrest.core.request.Request;
 import optionalrest.core.response.Response;
-import optionalrest.core.scope.definition.ScopeDefinition;
-import optionalrest.core.services.mapping.RequestHandler;
 import optionalrest.core.services.mapping.Mappings;
+import optionalrest.core.services.mapping.RequestHandler;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +13,6 @@ import static optionalrest.core.request.meta.HttpMethod.OPTIONS;
 
 public class GenericScope extends BasicScope {
 
-    private transient ScopeDefinition definition = new ScopeDefinition();
 
     private transient Mappings passMappings = new Mappings();
     private transient Mappings errorMappings = new Mappings();
@@ -128,11 +126,6 @@ public class GenericScope extends BasicScope {
             }
             throw new RestException("Unable to call request handler", e).add("requestHandler", requestHandler);
         }
-    }
-
-    @Override
-    public ScopeDefinition getDefinition() {
-        return definition;
     }
 
     @Override
