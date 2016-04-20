@@ -9,6 +9,9 @@ public class Parameters {
     protected Map<String, List<String>> map = new HashMap<>();
 
     public Parameters add(String key, String value) {
+        if (key == null){
+            return this;
+        }
         if (!map.containsKey(key)) {
             map.put(key, new ArrayList<>());
         }
@@ -24,17 +27,25 @@ public class Parameters {
     }
 
 
-    public Parameters add(Map<String, String> parameters){
+    public Parameters add(Map<String, String> parameters) {
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             add(entry.getKey(), entry.getValue());
         }
         return this;
     }
 
-    public Parameters addAll(Map<String, String[]> parameters){
-        for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-            for (String value : entry.getValue()) {
-                add(entry.getKey(), value);
+    public Parameters addAll(Map<String, ? extends Object> parameters) {
+        for (Map.Entry<String, ? extends Object> entry : parameters.entrySet()) {
+            if (entry.getValue() instanceof String[]) {
+                for (String value : (String[]) (entry.getValue())) {
+                    add(entry.getKey(), value);
+                }
+            } else if (entry.getValue() instanceof List) {
+                for (String value : (List<String>) (entry.getValue())) {
+                    add(entry.getKey(), value);
+                }
+            } else {
+                throw new IllegalArgumentException("Incompatible type: " + entry.getValue().getClass());
             }
         }
         return this;
@@ -49,44 +60,44 @@ public class Parameters {
         return map.containsKey(key);
     }
 
-    public List<String> get(String key){
-        if (!map.containsKey(key)){
+    public List<String> get(String key) {
+        if (!map.containsKey(key)) {
             return null;
         }
         return map.get(key);
     }
 
-    public Boolean getBooleanValue(String key){
+    public Boolean getBooleanValue(String key) {
         String value = getValue(key);
         return getBooleanValue(key, false);
     }
 
-    public Boolean getBooleanValue(String key, Boolean defaultValue){
+    public Boolean getBooleanValue(String key, Boolean defaultValue) {
         String value = getValue(key);
         return value != null ? Boolean.parseBoolean(value) : defaultValue;
     }
 
-    public Integer getIntValue(String key, Integer defaultValue){
+    public Integer getIntValue(String key, Integer defaultValue) {
         String value = getValue(key);
         return value != null ? Integer.parseInt(value) : defaultValue;
     }
 
-    public Integer getIntValue(String key){
+    public Integer getIntValue(String key) {
         return getIntValue(key, null);
     }
 
-    public String getValue(String key){
+    public String getValue(String key) {
         List<String> values = map.get(key);
         if (values == null) {
             return null;
         }
-        if (values.size() != 1){
+        if (values.size() != 1) {
             throw new RestException("More tha one value found for key " + key);
         }
         return values.get(0);
     }
 
-    public Collection<String> getKeys(){
+    public Collection<String> getKeys() {
         return map.keySet();
     }
 
@@ -94,8 +105,12 @@ public class Parameters {
         map.get(key).add(StringUtils.trim(value));
     }
 
-    public Parameters clear(String key){
+    public Parameters clear(String key) {
         map.put(key, new ArrayList<>());
         return this;
+    }
+
+    public Map<String, List<String>> toMap(){
+        return Collections.unmodifiableMap(map);
     }
 }

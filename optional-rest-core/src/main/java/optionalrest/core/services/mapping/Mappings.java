@@ -55,11 +55,14 @@ public class Mappings {
     }
 
     private boolean typeSupported(Collection<String> supportedTypes, Collection<String> neededTypes) {
-        if (neededTypes == null) {
+        if (neededTypes == null ) {
             return true;
         }
         for (String neededType : neededTypes) {
             if (supportedTypes.stream().anyMatch(s -> {
+                if (neededType.equals("*")){
+                    return true;
+                }
                 String[] supportedSplit = StringUtils.split(s, "/");
                 String[] neededSplit = StringUtils.split(neededType, "/");
                 if (supportedSplit.length != 2) {

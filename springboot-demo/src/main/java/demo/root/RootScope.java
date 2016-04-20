@@ -39,6 +39,9 @@ public class RootScope implements RootScopeContainer {
     @Relative(path = "stats")
     private StatisticsScope statisticsScope;
 
+    @Relative(path = "proxy")
+    private AddressProxyScope addressProxyScope;
+
     @Get @Handle(contentType = Mime.TEXT_HTML, accept = {Mime.APPLICATION_JSON, Mime.TEXT_ALL})
     private Response arrive(Request request) {
         return new RendererResponse().renderer(new StringRenderer("Root"));
