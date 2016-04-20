@@ -18,6 +18,8 @@ import optionalrest.core.scope.definition.ScopeContainer;
 import optionalrest.core.services.mapping.AnnotationBundle;
 import optionalrest.core.services.mapping.MethodRequestHandler;
 import optionalrest.core.services.mapping.providers.Evaluator;
+import optionalrest.core.services.mapping.providers.annotations.AnnotationConverter;
+import optionalrest.core.services.mapping.providers.annotations.AnnotationConverterProvider;
 import optionalrest.core.services.mapping.providers.parameters.ParameterConverter;
 import optionalrest.core.services.mapping.providers.parameters.ParameterConverterProvider;
 import optionalrest.core.services.mapping.providers.responses.ResponseConverter;
@@ -43,9 +45,11 @@ public class ScopeManager {
     private Collection<ScopeContainer> containers;
     private Collection<ParameterConverterProvider> parameterConverterProviders;
     private Collection<ResponseConverterProvider> responseConverterProviders;
+    private Collection<AnnotationConverterProvider> annotationConverterProviders;
 
     private Map<Evaluator<Parameter>, ParameterConverter> parameterConverters = new HashMap<>();
     private Map<Evaluator<Object>, ResponseConverter> responseConverters = new HashMap<>();
+    private Map<Evaluator<Annotation>, AnnotationConverter> annotationConverters = new HashMap<>();
 
     private OptionsRequestHandler optionsRequestHandler;
 
@@ -56,6 +60,10 @@ public class ScopeManager {
 
         for (ResponseConverterProvider provider : responseConverterProviders) {
             responseConverters.putAll(provider.getConverters());
+        }
+
+        for (AnnotationConverterProvider provider : annotationConverterProviders) {
+            annotationConverters.putAll(provider.getConverters());
         }
 
         for (ScopeContainer scopeContainer : containers) {
@@ -198,11 +206,11 @@ public class ScopeManager {
     }
 
     private boolean isRequestHandler(AnnotationBundle bundle) {
-        return bundle.contains(RequestHandler.class);
+        return bundle.containsType(RequestHandler.class);
     }
 
     private AnnotationBundle retrieveAnnotationBundle(AccessibleObject accessibleObject) {
-        AnnotationBundle bundle = new AnnotationBundle();
+        AnnotationBundle bundle = new AnnotationBundle(annotationConverters);
         bundle.add(accessibleObject.getAnnotations());
         return bundle;
     }
@@ -291,6 +299,10 @@ public class ScopeManager {
         return this;
     }
 
+    public ScopeManager annotationConverters(Collection<AnnotationConverterProvider> annotationConverterProviders) {
+        this.annotationConverterProviders = annotationConverterProviders;
+        return this;
+    }
     public ScopeManager optionsRequestHandler(OptionsRequestHandler optionsRequestHandler) {
         this.optionsRequestHandler = optionsRequestHandler;
         return this;

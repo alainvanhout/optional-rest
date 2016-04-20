@@ -3,6 +3,7 @@ package optionalrest.spring;
 import optionalrest.core.scope.definition.ScopeContainer;
 import optionalrest.core.services.ScopeManager;
 import optionalrest.core.services.ScopeRegistry;
+import optionalrest.core.services.mapping.providers.annotations.AnnotationConverterProvider;
 import optionalrest.core.services.mapping.providers.parameters.BasicParameterConverterProvider;
 import optionalrest.core.services.mapping.providers.parameters.ParameterConverterProvider;
 import optionalrest.core.services.mapping.providers.responses.ResponseConverterProvider;
@@ -44,6 +45,9 @@ public class OptionalRestConfiguration {
     private Collection<ParameterConverterProvider> parameterConverterProviders;
 
     @Autowired
+    private Collection<AnnotationConverterProvider> annotationConverterProviders;
+
+    @Autowired
     public Collection<ScopeContainer> containers;
 
     @Bean
@@ -60,7 +64,8 @@ public class OptionalRestConfiguration {
                 .containers(containers)
                 .optionsRequestHandler(new OptionsRequestHandlerImpl())
                 .parameterMapperProviders(parameterConverterProviders)
-                .responseConverterProviders(responseConverterProviders);
+                .responseConverterProviders(responseConverterProviders)
+                .annotationConverters(annotationConverterProviders);
 
         scopeManager.initialize();
 

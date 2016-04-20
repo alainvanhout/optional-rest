@@ -7,7 +7,6 @@ import optionalrest.core.annotations.Error;
 import optionalrest.core.annotations.ScopeDefinition;
 import optionalrest.core.annotations.requests.methods.Get;
 import optionalrest.core.annotations.requests.mime.ToHtml;
-import optionalrest.core.annotations.requests.mime.ToJson;
 import optionalrest.core.annotations.requests.mime.ToXml;
 import optionalrest.core.request.Request;
 import optionalrest.core.request.meta.Mime;
@@ -16,6 +15,8 @@ import optionalrest.rendering.JsonRenderer;
 import optionalrest.rendering.XmlRenderer;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import renderering.core.Renderer;
 import renderering.web.html.basic.documentbody.PreRenderer;
 
@@ -41,7 +42,9 @@ public class AddressScope implements ScopeContainer {
         return person.getAddress();
     }
 
-    @Get @ToJson
+    // @Get @ToJson
+    // using Spring annotations
+    @RequestMapping(produces = "application/json", method = {RequestMethod.GET, RequestMethod.POST})
     public Renderer arriveJson(Request request) {
         Person person = request.getContext().get("person");
         return new PreRenderer(new JsonRenderer(person.getAddress()).render());
