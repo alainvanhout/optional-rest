@@ -1,4 +1,4 @@
-package optionalrest.core.services.mapping.providers;
+package optionalrest.core.services.mapping.providers.parameters;
 
 import optionalrest.core.RestException;
 import optionalrest.core.request.Headers;
@@ -6,6 +6,7 @@ import optionalrest.core.request.Parameters;
 import optionalrest.core.request.Request;
 import optionalrest.core.request.meta.HttpMethod;
 import optionalrest.core.services.factories.*;
+import optionalrest.core.services.mapping.providers.Evaluator;
 import org.apache.commons.io.input.ReaderInputStream;
 
 import java.io.InputStream;
@@ -13,15 +14,13 @@ import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class BasicParameterMapperProvider implements ParameterMapperProvider {
+public class BasicParameterConverterProvider implements ParameterConverterProvider {
 
     @Override
-    public Map<Class, BiFunction<Parameter, Request, Object>> getParameterMappersForClass() {
-        Map<Class, BiFunction<Parameter, Request, Object>> map = new HashMap<>();
+    public Map<Class, ParameterConverter> defineConvertersForClass() {
+        Map<Class, ParameterConverter> map = new HashMap<>();
 
         map.put(Request.class, (p, r) -> r);
         map.put(HttpMethod.class, (p, r) -> r.getMethod());
@@ -33,8 +32,8 @@ public class BasicParameterMapperProvider implements ParameterMapperProvider {
     }
 
     @Override
-    public Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> getParameterMappers() {
-        Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> map = new HashMap<>();
+    public Map<Evaluator<Parameter>, ParameterConverter> defineConverters() {
+        Map<Evaluator<Parameter>, ParameterConverter> map = new HashMap<>();
 
         // Parameter to list
         map.put(p -> p.getAnnotation(Param.class) != null && p.getType().isAssignableFrom(List.class), (p, r) -> {

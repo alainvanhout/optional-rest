@@ -1,12 +1,11 @@
 package optionalrest.spring;
 
 import optionalrest.core.scope.definition.ScopeContainer;
-import optionalrest.core.services.ScopeHelper;
 import optionalrest.core.services.ScopeManager;
 import optionalrest.core.services.ScopeRegistry;
-import optionalrest.core.services.mapping.providers.BasicParameterMapperProvider;
-import optionalrest.core.services.mapping.providers.ParameterMapperProvider;
-import optionalrest.core.services.mapping.providers.ResponseConverterProvider;
+import optionalrest.core.services.mapping.providers.parameters.BasicParameterConverterProvider;
+import optionalrest.core.services.mapping.providers.parameters.ParameterConverterProvider;
+import optionalrest.core.services.mapping.providers.responses.ResponseConverterProvider;
 import optionalrest.rendering.BasicResponseConverterProvider;
 import optionalrest.rendering.OptionsRequestHandlerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +28,8 @@ public class OptionalRestConfiguration {
     }
 
     @Bean
-    public ParameterMapperProvider basicMapperProvider() {
-        return new BasicParameterMapperProvider();
+    public ParameterConverterProvider basicMapperProvider() {
+        return new BasicParameterConverterProvider();
     }
 
     @Bean
@@ -42,7 +41,7 @@ public class OptionalRestConfiguration {
     private Collection<ResponseConverterProvider> responseConverterProviders;
 
     @Autowired
-    private Collection<ParameterMapperProvider> parameterMapperProviders;
+    private Collection<ParameterConverterProvider> parameterConverterProviders;
 
     @Autowired
     public Collection<ScopeContainer> containers;
@@ -60,7 +59,7 @@ public class OptionalRestConfiguration {
         scopeManager.scopeRegistry(scopeRegistry())
                 .containers(containers)
                 .optionsRequestHandler(new OptionsRequestHandlerImpl())
-                .parameterMapperProviders(parameterMapperProviders)
+                .parameterMapperProviders(parameterConverterProviders)
                 .responseConverterProviders(responseConverterProviders);
 
         scopeManager.initialize();

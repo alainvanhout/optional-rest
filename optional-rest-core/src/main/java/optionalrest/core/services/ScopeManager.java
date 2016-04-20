@@ -17,8 +17,11 @@ import optionalrest.core.scope.Scope;
 import optionalrest.core.scope.definition.ScopeContainer;
 import optionalrest.core.services.mapping.AnnotationBundle;
 import optionalrest.core.services.mapping.MethodRequestHandler;
-import optionalrest.core.services.mapping.providers.ParameterMapperProvider;
-import optionalrest.core.services.mapping.providers.ResponseConverterProvider;
+import optionalrest.core.services.mapping.providers.Evaluator;
+import optionalrest.core.services.mapping.providers.parameters.ParameterConverter;
+import optionalrest.core.services.mapping.providers.parameters.ParameterConverterProvider;
+import optionalrest.core.services.mapping.providers.responses.ResponseConverter;
+import optionalrest.core.services.mapping.providers.responses.ResponseConverterProvider;
 import optionalrest.core.utils.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,28 +34,28 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class ScopeManager {
 
     private ScopeHelper scopeHelper = new ScopeHelper();
     private ScopeRegistry scopeRegistry;
+
     private Collection<ScopeContainer> containers;
-    private Collection<ParameterMapperProvider> parameterMapperProviders;
+    private Collection<ParameterConverterProvider> parameterConverterProviders;
     private Collection<ResponseConverterProvider> responseConverterProviders;
-    private Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers = new HashMap<>();
-    private Map<Class, Function<Object, Object>> responseTypeMappers = new HashMap<>();
+
+    private Map<Evaluator<Parameter>, ParameterConverter> parameterConverters = new HashMap<>();
+    private Map<Evaluator<Object>, ResponseConverter> responseConverters = new HashMap<>();
 
     private OptionsRequestHandler optionsRequestHandler;
 
     public void initialize() {
-        for (ParameterMapperProvider parameterMapperProvider : parameterMapperProviders) {
-            parameterMappers.putAll(parameterMapperProvider.getCombinedParameterMappers());
+        for (ParameterConverterProvider provider : parameterConverterProviders) {
+            parameterConverters.putAll(provider.getConverters());
         }
 
-        for (ResponseConverterProvider responseConverterProvider : responseConverterProviders) {
-            responseTypeMappers.putAll(responseConverterProvider.getResponseConverters());
+        for (ResponseConverterProvider provider : responseConverterProviders) {
+            responseConverters.putAll(provider.getConverters());
         }
 
         for (ScopeContainer scopeContainer : containers) {
@@ -113,7 +116,7 @@ public class ScopeManager {
                 // scope helper provides defaults if necessary
                 Handle handle = scopeHelper.retrieveAnnotation(accessibleObject, container.getClass(), Handle.class);
                 scopeHelper.updateSupported(requestHandler, handle);
-                requestHandler.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);
+                requestHandler.responseTypeMappers(responseConverters).parameterMappers(parameterConverters);
             }
         }
     }
@@ -240,7 +243,7 @@ public class ScopeManager {
                 }
             }
 
-            requestHandler.responseTypeMappers(responseTypeMappers).parameterMappers(parameterMappers);
+            requestHandler.responseTypeMappers(responseConverters).parameterMappers(parameterConverters);
         }
     }
 
@@ -278,8 +281,8 @@ public class ScopeManager {
         return this;
     }
 
-    public ScopeManager parameterMapperProviders(Collection<ParameterMapperProvider> parameterMapperProviders) {
-        this.parameterMapperProviders = parameterMapperProviders;
+    public ScopeManager parameterMapperProviders(Collection<ParameterConverterProvider> parameterConverterProviders) {
+        this.parameterConverterProviders = parameterConverterProviders;
         return this;
     }
 

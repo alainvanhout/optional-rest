@@ -4,6 +4,9 @@ import optionalrest.core.RestException;
 import optionalrest.core.request.Request;
 import optionalrest.core.response.Response;
 import optionalrest.core.scope.definition.ScopeContainer;
+import optionalrest.core.services.mapping.providers.Evaluator;
+import optionalrest.core.services.mapping.providers.parameters.ParameterConverter;
+import optionalrest.core.services.mapping.providers.responses.ResponseConverter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,8 +20,8 @@ public class MethodRequestHandler extends BasicRequestHandler {
 
     private ScopeContainer container;
     private Method method;
-    private Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers = new HashMap<>();
-    private Map<Class, Function<Object, Object>> responseTypeMappers = new HashMap<>();
+    private Map<Evaluator<Parameter>, ParameterConverter> parameterConverters = new HashMap<>();
+    private Map<Evaluator<Object>, ResponseConverter> responseConverters = new HashMap<>();
     private List<Function<Request, Object>> requestMappers;
 
     public MethodRequestHandler(ScopeContainer container, Method method) {
@@ -62,8 +65,8 @@ public class MethodRequestHandler extends BasicRequestHandler {
         if (response instanceof Response) {
             return (Response) response;
         } else {
-            for (Map.Entry<Class, Function<Object, Object>> entry : responseTypeMappers.entrySet()) {
-                if (entry.getKey().isAssignableFrom(response.getClass())) {
+            for (Map.Entry<Evaluator<Object>, ResponseConverter> entry : responseConverters.entrySet()) {
+                if (entry.getKey().apply(response)){
                     return processResponse(entry.getValue().apply(response));
                 }
             }
@@ -71,8 +74,8 @@ public class MethodRequestHandler extends BasicRequestHandler {
         }
     }
 
-    public MethodRequestHandler parameterMappers(Map<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> parameterMappers) {
-        this.parameterMappers.putAll(parameterMappers);
+    public MethodRequestHandler parameterMappers(Map<Evaluator<Parameter>, ParameterConverter> parameterMappers) {
+        this.parameterConverters.putAll(parameterMappers);
         formMappers();
         return this;
     }
@@ -86,7 +89,7 @@ public class MethodRequestHandler extends BasicRequestHandler {
     }
 
     private BiFunction<Parameter, Request, Object> getMapper(Parameter parameter) {
-        for (Map.Entry<Function<Parameter, Boolean>, BiFunction<Parameter, Request, Object>> entry : parameterMappers.entrySet()) {
+        for (Map.Entry<Evaluator<Parameter>, ParameterConverter> entry : parameterConverters.entrySet()) {
             if (entry.getKey().apply(parameter)) {
                 return entry.getValue();
             }
@@ -94,8 +97,8 @@ public class MethodRequestHandler extends BasicRequestHandler {
         throw new RestException("No mapper found for parameter " + parameter);
     }
 
-    public MethodRequestHandler responseTypeMappers(Map<Class, Function<Object, Object>> responseTypeMappers) {
-        this.responseTypeMappers.putAll(responseTypeMappers);
+    public MethodRequestHandler responseTypeMappers(Map<Evaluator<Object>, ResponseConverter> responseTypeMappers) {
+        this.responseConverters.putAll(responseTypeMappers);
         return this;
     }
 }
