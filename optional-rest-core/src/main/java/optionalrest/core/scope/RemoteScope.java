@@ -54,7 +54,7 @@ public class RemoteScope extends BasicScope {
             connection.setRequestMethod(request.getMethod().toString());
             connection.getResponseCode();
         } catch (IOException e) {
-            // ignore
+            // ignore, since any state >= 400 will trigger an exception (what were they thinking?)
             e.printStackTrace();
         }
 

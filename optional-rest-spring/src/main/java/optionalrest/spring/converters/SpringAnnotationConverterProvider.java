@@ -1,15 +1,17 @@
 package optionalrest.spring.converters;
 
-import optionalrest.core.annotations.requests.Handle;
 import optionalrest.core.request.meta.HttpMethod;
 import optionalrest.core.services.mapping.providers.Evaluator;
 import optionalrest.core.services.mapping.providers.annotations.AnnotationConverter;
 import optionalrest.core.services.mapping.providers.annotations.AnnotationConverterProvider;
+import optionalrest.core.services.mapping.providers.annotations.HandleBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class SpringAnnotationConverterProvider implements AnnotationConverterProvider {
@@ -19,41 +21,16 @@ public class SpringAnnotationConverterProvider implements AnnotationConverterPro
         Map<Class, AnnotationConverter> map = new HashMap<>();
 
         map.put(RequestMapping.class, p -> {
-            Handle o = new Handle() {
-                RequestMapping r = (RequestMapping) p;
-
-                @Override
-                public HttpMethod[] methods() {
-                    return Arrays.asList(r.method()).stream()
-                            .map(r -> HttpMethod.valueOf(r.name()))
-                            .toArray(HttpMethod[]::new);
-                }
-
-                @Override
-                public String[] accept() {
-                    return r.produces();
-                }
-
-                @Override
-                public String[] contentType() {
-                    return r.consumes();
-                }
-
-                @Override
-                public Class<? extends Annotation> annotationType() {
-                    return Handle.class;
-                }
-            };
-
-            Annotation marker = new optionalrest.core.annotations.requests.RequestHandler() {
-                @Override
-                public Class<? extends Annotation> annotationType() {
-                    return optionalrest.core.annotations.requests.RequestHandler.class;
-                }
-            };
-
-            Collection<Annotation> singleton = Arrays.asList(o, marker);
-            return singleton;
+            RequestMapping rm = (RequestMapping) p;
+            return Arrays.asList(
+                    new HandleBuilder()
+                            .methods(Arrays.asList(rm.method()).stream()
+                                    .map(r -> HttpMethod.valueOf(r.name()))
+                                    .toArray(HttpMethod[]::new))
+                            .accept(rm.produces())
+                            .contentType(rm.consumes())
+                            .build(),
+                    HandleBuilder.MARKER);
         });
 
         return map;

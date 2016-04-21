@@ -7,7 +7,6 @@ import optionalrest.core.annotations.Error;
 import optionalrest.core.annotations.ScopeDefinition;
 import optionalrest.core.annotations.requests.methods.Get;
 import optionalrest.core.annotations.requests.mime.ToHtml;
-import optionalrest.core.annotations.requests.mime.ToJson;
 import optionalrest.core.annotations.requests.mime.ToXml;
 import optionalrest.core.request.Request;
 import optionalrest.core.request.meta.Mime;
@@ -25,7 +24,6 @@ import renderering.web.html.basic.documentbody.PreRenderer;
 @ScopeDefinition(name = "address")
 @EntityDefinition(instanceClass = Address.class)
 public class AddressScope implements ScopeContainer {
-
 
     @Get @ToXml @ToHtml
     public Renderer arriveHtml(Request request) {
